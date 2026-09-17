@@ -68,7 +68,7 @@ export default {
       }).then((res) => {
         handleResponse(res, this, () => {
           this.$emit("close");
-        });
+        }, null, "delete.failed");
       });
     },
     handleClickSubmit() {
@@ -78,7 +78,6 @@ export default {
           type: "is-warning",
           position: "is-top",
           duration: 5000,
-          queue: false,
         });
         return;
       }
@@ -95,13 +94,14 @@ export default {
         handleResponse(res, this, () => {
           this.$emit("close");
           this.$buefy.toast.open({
-            message: this.$t("common.success"),
-            type: "is-warning",
+            message: this.$t("gfwList.updated"),
+            type: "is-success",
             position: "is-top",
             duration: 5000,
-            queue: false,
           });
-        });
+        }, null, "gfwList.saveFailed");
+      }).catch(() => {
+        loading.close();
       });
     },
   },

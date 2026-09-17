@@ -9,7 +9,7 @@ import {
   ModalProgrammatic,
 } from "buefy";
 import ModalLogin from "@/components/modalLogin";
-import { parseURL } from "@/assets/js/utils";
+import { escapeHtml, parseURL } from "@/assets/js/utils";
 import browser from "@/assets/js/browser";
 import modalCustomPorts from "../components/modalCustomPorts";
 import i18n from "../plugins/i18n";
@@ -18,10 +18,27 @@ import { nanoid } from "nanoid";
 Vue.prototype.$axios = axios;
 
 axios.defaults.timeout = 60 * 1000; // timeout: 60秒
+// The backend reads object query parameters (touch, whiches) as JSON text,
+// which is how axios 0.21 serialized them; 0.28+ expands them into
+// touch[id]=… instead. Keep the JSON form.
+axios.defaults.paramsSerializer = (params) =>
+  Object.entries(params)
+    .filter(([, v]) => v !== undefined && v !== null)
+    .map(([k, v]) => {
+      const value = typeof v === "object" ? JSON.stringify(v) : String(v);
+      return `${encodeURIComponent(k)}=${encodeURIComponent(value)}`;
+    })
+    .join("&");
 
 axios.interceptors.request.use(
   (config) => {
-    if (localStorage.hasOwnProperty("token")) {
+    // Only the backend that issued the token gets it. The backend-address
+    // dialog probes a user-typed URL with /api/version, which needs no auth.
+    if (
+      localStorage.hasOwnProperty("token") &&
+      typeof config.url === "string" &&
+      config.url.startsWith(apiRoot)
+    ) {
       config.headers.Authorization = `${localStorage["token"]}`;
       config.headers["X-V2raya-Request-Id"] = nanoid();
     }
@@ -69,7 +86,6 @@ function informNotRunning(url = localStorage["backendAddress"]) {
   SnackbarProgrammatic.open({
     message: i18n.t("axios.messages.optimizeBackend"),
     type: "is-primary",
-    queue: false,
     duration: 10000,
     position: "is-top",
     actionText: i18n.t("operations.yes"),
@@ -85,7 +101,6 @@ function informNotRunning(url = localStorage["backendAddress"]) {
   SnackbarProgrammatic.open({
     message: i18n.t("axios.messages.noBackendFound", { url }),
     type: "is-warning",
-    queue: false,
     position: "is-top",
     duration: 10000,
     actionText: i18n.t("operations.helpManual"),
@@ -97,6 +112,11 @@ function informNotRunning(url = localStorage["backendAddress"]) {
 
 axios.interceptors.response.use(
   function (res) {
+    // Buefy toasts and snackbars render their message with v-html, and
+    // backend error strings embed user data such as node remarks.
+    if (res.data && typeof res.data.message === "string") {
+      res.data.message = escapeHtml(res.data.message);
+    }
     return res;
   },
   function (err) {
@@ -129,8 +149,12 @@ axios.interceptors.response.use(
       }
       return Promise.reject(err);
     } else if (
+      u &&
       location.protocol.substr(0, 5) === "https" &&
-      u.protocol === "http"
+      u.protocol === "http" &&
+      // parseURL fabricates http:// for a relative apiRoot; only an absolute
+      // http:// backend address is the mixed-content case
+      /^http:\/\//i.test(err.config.url)
     ) {
       // https frontend communicating with http backend
       let msg = i18n.t("axios.messages.cannotCommunicate.0");
@@ -139,7 +163,7 @@ axios.interceptors.response.use(
           // Chrome and other WebKit browsers allow access to http://localhost, 
           // failures are likely due to backend service not being started.
           informNotRunning(u.source.replace(u.relative, ""));
-          return;
+          return Promise.reject(err);
         }
         if (browser.versions.gecko) {
           msg = i18n.t("axios.messages.cannotCommunicate.1");
@@ -149,7 +173,6 @@ axios.interceptors.response.use(
         message: msg,
         type: "is-warning",
         position: "is-top",
-        queue: false,
         duration: 10000,
         actionText: i18n.t("operations.switchSite"),
         onAction: () => {
@@ -159,7 +182,6 @@ axios.interceptors.response.use(
       SnackbarProgrammatic.open({
         message: i18n.t("axios.messages.optimizeBackend"),
         type: "is-primary",
-        queue: false,
         duration: 10000,
         position: "is-top",
         actionText: i18n.t("operations.yes"),
@@ -173,8 +195,9 @@ axios.interceptors.response.use(
         },
       });
     } else if (
-      (err.message && err.message === "Network Error") ||
-      (err.config && err.config.url === "/api/version")
+      u &&
+      ((err.message && err.message === "Network Error") ||
+        (err.config && err.config.url === "/api/version"))
     ) {
       informNotRunning(u.source.replace(u.relative, ""));
     } else {
@@ -192,7 +215,6 @@ axios.interceptors.response.use(
         message: err,
         type: "is-warning",
         position: "is-top",
-        queue: false,
         duration: 5000,
       });
     }
