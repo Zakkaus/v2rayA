@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/v2rayA/v2rayA/common"
@@ -11,8 +10,6 @@ import (
 	"github.com/v2rayA/v2rayA/kernel/v2ray/asset"
 	"github.com/v2rayA/v2rayA/pkg/util/log"
 )
-
-var V2OnlyFeatureError = fmt.Errorf("v2fly/v2ray-core only feature")
 
 func StopV2ray() (err error) {
 	v2ray.ProcessManager.Stop(true)
@@ -97,7 +94,7 @@ func Connect(which *configure.Which) (err error) {
 		}
 	}()
 	if which == nil {
-		return fmt.Errorf("which can not be nil")
+		return fmt.Errorf("no server was given to connect to")
 	}
 	// Reject a malformed or stale selection before it is stored: AddConnect
 	// below persists it, and a stored entry that cannot be located makes
@@ -106,13 +103,10 @@ func Connect(which *configure.Which) (err error) {
 		return err
 	}
 	setting := GetSetting()
+	// checkSupport only verifies the geo assets now; the load-balancing
+	// restriction it used to report is gone, so any error it returns is fatal.
 	if err = checkSupport([]*configure.Which{which}); err != nil {
-		if !errors.Is(err, V2OnlyFeatureError) {
-			return err
-		}
-		if err = configure.ClearConnects(which.Outbound); err != nil {
-			return err
-		}
+		return err
 	}
 	//configure the ip forward
 	if setting.IpForward != ipforward.IsIpForwardOn() {
