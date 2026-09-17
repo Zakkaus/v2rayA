@@ -397,7 +397,7 @@ export default {
           <p class="about-small">Другие порты:</p>
           <p class="about-small">32345: tproxy, необходим для прозрачного прокси </p>
           <p>Все данные хранятся локально, а не в облаке.</p>
-          <p>О проблемах, обнаруженных при использовании, можно сообщить в разделе <a href="https://github.com/v2rayA/v2rayA/issues">issues</a>.</p>
+          <p>О проблемах, обнаруженных при использовании, можно сообщить в разделе <a href="https://github.com/v2rayA/v2rayA/discussions">discussions</a>.</p>
           <p>Документация: <a href="https://v2raya.org">https://v2raya.org</a></p>`,
   axios: {
     messages: {
@@ -472,6 +472,8 @@ export default {
     sources: {
       all: "Все",
     },
+    tailOnly: "Показаны последние {count} строк ({skipped} более старых скрыто на этом экране)",
+    export: "Экспорт",
   },
   tproxyWhiteIpGroups: {
     title: "Группы IP-адресов прямого доступа",
@@ -594,6 +596,7 @@ export default {
     REQUEST_IN_PROGRESS: "the last request is being processed",
     GFWLIST_MISSING: "Файл GFWList отсутствует в каталоге {dir}.",
     INVALID_CONFIG: "invalid config: {detail}",
+    ASSET_UNREACHABLE: "Не удалось соединиться с {host}: {detail}",
     ASSET_DOWNLOAD_FAILED:
       "Не удалось загрузить ресурс по адресу {host} (HTTP {status}).",
     TRANSPARENT_SETUP_FAILED:

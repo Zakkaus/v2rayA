@@ -386,7 +386,7 @@ export default {
           <p class="about-small">Outras portas:</p>
           <p class="about-small">32345: tproxy, necessária para o proxy transparente</p>
           <p>Todos os dados são armazenados localmente, não na nuvem.</p>
-          <p>Problemas encontrados durante o uso podem ser relatados em <a href="https://github.com/v2rayA/v2rayA/issues">problemas</a>.</p>
+          <p>Problemas encontrados durante o uso podem ser relatados em <a href="https://github.com/v2rayA/v2rayA/discussions">discussões</a>.</p>
           <p>Documentação: <a href="https://v2raya.org">https://v2raya.org</a></p>`,
   axios: {
     messages: {
@@ -459,6 +459,8 @@ export default {
     sources: {
       all: "Todas",
     },
+    tailOnly: "Mostrando as últimas {count} linhas ({skipped} linhas mais antigas ocultas nesta tela)",
+    export: "Exportar",
   },
   tproxyWhiteIpGroups: {
     title: "Grupos de IPs na lista branca",
@@ -581,6 +583,7 @@ export default {
     REQUEST_IN_PROGRESS: "the last request is being processed",
     GFWLIST_MISSING: "A GFWList está ausente no diretório {dir}.",
     INVALID_CONFIG: "invalid config: {detail}",
+    ASSET_UNREACHABLE: "Não foi possível conectar a {host}: {detail}",
     ASSET_DOWNLOAD_FAILED:
       "Não foi possível baixar o recurso de {host} (HTTP {status}).",
     TRANSPARENT_SETUP_FAILED:

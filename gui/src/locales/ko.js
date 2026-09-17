@@ -400,7 +400,7 @@ export default {
           <p class="about-small">기타 포트:</p>
           <p class="about-small">32345: tproxy, 투명 프록시에 필요 </p>
           <p>모든 데이터는 클라우드가 아닌 로컬에 저장됩니다. </p>
-          <p>사용 중 발견한 문제는 <a href="https://github.com/v2rayA/v2rayA/issues">issues</a>에 제보할 수 있습니다.</p>
+          <p>사용 중 발견한 문제는 <a href="https://github.com/v2rayA/v2rayA/discussions">discussions</a>에 제보할 수 있습니다.</p>
           <p>문서: <a href="https://v2raya.org">https://v2raya.org</a></p>`,
   axios: {
     messages: {
@@ -477,6 +477,8 @@ export default {
     sources: {
       all: "전체",
     },
+    tailOnly: "최근 {count}줄만 표시합니다(이 화면에서는 이전 {skipped}줄이 숨겨짐)",
+    export: "내보내기",
   },
   tproxyWhiteIpGroups: {
     title: "화이트리스트 IP 그룹",
@@ -599,6 +601,7 @@ export default {
     REQUEST_IN_PROGRESS: "the last request is being processed",
     GFWLIST_MISSING: "GFWList가 {dir}에 없음.",
     INVALID_CONFIG: "invalid config: {detail}",
+    ASSET_UNREACHABLE: "{host}에 연결할 수 없습니다: {detail}",
     ASSET_DOWNLOAD_FAILED:
       "{host}에서 자산 다운로드 실패 (HTTP {status}).",
     TRANSPARENT_SETUP_FAILED:

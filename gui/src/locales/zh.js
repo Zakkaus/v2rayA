@@ -394,7 +394,7 @@ export default {
           <p class="about-small">20172: 带分流规则的HTTP协议</p>
           <p class="about-small">其他端口：</p>
           <p class="about-small">32345: tproxy，透明代理所需 </p>
-          <p>在使用中如果发现任何问题，欢迎<a href="https://github.com/v2rayA/v2rayA/issues">提出issue</a>.</p>
+          <p>在使用中如果发现任何问题，欢迎到<a href="https://github.com/v2rayA/v2rayA/discussions">讨论区</a>反馈。</p>
           <p>文档：<a href="https://v2raya.org">https://v2raya.org</a>.</p>`,
   axios: {
     messages: {
@@ -478,6 +478,8 @@ export default {
     sources: {
       all: "全部",
     },
+    tailOnly: "仅显示最近 {count} 行（此屏幕上隐藏了较早的 {skipped} 行）",
+    export: "导出",
   },
   
   tproxyWhiteIpGroups: {
@@ -597,6 +599,7 @@ export default {
     REQUEST_IN_PROGRESS: "上一个请求正在处理。",
     GFWLIST_MISSING: "目录 {dir} 中缺少 GFWList。",
     INVALID_CONFIG: "配置无效：{detail}",
+    ASSET_UNREACHABLE: "无法连接 {host}：{detail}",
     ASSET_DOWNLOAD_FAILED: "无法从 {host} 下载资源（HTTP {status}）。",
     TRANSPARENT_SETUP_FAILED: "无法设置 {mode} 透明代理：{detail}",
     MUX_RANGE: "无效的 MUX 并发值：{value}",
