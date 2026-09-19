@@ -12,12 +12,12 @@ import {
   SchemeTonalSpot,
 } from "@material/material-color-utilities";
 
-/** The default seed, a teal; the brand yellow stays a swatch. */
-export const brandSeed = "#2a8c96";
+/** The default seed: the brand amber (the owner's Material Theme Builder export, 2026-09-19). */
+export const brandSeed = "#edad48";
 
 export const presetSeeds: { name: string; seed: string }[] = [
-  { name: "teal", seed: brandSeed },
-  { name: "brand", seed: "#ffe08a" },
+  { name: "brand", seed: brandSeed },
+  { name: "teal", seed: "#2a8c96" },
   { name: "blue", seed: "#4a6fd5" },
   { name: "green", seed: "#3d8f5a" },
   { name: "purple", seed: "#7b57c7" },
