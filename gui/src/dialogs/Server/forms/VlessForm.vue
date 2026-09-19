@@ -1,15 +1,54 @@
 <script setup lang="ts">
-// The vless tab of the node editor. Contract: the model comes in by
-// v-model and is edited in place; `readonly` shows a subscription node's
-// values without editing; fields hidden by their conditions are not
-// validated. Replace this placeholder with the form.
+import { useI18n } from "vue-i18n";
 import type { V2rayModel } from "../models";
-import PendingForm from "../PendingForm.vue";
+import { required } from "./parts/rules";
+import TlsFields from "./parts/TlsFields.vue";
+import TransportFields from "./parts/TransportFields.vue";
 
-defineModel<V2rayModel>({ required: true });
+const model = defineModel<V2rayModel>({ required: true });
 defineProps<{ readonly?: boolean }>();
+const { t } = useI18n();
 </script>
 
 <template>
-  <PendingForm protocol="vless" />
+  <v-row dense>
+    <v-col cols="12">
+      <v-text-field
+        v-model="model.ps"
+        :label="t('configureServer.servername')"
+        :readonly="readonly"
+      />
+    </v-col>
+    <v-col cols="12" sm="8">
+      <v-text-field
+        v-model="model.add"
+        :label="t('configureServer.host')"
+        :rules="[required]"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="4">
+      <v-text-field
+        v-model="model.port"
+        type="number"
+        :label="t('configureServer.port')"
+        :rules="[required]"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12">
+      <v-text-field
+        v-model="model.id"
+        label="ID"
+        placeholder="UserID"
+        :rules="[required]"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+  </v-row>
+  <TransportFields v-model="model" :readonly="readonly" />
+  <TlsFields v-model="model" :readonly="readonly" vless />
 </template>
