@@ -4,7 +4,16 @@ import (
 	"reflect"
 	"sort"
 	"testing"
+
+	"github.com/v2rayA/v2rayA/kernel/serverObj"
 )
+
+func socksInfo(outbound, server string) serverInfo {
+	return serverInfo{
+		Info:         &serverObj.SOCKS{Name: server, Server: server, Port: 1080, Protocol: "socks5"},
+		OutboundName: outbound,
+	}
+}
 
 func TestBalancedSnapshotNodeIPs(t *testing.T) {
 	tmpl := &Template{}

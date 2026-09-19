@@ -1,17 +1,6 @@
 package v2ray
 
-import (
-	"testing"
-
-	"github.com/v2rayA/v2rayA/kernel/serverObj"
-)
-
-func socksInfo(outbound, server string) serverInfo {
-	return serverInfo{
-		Info:         &serverObj.SOCKS{Name: server, Server: server, Port: 1080, Protocol: "socks5"},
-		OutboundName: outbound,
-	}
-}
+import "testing"
 
 func TestApplySelection(t *testing.T) {
 	infos := []serverInfo{
