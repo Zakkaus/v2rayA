@@ -111,6 +111,16 @@ export interface CustomInbound {
   password: string;
 }
 
+export interface DnsRule {
+  server: string;
+  domains: string;
+  outbound: string;
+}
+
+export interface DnsRulesResponse {
+  rules?: Partial<DnsRule>[] | null;
+}
+
 /** The WebSocket frames on /api/message: the two the interface reads, and any other the backend may add. */
 export interface RunningStateMessage {
   type: "running_state";
