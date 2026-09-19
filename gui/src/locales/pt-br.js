@@ -1,5 +1,8 @@
 export default {
   common: {
+    dashboard: "Painel",
+    proxies: "Proxies",
+    subscriptions: "Assinaturas",
     selectedCount: "{n} selecionados",
     nodes: "Nós",
     menu: "Menu",

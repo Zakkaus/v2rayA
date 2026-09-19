@@ -1,5 +1,8 @@
 export default {
   common: {
+    dashboard: "仪表板",
+    proxies: "代理",
+    subscriptions: "订阅",
     selectedCount: "已选 {n} 项",
     nodes: "节点",
     menu: "菜单",

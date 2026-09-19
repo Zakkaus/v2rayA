@@ -1,5 +1,8 @@
 export default {
   common: {
+    dashboard: "대시보드",
+    proxies: "프록시",
+    subscriptions: "구독",
     selectedCount: "{n}개 선택됨",
     nodes: "노드",
     menu: "메뉴",

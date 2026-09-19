@@ -1,5 +1,8 @@
 export default {
   common: {
+    dashboard: "داشبورد",
+    proxies: "پروکسی‌ها",
+    subscriptions: "اشتراک‌ها",
     selectedCount: "{n} مورد انتخاب شد",
     nodes: "گره‌ها",
     menu: "منو",

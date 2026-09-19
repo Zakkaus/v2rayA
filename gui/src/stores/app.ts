@@ -24,7 +24,14 @@ export function normalizeOutbounds(outbounds: unknown): string[] {
 export type Running = "checking" | "running" | "stopped" | "paused";
 export type ThemePreference = "auto" | "light" | "dark";
 /** The page's destinations, in the order the rail and the bar show them. */
-export type View = "nodes" | "settings" | "logs" | "about";
+export type View =
+  | "dashboard"
+  | "proxies"
+  | "subscriptions"
+  | "nodes"
+  | "settings"
+  | "logs"
+  | "about";
 
 // One store for the session-wide state the old App.vue kept in data and
 // localStorage: what was a translated text ("正在运行") is an enum here, so
@@ -61,7 +68,7 @@ export const useAppStore = defineStore("app", {
       return isSeed(seed) ? seed.toLowerCase() : brandSeed;
     })(),
     language: localStorage.getItem("_lang") ?? "",
-    view: "nodes" as View,
+    view: "dashboard" as View,
   }),
   getters: {
     loggedIn: (s) => s.token !== "",

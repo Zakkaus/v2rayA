@@ -1,13 +1,17 @@
-// The four destinations the rail (≥ 600 dp) and the bottom bar (compact)
-// offer; the app bar titles the current one.
+// The five destinations the drawer, the rail and the bottom bar offer; the
+// app bar titles the current one. About lives at the bottom of the
+// settings page.
 import {
   mdiCogOutline,
   mdiCog,
-  mdiInformationOutline,
-  mdiInformation,
-  mdiLanConnect,
+  mdiRss,
+  mdiRssBox,
   mdiScriptTextOutline,
   mdiScriptText,
+  mdiServerNetworkOutline,
+  mdiServerNetwork,
+  mdiViewDashboardOutline,
+  mdiViewDashboard,
 } from "@mdi/js";
 import type { View } from "@/stores/app";
 
@@ -22,10 +26,22 @@ export interface Destination {
 
 export const destinations: Destination[] = [
   {
-    view: "nodes",
-    label: "common.nodes",
-    icon: mdiLanConnect,
-    activeIcon: mdiLanConnect,
+    view: "dashboard",
+    label: "common.dashboard",
+    icon: mdiViewDashboardOutline,
+    activeIcon: mdiViewDashboard,
+  },
+  {
+    view: "proxies",
+    label: "common.proxies",
+    icon: mdiServerNetworkOutline,
+    activeIcon: mdiServerNetwork,
+  },
+  {
+    view: "subscriptions",
+    label: "common.subscriptions",
+    icon: mdiRss,
+    activeIcon: mdiRssBox,
   },
   {
     view: "settings",
@@ -38,11 +54,5 @@ export const destinations: Destination[] = [
     label: "common.log",
     icon: mdiScriptTextOutline,
     activeIcon: mdiScriptText,
-  },
-  {
-    view: "about",
-    label: "common.about",
-    icon: mdiInformationOutline,
-    activeIcon: mdiInformation,
   },
 ];

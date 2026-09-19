@@ -65,7 +65,10 @@ import logo from "@/assets/img/v2raya-icon.svg";
 import OutboundMenu from "@/components/OutboundMenu.vue";
 import ModalCustomPorts from "@/components/modalCustomPorts.vue";
 import AboutView from "@/views/AboutView.vue";
+import DashboardView from "@/views/DashboardView.vue";
 import LogsView from "@/views/LogsView.vue";
+import ProxiesView from "@/views/ProxiesView.vue";
+import SubscriptionsView from "@/views/SubscriptionsView.vue";
 import NodesView from "@/views/NodesView.vue";
 import SettingsView from "@/views/SettingsView.vue";
 
@@ -413,7 +416,10 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
           ref="nodesRef"
           :key="sessionSerial"
         />
-        <SettingsView v-if="store.view === 'settings'" />
+        <DashboardView v-if="store.view === 'dashboard'" />
+        <ProxiesView v-else-if="store.view === 'proxies'" />
+        <SubscriptionsView v-else-if="store.view === 'subscriptions'" />
+        <SettingsView v-else-if="store.view === 'settings'" />
         <LogsView v-else-if="store.view === 'logs'" />
         <AboutView v-else-if="store.view === 'about'" />
       </div>

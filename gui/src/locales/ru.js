@@ -1,5 +1,8 @@
 export default {
   common: {
+    dashboard: "Панель",
+    proxies: "Прокси",
+    subscriptions: "Подписки",
     selectedCount: "Выбрано: {n}",
     nodes: "Узлы",
     menu: "Меню",
