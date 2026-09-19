@@ -32,6 +32,7 @@ import { errorText } from "@/api/errors";
 import type {
   ObservatoryMessage,
   RunningStateMessage,
+  TrafficMessage,
   Which,
   WsMessage,
 } from "@/api/types";
@@ -42,6 +43,7 @@ import {
   openLoading,
   useBanner,
   useNotify,
+  useTraffic,
 } from "@/composables";
 import BannerHost from "@/components/hosts/BannerHost.vue";
 import DialogHost from "@/components/hosts/DialogHost.vue";
@@ -76,6 +78,7 @@ const store = useAppStore();
 const { t, locale } = useI18n();
 const notify = useNotify();
 const banner = useBanner();
+const traffic = useTraffic();
 const theme = useTheme();
 const vuetifyLocale = useLocale();
 // Material's window size classes: compact < 600, medium < 840, expanded
@@ -192,6 +195,8 @@ function onMessage(msg: WsMessage) {
   if (msg.type === "observatory") {
     const { body } = msg as ObservatoryMessage;
     if (body?.outboundName === store.outboundName) store.observatory = msg;
+  } else if (msg.type === "traffic") {
+    traffic.feed(msg as TrafficMessage);
   } else if (msg.type === "running_state") {
     const { body } = msg as RunningStateMessage;
     if (!body) return;
@@ -205,6 +210,7 @@ function onMessage(msg: WsMessage) {
 
 async function startSession() {
   onSessionTeardown(closeProgrammatic);
+  onSessionTeardown(() => traffic.reset());
   sessionSerial.value++;
   applyTitle();
   if (!store.loggedIn) {
@@ -344,34 +350,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
 
 <template>
   <v-app>
-    <NavDrawer v-if="expanded">
-      <template #core>
-        <v-list-item
-          :prepend-icon="mdiPower"
-          :title="labelOf(store.running)"
-          :subtitle="
-            store.running === 'running' ? t('v2ray.stop') : t('v2ray.start')
-          "
-          rounded="xl"
-          @click="toggleRunning"
-        >
-          <template #append>
-            <v-switch
-              :model-value="store.running === 'running'"
-              :loading="store.running === 'checking'"
-              :color="statusColor"
-              hide-details
-              density="compact"
-              tabindex="-1"
-              @click.stop="toggleRunning"
-            />
-          </template>
-        </v-list-item>
-      </template>
-      <template #groups>
-        <OutboundMenu variant="list" @changed="nodesRef?.sync()" />
-      </template>
-    </NavDrawer>
+    <NavDrawer v-if="expanded" />
     <NavRail v-else-if="!compact" />
 
     <v-app-bar

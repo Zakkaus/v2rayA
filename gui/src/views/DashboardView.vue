@@ -4,12 +4,13 @@ import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
 import { mdiChevronRight, mdiPower } from "@mdi/js";
 import OutboundMenu from "@/components/OutboundMenu.vue";
+import TrafficCard from "@/components/TrafficCard.vue";
+import { useTraffic } from "@/composables/useTraffic";
 import { useDashboard } from "./dashboard/model";
 
 defineOptions({ name: "DashboardView" });
 const { t } = useI18n();
 const { width } = useDisplay();
-const compact = computed(() => width.value < 600);
 const expanded = computed(() => width.value >= 840);
 const {
   store,
@@ -27,15 +28,11 @@ const {
 } = useDashboard();
 
 // A filled button keeps the requested action distinct from the confirmed core state.
-// TrafficCard lands here
+const traffic = useTraffic();
 </script>
 
 <template>
-  <v-sheet
-    color="surface-container-low"
-    rounded="xl"
-    :class="compact ? 'pa-4' : 'pa-6'"
-  >
+  <div>
     <v-alert v-if="error" type="error" variant="tonal" class="mb-4">
       {{ error }}
     </v-alert>
@@ -91,11 +88,14 @@ const {
         />
       </v-card>
 
-      <v-card
-        color="surface-container-high"
-        rounded="xl"
-        class="dashboard-traffic pa-4"
-        aria-hidden="true"
+      <TrafficCard
+        class="dashboard-traffic"
+        :up="traffic.up.value"
+        :down="traffic.down.value"
+        :up-total="traffic.upTotal.value"
+        :down-total="traffic.downTotal.value"
+        :up-series="traffic.upSeries.value"
+        :down-series="traffic.downSeries.value"
       />
 
       <v-card color="surface-container-high" rounded="xl" class="pa-4">
@@ -176,7 +176,7 @@ const {
         </dl>
       </v-card>
     </div>
-  </v-sheet>
+  </div>
 </template>
 
 <style scoped>

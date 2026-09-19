@@ -3,8 +3,8 @@ import type { TrafficMessage } from "@/api/types";
 
 const capacity = 60;
 
-/** Retains one minute of one-second traffic frames, oldest sample first. */
-export function useTraffic() {
+/** createTraffic retains one minute of one-second traffic frames, oldest sample first. */
+export function createTraffic() {
   const up = ref(0);
   const down = ref(0);
   const upTotal = ref(0);
@@ -44,4 +44,12 @@ export function useTraffic() {
   }
 
   return { feed, reset, up, down, upTotal, downTotal, upSeries, downSeries };
+}
+
+// One stream for the page: the shell feeds it from the message socket
+// and resets it with the session; the dashboard reads it.
+const shared = createTraffic();
+
+export function useTraffic() {
+  return shared;
 }

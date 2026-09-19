@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // The standard navigation drawer for expanded windows (≥ 840 dp): the
-// brand, the destinations, then the core's state and the outbound groups
-// as list content, and the theme, language and account menus at the
-// bottom. There is no top app bar at this width; the page titles itself.
+// brand, the destinations, and the theme, language and account menus at
+// the bottom. There is no top app bar at this width; the page titles
+// itself, and the core's state lives on the dashboard.
 import { useI18n } from "vue-i18n";
 import { destinations } from "./destinations";
 import ShellMenus from "./ShellMenus.vue";
@@ -30,11 +30,6 @@ const store = useAppStore();
         class="drawer__item"
         @click="store.view = d.view"
       />
-    </v-list>
-    <v-divider class="mx-7 my-2" />
-    <v-list nav density="default" class="px-3 py-0">
-      <slot name="core" />
-      <slot name="groups" />
     </v-list>
     <template #append>
       <v-divider class="mx-7" />

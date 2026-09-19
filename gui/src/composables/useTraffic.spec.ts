@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import type { TrafficMessage } from "@/api/types";
 import { formatBytes, formatRate } from "@/lib/format";
-import { useTraffic } from "./useTraffic";
+import { createTraffic } from "./useTraffic";
 
 function message(n: number): TrafficMessage {
   return {
@@ -12,7 +12,7 @@ function message(n: number): TrafficMessage {
 
 describe("traffic history", () => {
   test("keeps the newest 60 rates in order across repeated wraps", () => {
-    const traffic = useTraffic();
+    const traffic = createTraffic();
     for (let n = 1; n <= 125; n++) {
       traffic.feed(message(n));
       const expected = Array.from(
@@ -29,7 +29,7 @@ describe("traffic history", () => {
   });
 
   test("resets a wrapped history and starts a new session without stale samples", () => {
-    const traffic = useTraffic();
+    const traffic = createTraffic();
     for (let n = 1; n <= 65; n++) traffic.feed(message(n));
     traffic.reset();
     expect(traffic.upSeries.value).toEqual([]);
