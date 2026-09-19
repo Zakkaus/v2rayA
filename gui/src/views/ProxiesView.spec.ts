@@ -28,7 +28,9 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 let wrapper: VueWrapper;
 const button = (text: string) =>
-  wrapper.findAll("button").find((b) => b.text() === text)!;
+  wrapper
+    .findAll("button, .v-chip")
+    .find((b) => b.text() === text || b.attributes("aria-label") === text)!;
 beforeEach(async () => {
   localStorage.clear();
   vi.clearAllMocks();
