@@ -39,3 +39,34 @@ export const updateProxyModes = (t: T, transparentOff: boolean) => [
   { value: "proxy", title: t("setting.options.global") },
   { value: "pac", title: t("setting.options.pac") },
 ];
+
+/** what the transparent proxy can be implemented with on this instance */
+export const transparentTypes = (
+  t: T,
+  host: { lite: boolean; os: string; isRoot: boolean; tunSupported: boolean },
+) => {
+  const items: {
+    value: string;
+    title: string;
+    props?: { disabled: boolean };
+  }[] = [];
+  if (!host.lite && host.os === "linux")
+    items.push(
+      { value: "redirect", title: "redirect" },
+      { value: "tproxy", title: "tproxy" },
+    );
+  if (!host.lite)
+    items.push({
+      value: "tun",
+      title: host.tunSupported
+        ? "tun"
+        : `tun — ${t("setting.options.tunUnsupported")}`,
+      props: { disabled: !host.tunSupported },
+    });
+  if (!(host.isRoot && (host.os === "linux" || host.os === "darwin")))
+    items.push({
+      value: "system_proxy",
+      title: t("setting.options.systemProxy"),
+    });
+  return items;
+};

@@ -18,6 +18,7 @@ import TunRouteScriptDialog, {
 } from "@/dialogs/settings/TunRouteScript.vue";
 import { useAppStore } from "@/stores/app";
 import { useSettings } from "./settings/model";
+import { transparentTypes as transparentTypeItems } from "./settings/options";
 import AboutDialog from "./settings/AboutDialog.vue";
 import SettingChoice from "./settings/SettingChoice.vue";
 import SettingRow from "./settings/SettingRow.vue";
@@ -45,32 +46,14 @@ onMounted(() => {
 const os = computed(() => store.version?.os ?? "");
 const isRoot = computed(() => store.version?.isRoot ?? false);
 const tunSupported = computed(() => store.version?.tunSupported ?? false);
-const transparentTypes = computed(() => {
-  const items: {
-    value: string;
-    title: string;
-    props?: { disabled: boolean };
-  }[] = [];
-  if (!store.lite && os.value === "linux")
-    items.push(
-      { value: "redirect", title: "redirect" },
-      { value: "tproxy", title: "tproxy" },
-    );
-  if (!store.lite)
-    items.push({
-      value: "tun",
-      title: tunSupported.value
-        ? "tun"
-        : `tun — ${t("setting.options.tunUnsupported")}`,
-      props: { disabled: !tunSupported.value },
-    });
-  if (!(isRoot.value && (os.value === "linux" || os.value === "darwin")))
-    items.push({
-      value: "system_proxy",
-      title: t("setting.options.systemProxy"),
-    });
-  return items;
-});
+const transparentTypes = computed(() =>
+  transparentTypeItems(t, {
+    lite: store.lite,
+    os: os.value,
+    isRoot: isRoot.value,
+    tunSupported: tunSupported.value,
+  }),
+);
 const transparentOn = computed(() => form.transparent !== "close");
 const usesTproxy = computed(
   () =>

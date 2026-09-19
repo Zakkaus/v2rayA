@@ -20,7 +20,11 @@ import { useTraffic } from "@/composables/useTraffic";
 import { formatBytes, formatRate } from "@/lib/format";
 import { useDashboard } from "./dashboard/model";
 import type { SubscriptionAction } from "./proxies/model";
-import { transparentModes, pacModes } from "./settings/options";
+import {
+  transparentModes,
+  transparentTypes,
+  pacModes,
+} from "./settings/options";
 
 defineOptions({ name: "DashboardView" });
 const { t } = useI18n();
@@ -65,6 +69,14 @@ const {
 } = useDashboard();
 const traffic = useTraffic();
 const transparentItems = computed(() => transparentModes(t));
+const transparentTypeItems = computed(() =>
+  transparentTypes(t, {
+    lite: store.lite,
+    os: store.version?.os ?? "",
+    isRoot: store.version?.isRoot ?? false,
+    tunSupported: store.version?.tunSupported ?? false,
+  }),
+);
 const pacItems = computed(() => pacModes(t));
 const ranked = computed(() =>
   [...members.value].sort(
@@ -304,6 +316,22 @@ function pick(value: string) {
             hide-details
             @update:model-value="(value) => setQuick('transparent', value)"
           />
+          <v-expand-transition>
+            <v-select
+              v-if="quick.transparent !== 'close'"
+              :model-value="quick.transparentType"
+              :aria-label="t('setting.transparentType')"
+              :label="t('setting.transparentType')"
+              :items="transparentTypeItems"
+              :disabled="quickDisabled"
+              density="compact"
+              hide-details
+              class="mt-3"
+              @update:model-value="
+                (value) => setQuick('transparentType', value)
+              "
+            />
+          </v-expand-transition>
           <v-switch
             :model-value="quick.portSharing"
             :label="t('setting.portSharingOn')"
