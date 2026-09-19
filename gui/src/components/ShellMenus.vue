@@ -50,7 +50,7 @@ function logout() {
         rounded="xl"
       />
     </template>
-    <v-card min-width="340">
+    <v-card width="340">
       <ThemePanel />
     </v-card>
   </v-menu>
