@@ -77,6 +77,8 @@ export default {
     moreSubscriptions: "مشاهده همه",
     testLatency: "آزمایش تأخیر",
     usage: "مصرف‌شده {used} / {total}",
+    usedOnly: "مصرف‌شده {used}",
+    totalOnly: "مجموع {total}",
     expires: "انقضا {date}",
   },
   common: {

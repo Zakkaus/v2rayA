@@ -77,6 +77,8 @@ export default {
     moreSubscriptions: "모두 보기",
     testLatency: "지연 시간 측정",
     usage: "사용량 {used} / {total}",
+    usedOnly: "사용 {used}",
+    totalOnly: "총 {total}",
     expires: "만료일 {date}",
   },
   common: {

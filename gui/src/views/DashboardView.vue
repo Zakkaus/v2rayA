@@ -548,7 +548,7 @@ function pick(value: string) {
               {{ subscription.summary }}
             </p>
             <v-progress-linear
-              v-if="subscription.usage"
+              v-if="subscription.usage?.percent !== undefined"
               :model-value="subscription.usage.percent"
               :aria-label="subscription.summary"
               height="4"

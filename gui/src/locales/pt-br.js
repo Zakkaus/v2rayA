@@ -78,6 +78,8 @@ export default {
     moreSubscriptions: "Ver todas",
     testLatency: "Testar latência",
     usage: "Usado {used} / {total}",
+    usedOnly: "Usado {used}",
+    totalOnly: "Total {total}",
     expires: "Expira em {date}",
   },
   common: {

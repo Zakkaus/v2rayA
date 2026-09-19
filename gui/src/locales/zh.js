@@ -75,6 +75,8 @@ export default {
     moreSubscriptions: "查看更多",
     testLatency: "测速",
     usage: "已用 {used} / {total}",
+    usedOnly: "已用 {used}",
+    totalOnly: "总量 {total}",
     expires: "到期 {date}",
   },
   common: {

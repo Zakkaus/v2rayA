@@ -29,6 +29,7 @@ import RoutingADialog from "@/dialogs/settings/RoutingA.vue";
 import GroupMembersDialog from "./GroupMembers.vue";
 import { useAppStore } from "@/stores/app";
 import { locate, runningOf, sameWhich } from "@/views/nodes/model";
+import { parseQuota } from "@/lib/quota";
 import { useSettings, type SettingForm } from "@/views/settings/model";
 import type { SubscriptionAction } from "@/views/proxies/model";
 import { useSubscriptions } from "@/views/subscriptions/model";
@@ -52,17 +53,6 @@ function parseMs(text: string): number | undefined {
 }
 
 // The backend formats both quota values in GiB.
-function usage(info: string) {
-  const m = /Used ([\d.]+ \w+) \/ ([\d.]+ \w+)(?: · Expires (\S+))?/.exec(info);
-  if (!m || !(parseFloat(m[2]) > 0)) return null;
-  return {
-    used: m[1],
-    total: m[2],
-    expires: m[3] ?? "",
-    percent: Math.min(100, (parseFloat(m[1]) / parseFloat(m[2])) * 100),
-  };
-}
-
 export function useDashboard() {
   const store = useAppStore();
   const { t, locale } = useI18n();
@@ -133,7 +123,7 @@ export function useDashboard() {
   });
   const subscriptions = computed(() =>
     (touch.value?.subscriptions ?? []).map((subscription) => {
-      const quota = usage(subscription.info);
+      const quota = parseQuota(subscription.info);
       const date = dayjs(subscription.status);
       const dateLocale =
         locale.value === "zh"
@@ -145,10 +135,20 @@ export function useDashboard() {
         ...subscription,
         usage: quota,
         summary: quota
-          ? t("dashboard.usage", quota) +
-            (quota.expires
-              ? `  ${t("dashboard.expires", { date: quota.expires })}`
-              : "")
+          ? [
+              quota.used && quota.total
+                ? t("dashboard.usage", { used: quota.used, total: quota.total })
+                : quota.used
+                  ? t("dashboard.usedOnly", { used: quota.used })
+                  : quota.total
+                    ? t("dashboard.totalOnly", { total: quota.total })
+                    : "",
+              quota.expires
+                ? t("dashboard.expires", { date: quota.expires })
+                : "",
+            ]
+              .filter((part) => part)
+              .join("  ")
           : subscription.info,
         updatedAt:
           subscription.status && date.isValid()

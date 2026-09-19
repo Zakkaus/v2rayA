@@ -77,6 +77,8 @@ export default {
     moreSubscriptions: "Показать все",
     testLatency: "Проверить задержку",
     usage: "Использовано {used} / {total}",
+    usedOnly: "Использовано {used}",
+    totalOnly: "Всего {total}",
     expires: "Истекает {date}",
   },
   common: {

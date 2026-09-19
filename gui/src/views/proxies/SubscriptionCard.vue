@@ -10,6 +10,7 @@ import {
   mdiDeleteOutline,
 } from "@mdi/js";
 import type { TouchSubscription } from "@/api/types";
+import { parseQuota } from "@/lib/quota";
 import type { SubscriptionAction } from "./model";
 defineOptions({ name: "SubscriptionCard" });
 const props = defineProps<{
@@ -18,29 +19,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{ action: [action: SubscriptionAction] }>();
 const { t } = useI18n();
-// The backend formats quota information as “Used X / Y · Expires D”.
-const usage = computed(() => {
-  const match =
-    /Used ([\d.]+) (\w+) \/ ([\d.]+) (\w+)(?: · Expires (\S+))?/.exec(
-      props.subscription.info ?? "",
-    );
-  if (!match) return null;
-  const units: Record<string, number> = {
-    B: 1,
-    KiB: 1024,
-    MiB: 1024 ** 2,
-    GiB: 1024 ** 3,
-    TiB: 1024 ** 4,
-  };
-  const used = Number(match[1]) * (units[match[2]] ?? 1);
-  const total = Number(match[3]) * (units[match[4]] ?? 1);
-  return {
-    used: `${match[1]} ${match[2]}`,
-    total: `${match[3]} ${match[4]}`,
-    expires: match[5] ?? "",
-    percent: total > 0 ? Math.min(100, (used / total) * 100) : 0,
-  };
-});
+const usage = computed(() => parseQuota(props.subscription.info));
 </script>
 <template>
   <v-card
@@ -102,12 +81,17 @@ const usage = computed(() => {
         <div
           class="d-flex flex-wrap justify-space-between ga-2 md3-body-medium mb-2"
         >
-          <span dir="ltr">{{ usage.used }} / {{ usage.total }}</span>
+          <span dir="ltr">{{
+            usage.used && usage.total
+              ? `${usage.used} / ${usage.total}`
+              : usage.used || usage.total
+          }}</span>
           <span class="text-on-surface-variant" dir="ltr">{{
             usage.expires
           }}</span>
         </div>
         <v-progress-linear
+          v-if="usage.percent !== undefined"
           :model-value="usage.percent"
           color="primary"
           bg-color="surface-container-highest"
