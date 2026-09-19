@@ -18,3 +18,24 @@ export const pacModes = (t: T) => [
   { value: "gfwlist", title: t("setting.options.gfwlist") },
   { value: "routingA", title: "RoutingA" },
 ];
+
+export const subscriptionUpdateModes = (t: T) => [
+  { value: "none", title: t("setting.options.off") },
+  { value: "auto_update", title: t("setting.options.updateSubWhenStart") },
+  {
+    value: "auto_update_at_intervals",
+    title: t("setting.options.updateSubAtIntervals"),
+  },
+];
+
+/** the proxy an update runs through; "direct" reads as "follows the transparent proxy" when one is on */
+export const updateProxyModes = (t: T, transparentOff: boolean) => [
+  {
+    value: "direct",
+    title: transparentOff
+      ? t("setting.options.direct")
+      : t("setting.options.dependTransparentMode"),
+  },
+  { value: "proxy", title: t("setting.options.global") },
+  { value: "pac", title: t("setting.options.pac") },
+];

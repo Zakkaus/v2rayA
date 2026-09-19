@@ -15,6 +15,8 @@ export default {
     chooseManually: "직접 선택",
   },
   dashboard: {
+    showMore: "{n}개 더 보기",
+    showLess: "접기",
     quick: "빠른 설정",
     connected: "연결됨",
     status: "코어 상태",

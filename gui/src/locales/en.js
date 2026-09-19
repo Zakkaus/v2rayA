@@ -15,6 +15,8 @@ export default {
     chooseManually: "Choose manually",
   },
   dashboard: {
+    showMore: "Show {n} more",
+    showLess: "Show less",
     quick: "Quick settings",
     connected: "Connected",
     status: "Core status",

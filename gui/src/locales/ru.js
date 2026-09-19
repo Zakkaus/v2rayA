@@ -15,6 +15,8 @@ export default {
     chooseManually: "Выбрать вручную",
   },
   dashboard: {
+    showMore: "Ещё {n}",
+    showLess: "Свернуть",
     quick: "Быстрые настройки",
     connected: "Подключено",
     status: "Состояние ядра",

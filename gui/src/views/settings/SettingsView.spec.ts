@@ -98,28 +98,22 @@ describe("settings list", () => {
   test("edits settings through the list and preserves the save request contract", async () => {
     await mountPage();
     await choose("Log Level", "Debug");
-    await toggle("Port Sharing", true);
     await wrapper
       .get('input[aria-label="Update GFWList Regularly (Unit: hour)"]')
       .setValue("48");
-    await wrapper
-      .get('input[aria-label="Update Subscriptions Regularly (Unit: hour)"]')
-      .setValue("6");
     await wrapper.get('input[aria-label="Concurrency"]').setValue("16");
-    await choose("Transparent Proxy/System Proxy", "Off");
-    expect(
-      wrapper.find('input[aria-label="Excluded Interface Prefixes"]').exists(),
-    ).toBe(false);
+    // the proxy and subscription rows live elsewhere, but their values
+    // still travel with the request
+    expect(wrapper.find('input[aria-label="Port Sharing"]').exists()).toBe(
+      false,
+    );
     await wrapper.get('button[type="submit"]').trigger("click");
     await flushPromises();
     expect(putSetting).toHaveBeenCalledExactlyOnceWith(
       {
         ...loaded,
-        transparent: "close",
-        portSharing: true,
         logLevel: "debug",
         pacAutoUpdateIntervalHour: 48,
-        subscriptionAutoUpdateIntervalHour: 6,
         mux: 16,
       },
       { signal: expect.any(AbortSignal) },
@@ -128,12 +122,6 @@ describe("settings list", () => {
 
   test("shows dependent rows and blocks saving invalid intervals", async () => {
     await mountPage();
-    await choose("Transparent Proxy/System Proxy Implementation", "tun");
-    expect(wrapper.text()).toContain("TUN Excluded Processes");
-    expect(wrapper.text()).not.toContain("Direct Whitelist IP Groups");
-    expect(wrapper.text()).not.toContain("Configure Route Script");
-    await toggle("Auto Route", false);
-    expect(wrapper.text()).toContain("Configure Route Script");
     await choose("Sniffing", "Off");
     expect(wrapper.find('input[aria-label="RouteOnly"]').exists()).toBe(false);
     expect(wrapper.text()).not.toContain("Domains Excluded");

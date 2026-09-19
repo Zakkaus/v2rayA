@@ -15,6 +15,8 @@ export default {
     chooseManually: "انتخاب دستی",
   },
   dashboard: {
+    showMore: "{n} مورد دیگر",
+    showLess: "کمتر",
     quick: "تنظیمات سریع",
     connected: "متصل",
     status: "وضعیت هسته",

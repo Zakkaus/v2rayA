@@ -4,6 +4,7 @@
 // app bar at this width: the page titles itself and carries the theme,
 // language and account menus; the core's state lives on the dashboard.
 import { useI18n } from "vue-i18n";
+import { mdiInformationOutline } from "@mdi/js";
 import { destinations } from "./destinations";
 import { useDialog } from "@/composables";
 import AboutDialog from "@/views/settings/AboutDialog.vue";
@@ -41,6 +42,7 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
             v-bind="tip"
             variant="text"
             size="small"
+            :prepend-icon="mdiInformationOutline"
             class="drawer__version text-none md3-label-medium"
             @click="openAbout"
           >

@@ -97,8 +97,12 @@ describe("dashboard", () => {
     expect(wrapper.findAll(".dashboard-node").map((c) => c.text())).toEqual([
       "Standalone24ms",
     ]);
-    expect(wrapper.text()).toContain("Off");
-    expect(wrapper.text()).toContain("RoutingA");
+    // the proxy settings list is on the dashboard, showing the mode
+    expect(
+      wrapper
+        .get('button[aria-label^="Transparent Proxy/System Proxy:"]')
+        .text(),
+    ).toContain("Off");
 
     await control().trigger("click");
     await flushPromises();
@@ -115,8 +119,6 @@ describe("dashboard", () => {
     expect(wrapper.findAll(".dashboard-node").map((c) => c.text())).toEqual([
       "Subscribed24ms",
     ]);
-    // the quick settings render the current modes
-    expect(wrapper.findAll(".v-select").length).toBe(2);
   });
 
   test("keeps the confirmed state while starting and prevents duplicate requests", async () => {

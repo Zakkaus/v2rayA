@@ -13,16 +13,14 @@ export function createTraffic() {
   const downSamples = shallowRef<number[]>([]);
   let next = 0;
 
-  const upSeries = computed(() =>
-    upSamples.value.map(
-      (_, i, samples) => samples[(next + i) % samples.length],
-    ),
-  );
-  const downSeries = computed(() =>
-    downSamples.value.map(
-      (_, i, samples) => samples[(next + i) % samples.length],
-    ),
-  );
+  // oldest first, padded with zeros to the minute so the chart is a flat
+  // line before the first frame and keeps one time scale as frames come in
+  const ordered = (samples: number[]) => [
+    ...new Array<number>(capacity - samples.length).fill(0),
+    ...samples.map((_, i) => samples[(next + i) % samples.length]),
+  ];
+  const upSeries = computed(() => ordered(upSamples.value));
+  const downSeries = computed(() => ordered(downSamples.value));
 
   function feed({ body }: TrafficMessage) {
     up.value = body.up;

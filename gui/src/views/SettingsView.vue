@@ -11,17 +11,8 @@ import DomainsExcludedDialog from "@/dialogs/settings/DomainsExcluded.vue";
 import GfwListDialog from "@/dialogs/settings/GfwList.vue";
 import PortsDialog from "@/dialogs/settings/Ports.vue";
 import RoutingADialog from "@/dialogs/settings/RoutingA.vue";
-import TproxyWhiteIpsDialog from "@/dialogs/settings/TproxyWhiteIps.vue";
-import TunProcessesDialog from "@/dialogs/settings/TunProcesses.vue";
-import TunRouteScriptDialog, {
-  type TunRouteScript,
-} from "@/dialogs/settings/TunRouteScript.vue";
-import { useAppStore } from "@/stores/app";
 import { useSettings } from "./settings/model";
-import {
-  pacModes as pacModeItems,
-  transparentModes as transparentModeItems,
-} from "./settings/options";
+import { pacModes as pacModeItems } from "./settings/options";
 import AboutDialog from "./settings/AboutDialog.vue";
 import SettingChoice from "./settings/SettingChoice.vue";
 import SettingRow from "./settings/SettingRow.vue";
@@ -30,17 +21,12 @@ defineOptions({ name: "SettingsView" });
 const { t } = useI18n();
 const { width } = useDisplay();
 const compact = computed(() => width.value < 600);
-const store = useAppStore();
 const notify = useNotify();
 const { open } = useDialog();
 const settings = useSettings();
 const { form, ready, localGFWListVersion, remoteGFWListVersion } = settings;
 const saving = ref(false);
 const formRef = ref<{ validate(): Promise<{ valid: boolean }> } | null>(null);
-
-const os = computed(() => store.version?.os ?? "");
-const isRoot = computed(() => store.version?.isRoot ?? false);
-const tunSupported = computed(() => store.version?.tunSupported ?? false);
 
 onMounted(() => {
   settings.load().catch((err) => notify.warning(errorText(err)));
@@ -49,34 +35,6 @@ onMounted(() => {
 
 // ---- the choices -------------------------------------------------------------
 
-const transparentModes = computed(() => transparentModeItems(t));
-const transparentTypes = computed(() => {
-  const items: {
-    value: string;
-    title: string;
-    props?: { disabled: boolean };
-  }[] = [];
-  if (!store.lite && os.value === "linux") {
-    items.push(
-      { value: "redirect", title: "redirect" },
-      { value: "tproxy", title: "tproxy" },
-    );
-  }
-  if (!store.lite)
-    items.push({
-      value: "tun",
-      title: tunSupported.value
-        ? "tun"
-        : `tun — ${t("setting.options.tunUnsupported")}`,
-      props: { disabled: !tunSupported.value },
-    });
-  if (!(isRoot.value && (os.value === "linux" || os.value === "darwin")))
-    items.push({
-      value: "system_proxy",
-      title: t("setting.options.systemProxy"),
-    });
-  return items;
-});
 const pacModes = computed(() => pacModeItems(t));
 const onOffDefault = computed(() => [
   { value: "default", title: t("setting.options.default") },
@@ -102,36 +60,7 @@ const gfwUpdateModes = computed(() => [
     title: t("setting.options.updateGfwlistAtIntervals"),
   },
 ]);
-const subUpdateModes = computed(() => [
-  { value: "none", title: t("setting.options.off") },
-  { value: "auto_update", title: t("setting.options.updateSubWhenStart") },
-  {
-    value: "auto_update_at_intervals",
-    title: t("setting.options.updateSubAtIntervals"),
-  },
-]);
-const updateProxyModes = computed(() => [
-  {
-    value: "direct",
-    title:
-      form.transparent === "close" || store.lite
-        ? t("setting.options.direct")
-        : t("setting.options.dependTransparentMode"),
-  },
-  { value: "proxy", title: t("setting.options.global") },
-  { value: "pac", title: t("setting.options.pac") },
-]);
 
-const transparentOn = computed(() => form.transparent !== "close");
-const usesTproxy = computed(
-  () =>
-    transparentOn.value &&
-    ["tproxy", "redirect"].includes(form.transparentType),
-);
-const usesTun = computed(
-  () =>
-    transparentOn.value && form.transparentType === "tun" && tunSupported.value,
-);
 const gfwlistInUse = computed(
   () => form.pacMode === "gfwlist" || form.transparent === "gfwlist",
 );
@@ -154,35 +83,6 @@ async function openGfwList() {
   ).result;
   if (changed) settings.load().catch(() => {});
 }
-async function openTunProcesses() {
-  const value = await open<string>(
-    TunProcessesDialog,
-    { value: form.tunExcludeProcesses },
-    { width: 520 },
-  ).result;
-  if (value !== undefined) form.tunExcludeProcesses = value;
-}
-async function openTunScript() {
-  const value = await open<TunRouteScript>(
-    TunRouteScriptDialog,
-    {
-      os: os.value,
-      value: {
-        shellType: form.tunRouteShellType,
-        shellPath: form.tunRouteShellPath,
-        setupScript: form.tunSetupScript,
-        teardownScript: form.tunTeardownScript,
-      },
-    },
-    { width: 640 },
-  ).result;
-  if (!value) return;
-  form.tunRouteShellType = value.shellType;
-  form.tunRouteShellPath = value.shellPath;
-  form.tunSetupScript = value.setupScript;
-  form.tunTeardownScript = value.teardownScript;
-}
-const openWhiteIps = () => open(TproxyWhiteIpsDialog, {}, { width: 520 });
 const openDomains = () => open(DomainsExcludedDialog, {}, { width: 520 });
 const openRoutingA = () => open(RoutingADialog, {}, { width: 720 });
 const openDns = () => open(DnsDialog, {}, { width: 640 });
@@ -213,103 +113,6 @@ async function save() {
       class="bg-transparent"
     />
     <template v-else>
-      <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">
-        <v-list-subheader>{{ t("setting.sections.proxy") }}</v-list-subheader>
-        <SettingChoice
-          v-model="form.transparent"
-          :title="t('setting.transparentProxy')"
-          :hint="t('setting.messages.transparentProxy')"
-          :items="transparentModes"
-        />
-        <v-expand-transition>
-          <SettingChoice
-            v-if="transparentOn"
-            v-model="form.transparentType"
-            :title="t('setting.transparentType')"
-            :hint="t('setting.messages.transparentType')"
-            :items="transparentTypes"
-          />
-        </v-expand-transition>
-        <SettingRow v-if="!store.lite" :title="t('setting.ipForwardOn')">
-          <v-switch
-            v-model="form.ipforward"
-            :aria-label="t('setting.ipForwardOn')"
-            hide-details
-          />
-        </SettingRow>
-        <SettingRow :title="t('setting.portSharingOn')">
-          <v-switch
-            v-model="form.portSharing"
-            :aria-label="t('setting.portSharingOn')"
-            hide-details
-          />
-        </SettingRow>
-        <v-expand-transition>
-          <SettingRow
-            v-if="usesTproxy"
-            :title="t('setting.tproxyExcludedInterfaces')"
-            :hint="t('setting.messages.tproxyExcludedInterfaces')"
-          >
-            <v-text-field
-              v-model="form.tproxyExcludedInterfaces"
-              class="settings__interfaces"
-              :aria-label="t('setting.tproxyExcludedInterfaces')"
-              :placeholder="t('setting.tproxyExcludedInterfacesPlaceholder')"
-              hide-details="auto"
-              dir="ltr"
-            />
-          </SettingRow>
-        </v-expand-transition>
-        <v-expand-transition>
-          <SettingRow
-            v-if="transparentOn && form.transparentType === 'tproxy'"
-            :title="t('operations.tproxyWhiteIpGroups')"
-            :hint="t('tproxyWhiteIpGroups.messages.0')"
-            action
-            @click="openWhiteIps"
-          />
-        </v-expand-transition>
-        <v-expand-transition>
-          <div v-if="usesTun">
-            <SettingRow
-              :title="t('setting.tunAutoRoute')"
-              :hint="t('setting.messages.tunAutoRoute')"
-            >
-              <v-switch
-                v-model="form.tunAutoRoute"
-                :aria-label="t('setting.tunAutoRoute')"
-                hide-details
-              />
-            </SettingRow>
-            <v-expand-transition>
-              <SettingRow
-                v-if="!form.tunAutoRoute"
-                :title="t('operations.configureTunRouteScript')"
-                :subtitle="form.tunRouteShellPath"
-                action
-                @click="openTunScript"
-              />
-            </v-expand-transition>
-            <SettingRow
-              :title="t('setting.tunExcludeProcesses')"
-              :hint="t('setting.messages.tunExcludeProcesses')"
-              action
-              @click="openTunProcesses"
-            >
-              <v-badge
-                v-if="form.tunExcludeProcesses"
-                :content="
-                  form.tunExcludeProcesses.split(',').filter((p) => p).length
-                "
-                inline
-                color="primary"
-                class="me-2"
-              />
-            </SettingRow>
-          </div>
-        </v-expand-transition>
-      </v-list>
-
       <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">
         <v-list-subheader>{{ t("setting.sections.traffic") }}</v-list-subheader>
         <SettingChoice
@@ -359,34 +162,6 @@ async function save() {
             </v-expand-transition>
           </div>
         </v-expand-transition>
-        <SettingChoice
-          v-model="form.subscriptionAutoUpdateMode"
-          :title="t('setting.autoUpdateSub')"
-          :items="subUpdateModes"
-        />
-        <v-expand-transition>
-          <SettingRow
-            v-if="
-              form.subscriptionAutoUpdateMode === 'auto_update_at_intervals'
-            "
-            :title="t('setting.options.updateSubAtIntervals')"
-          >
-            <v-text-field
-              v-model="form.subscriptionAutoUpdateIntervalHour"
-              class="settings__number"
-              type="number"
-              min="1"
-              :rules="[positive]"
-              :aria-label="t('setting.options.updateSubAtIntervals')"
-              hide-details="auto"
-            />
-          </SettingRow>
-        </v-expand-transition>
-        <SettingChoice
-          v-model="form.proxyModeWhenSubscribe"
-          :title="t('setting.preferModeWhenUpdate')"
-          :items="updateProxyModes"
-        />
       </v-list>
 
       <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">

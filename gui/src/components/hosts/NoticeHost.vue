@@ -5,12 +5,14 @@ import { computed } from "vue";
 import { dismissNotice, noticeState } from "@/composables/useNotify";
 
 const current = computed(() => noticeState.current);
+// failures, warnings included, are red: the error container is the one
+// role the scheme keeps for something going wrong
 const color = computed(
   () =>
     ({
       info: "surface-variant",
       success: "secondary-container",
-      warning: "tertiary-container",
+      warning: "error-container",
       error: "error-container",
     })[current.value?.kind ?? "info"],
 );

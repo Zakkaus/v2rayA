@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
-import { mdiPower } from "@mdi/js";
-import { errorText } from "@/api/errors";
-import { useNotify } from "@/composables";
+import { mdiChevronDown, mdiChevronUp, mdiPower } from "@mdi/js";
 import OutboundMenu from "@/components/OutboundMenu.vue";
 import TrafficCard from "@/components/TrafficCard.vue";
 import { useTraffic } from "@/composables/useTraffic";
 import { useDashboard } from "./dashboard/model";
-import { useSettings, type SettingForm } from "./settings/model";
-import { pacModes, transparentModes } from "./settings/options";
+import ProxySettings from "./settings/ProxySettings.vue";
 
 defineOptions({ name: "DashboardView" });
 const { t } = useI18n();
@@ -31,27 +28,18 @@ const {
 
 // A filled button keeps the requested action distinct from the confirmed core state.
 const traffic = useTraffic();
-const notify = useNotify();
 
-// the quick settings: the same form the settings page saves, three fields of it
-const settings = useSettings();
-const quickBusy = ref(false);
-const transparentItems = computed(() => transparentModes(t));
-const pacItems = computed(() => pacModes(t));
-onMounted(() => settings.load().catch(() => {}));
-async function quick(patch: Partial<SettingForm>) {
-  Object.assign(settings.form, patch);
-  quickBusy.value = true;
-  try {
-    await settings.save();
-    notify.success(t("setting.saved"));
-  } catch (err) {
-    notify.warning(t("setting.saveFailed", { message: errorText(err) }));
-    await settings.load().catch(() => {});
-  } finally {
-    quickBusy.value = false;
-  }
-}
+// a long member list folds to its first rows until asked for the rest
+const foldAt = 8;
+const unfolded = ref(false);
+const shownNodes = computed(() =>
+  unfolded.value || connectedNodes.value.length <= foldAt
+    ? connectedNodes.value
+    : connectedNodes.value.slice(0, foldAt),
+);
+const hiddenCount = computed(
+  () => connectedNodes.value.length - shownNodes.value.length,
+);
 </script>
 
 <template>
@@ -112,7 +100,7 @@ async function quick(patch: Partial<SettingForm>) {
           />
           <template v-else-if="connectedNodes.length">
             <v-chip
-              v-for="{ key, row } in connectedNodes"
+              v-for="{ key, row } in shownNodes"
               :key="key"
               variant="tonal"
               class="dashboard-node"
@@ -126,6 +114,20 @@ async function quick(patch: Partial<SettingForm>) {
                 {{ row.pingLatency }}
               </span>
             </v-chip>
+            <v-btn
+              v-if="hiddenCount || unfolded"
+              variant="text"
+              size="small"
+              :append-icon="unfolded ? mdiChevronUp : mdiChevronDown"
+              class="dashboard-fold"
+              @click="unfolded = !unfolded"
+            >
+              {{
+                unfolded
+                  ? t("dashboard.showLess")
+                  : t("dashboard.showMore", { n: hiddenCount })
+              }}
+            </v-btn>
           </template>
           <span v-else class="md3-body-medium text-on-surface-variant">
             {{ t(nodeCount === 0 ? "common.empty" : "proxyGroup.emptyGroup") }}
@@ -143,37 +145,7 @@ async function quick(patch: Partial<SettingForm>) {
         :down-series="traffic.downSeries.value"
       />
 
-      <!-- quick settings -->
-      <v-card color="surface-container-high" rounded="xl" class="pa-5">
-        <h2 class="md3-title-medium mb-4">{{ t("dashboard.quick") }}</h2>
-        <v-select
-          :model-value="settings.form.transparent"
-          :items="transparentItems"
-          :label="t('setting.transparentProxy')"
-          :disabled="!settings.ready.value || quickBusy"
-          hide-details
-          class="mb-3"
-          @update:model-value="(v: string) => quick({ transparent: v })"
-        />
-        <v-select
-          :model-value="settings.form.pacMode"
-          :items="pacItems"
-          :label="t('setting.pacMode')"
-          :disabled="!settings.ready.value || quickBusy"
-          hide-details
-          class="mb-1"
-          @update:model-value="(v: string) => quick({ pacMode: v })"
-        />
-        <v-switch
-          :model-value="settings.form.portSharing"
-          :label="t('setting.portSharingOn')"
-          :disabled="!settings.ready.value || quickBusy"
-          hide-details
-          @update:model-value="
-            (v: boolean | null) => quick({ portSharing: !!v })
-          "
-        />
-      </v-card>
+      <ProxySettings class="dashboard-proxy" />
 
       <!-- the instance -->
       <v-card color="surface-container-high" rounded="xl" class="pa-5">
@@ -232,9 +204,11 @@ async function quick(patch: Partial<SettingForm>) {
 .dashboard-grid--expanded .dashboard-traffic {
   grid-column: span 4;
 }
-.dashboard-grid--expanded > :nth-child(3),
-.dashboard-grid--expanded > :nth-child(4) {
-  grid-column: span 6;
+.dashboard-grid--expanded .dashboard-proxy {
+  grid-column: span 7;
+}
+.dashboard-grid--expanded > :last-child {
+  grid-column: span 5;
 }
 .dashboard-facts {
   display: grid;

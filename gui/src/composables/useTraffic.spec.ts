@@ -11,14 +11,18 @@ function message(n: number): TrafficMessage {
 }
 
 describe("traffic history", () => {
-  test("keeps the newest 60 rates in order across repeated wraps", () => {
+  test("keeps the newest 60 rates in order across repeated wraps, padded to the minute", () => {
     const traffic = createTraffic();
+    expect(traffic.upSeries.value).toEqual(new Array(60).fill(0));
     for (let n = 1; n <= 125; n++) {
       traffic.feed(message(n));
-      const expected = Array.from(
-        { length: Math.min(n, 60) },
-        (_, i) => Math.max(1, n - 59) + i,
-      );
+      const expected = [
+        ...new Array(Math.max(0, 60 - n)).fill(0),
+        ...Array.from(
+          { length: Math.min(n, 60) },
+          (_, i) => Math.max(1, n - 59) + i,
+        ),
+      ];
       expect(traffic.upSeries.value).toEqual(expected);
       expect(traffic.downSeries.value).toEqual(expected.map((v) => v * 2));
     }
@@ -32,8 +36,8 @@ describe("traffic history", () => {
     const traffic = createTraffic();
     for (let n = 1; n <= 65; n++) traffic.feed(message(n));
     traffic.reset();
-    expect(traffic.upSeries.value).toEqual([]);
-    expect(traffic.downSeries.value).toEqual([]);
+    expect(traffic.upSeries.value).toEqual(new Array(60).fill(0));
+    expect(traffic.downSeries.value).toEqual(new Array(60).fill(0));
     expect([
       traffic.up.value,
       traffic.down.value,
@@ -41,8 +45,8 @@ describe("traffic history", () => {
       traffic.downTotal.value,
     ]).toEqual([0, 0, 0, 0]);
     traffic.feed(message(2));
-    expect(traffic.upSeries.value).toEqual([2]);
-    expect(traffic.downSeries.value).toEqual([4]);
+    expect(traffic.upSeries.value.slice(-2)).toEqual([0, 2]);
+    expect(traffic.downSeries.value.slice(-2)).toEqual([0, 4]);
     expect(traffic.upTotal.value).toBe(200);
     expect(traffic.downTotal.value).toBe(400);
   });

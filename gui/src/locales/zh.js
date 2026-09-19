@@ -15,6 +15,8 @@ export default {
     chooseManually: "手动选择",
   },
   dashboard: {
+    showMore: "还有 {n} 个",
+    showLess: "收起",
     quick: "快捷设置",
     connected: "已连接",
     status: "核心状态",
