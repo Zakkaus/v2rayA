@@ -9,7 +9,6 @@ import {
   mdiSpeedometer,
   mdiServerNetwork,
   mdiDotsVertical,
-  mdiPencilOutline,
   mdiPlus,
   mdiShieldOutline,
   mdiRoutes,
@@ -195,12 +194,9 @@ function switchNode() {
           </div>
         </dl>
         <div class="d-flex flex-wrap ga-2 mt-4">
-          <v-btn
-            variant="text"
-            :prepend-icon="mdiPencilOutline"
-            @click="editPorts"
-            >{{ t("customAddressPort.title") }}</v-btn
-          >
+          <v-btn variant="text" @click="editPorts">{{
+            t("customAddressPort.title")
+          }}</v-btn>
           <v-btn variant="text" @click="store.view = 'logs'">{{
             t("common.log")
           }}</v-btn>
@@ -304,20 +300,13 @@ function switchNode() {
             >
           </div>
           <div class="d-flex align-center justify-end ga-2">
-            <v-tooltip :text="t('dashboard.testLatency')">
-              <template #activator="{ props }">
-                <v-btn
-                  v-bind="props"
-                  :icon="mdiSpeedometer"
-                  size="40"
-                  variant="text"
-                  :aria-label="t('dashboard.testLatency')"
-                  :loading="!!testing"
-                  :disabled="!nodeInUse || !!testing"
-                  @click="testNode"
-                />
-              </template>
-            </v-tooltip>
+            <v-btn
+              variant="text"
+              :loading="!!testing"
+              :disabled="!nodeInUse || !!testing"
+              @click="testNode"
+              >{{ t("dashboard.testLatency") }}</v-btn
+            >
             <v-btn variant="text" :disabled="selecting" @click="switchNode">{{
               t("dashboard.switchNode")
             }}</v-btn>
