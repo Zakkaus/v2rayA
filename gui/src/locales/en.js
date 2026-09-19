@@ -4,6 +4,14 @@ export default {
     download: "Download",
     total: "Total: {value}",
   },
+  proxies: {
+    cards: "Cards",
+    list: "List",
+    members: "Members: {n}",
+    testLatency: "Test latency",
+    connectFastest: "Connect fastest",
+    chooseManually: "Choose manually",
+  },
   common: {
     dashboard: "Dashboard",
     proxies: "Proxies",

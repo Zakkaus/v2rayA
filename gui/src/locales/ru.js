@@ -4,6 +4,14 @@ export default {
     download: "Загрузка",
     total: "Всего: {value}",
   },
+  proxies: {
+    cards: "Карточки",
+    list: "Список",
+    members: "Участников: {n}",
+    testLatency: "Проверить задержку",
+    connectFastest: "Подключить самый быстрый",
+    chooseManually: "Выбрать вручную",
+  },
   common: {
     dashboard: "Панель",
     proxies: "Прокси",
