@@ -107,7 +107,14 @@ function switchNode() {
           <v-icon :icon="mdiPower" size="20" color="on-surface-variant" />
           <h2 class="md3-title-small">{{ t("dashboard.status") }}</h2>
         </div>
-        <p class="md3-title-large mb-4" role="status">{{ stateLabel }}</p>
+        <p class="md3-title-large mb-4 d-flex align-center ga-3" role="status">
+          <span
+            class="dashboard-state-dot"
+            :class="`dashboard-state-dot--${store.running}`"
+            aria-hidden="true"
+          />
+          {{ stateLabel }}
+        </p>
         <v-btn
           color="primary"
           variant="flat"
@@ -641,6 +648,23 @@ function switchNode() {
 }
 .dashboard-wrap {
   overflow-wrap: anywhere;
+}
+/* the core's state at a glance: a 12 dp dot in the state's colour */
+.dashboard-state-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: rgb(var(--v-theme-outline-variant));
+}
+.dashboard-state-dot--running {
+  background: rgb(var(--v-theme-primary));
+}
+.dashboard-state-dot--paused {
+  background: rgb(var(--v-theme-tertiary));
+}
+.dashboard-state-dot--stopped {
+  background: rgb(var(--v-theme-error));
 }
 /* subscriptions side by side on a wide row */
 .dashboard-grid--wide .dashboard-subscription-rows {
