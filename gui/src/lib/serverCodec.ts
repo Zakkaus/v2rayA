@@ -5,7 +5,7 @@
 // only consumer: the import dialog posts links as typed, and the share
 // dialog shows the backend's link.
 import { Base64 } from "js-base64";
-import { generateURL as buildURL, parseURL } from "@/lib/url";
+import { decodeSafe, generateURL as buildURL, parseURL } from "@/lib/url";
 
 export type ShareForm = Record<string, any>;
 
@@ -17,11 +17,7 @@ export function parseShareLink(url: string): ShareForm | null {
     );
     // the backend stores ps as typed; only decode when it is valid
     // percent-encoding, a literal "%" in a name must survive
-    try {
-      obj.ps = decodeURIComponent(obj.ps);
-    } catch {
-      // keep obj.ps as is
-    }
+    obj.ps = decodeSafe(obj.ps);
     // the backend keys the uTLS fingerprint "fingerprint" in vmess JSON
     obj.fp = obj.fp || obj.fingerprint || "";
     obj.tls = obj.tls || "none";
@@ -52,10 +48,10 @@ export function parseShareLink(url: string): ShareForm | null {
   } else if (url.toLowerCase().startsWith("vless://")) {
     const u = parseURL(url);
     const o: ShareForm = {
-      ps: decodeURIComponent(u.hash),
+      ps: decodeSafe(u.hash),
       add: u.host,
       port: u.port,
-      id: decodeURIComponent(u.username),
+      id: decodeSafe(u.username),
       flow: u.params.flow || "",
       net: u.params.type || "tcp",
       type: u.params.headerType || "none",
@@ -118,7 +114,7 @@ export function parseShareLink(url: string): ShareForm | null {
       protocol: "vless",
     };
     if (o.alpn !== "") {
-      o.alpn = decodeURIComponent(o.alpn);
+      o.alpn = decodeSafe(o.alpn);
     }
     if (o.net === "mkcp" || o.net === "kcp") {
       o.path = u.params.seed;
@@ -131,7 +127,7 @@ export function parseShareLink(url: string): ShareForm | null {
     // and js-base64 decodes those escapes as data, which corrupted the
     // password of every shadowsocks node opened for editing.
     try {
-      userinfo = decodeURIComponent(userinfo);
+      userinfo = decodeSafe(userinfo);
     } catch {
       // a literal "%" in the userinfo: use it as it came
     }
@@ -157,7 +153,7 @@ export function parseShareLink(url: string): ShareForm | null {
       password: password,
       server: u.host,
       port: u.port,
-      name: decodeURIComponent(u.hash || ""),
+      name: decodeSafe(u.hash || ""),
       plugin: opts[0] || "",
       obfs: "http",
       tls: "",
@@ -237,10 +233,10 @@ export function parseShareLink(url: string): ShareForm | null {
   ) {
     const u = parseURL(url);
     const o: ShareForm = {
-      password: decodeURIComponent(u.username),
+      password: decodeSafe(u.username),
       server: u.host,
       port: u.port,
-      name: decodeURIComponent(u.hash),
+      name: decodeSafe(u.hash),
       peer: u.params.peer || u.params.sni || "",
       pinnedPeerCertSha256: u.params.pinnedPeerCertSha256 || "",
       verifyPeerCertByName: u.params.verifyPeerCertByName || "",
@@ -270,9 +266,9 @@ export function parseShareLink(url: string): ShareForm | null {
   } else if (url.toLowerCase().startsWith("juicity://")) {
     const u = parseURL(url);
     return {
-      name: decodeURIComponent(u.hash),
-      uuid: decodeURIComponent(u.username),
-      password: decodeURIComponent(u.password),
+      name: decodeSafe(u.hash),
+      uuid: decodeSafe(u.username),
+      password: decodeSafe(u.password),
       server: u.host,
       port: u.port,
       sni: u.params.sni || "",
@@ -285,9 +281,9 @@ export function parseShareLink(url: string): ShareForm | null {
   } else if (url.toLowerCase().startsWith("tuic://")) {
     const u = parseURL(url);
     return {
-      name: decodeURIComponent(u.hash),
-      uuid: decodeURIComponent(u.username),
-      password: decodeURIComponent(u.password),
+      name: decodeSafe(u.hash),
+      uuid: decodeSafe(u.username),
+      password: decodeSafe(u.password),
       server: u.host,
       port: u.port,
       sni: u.params.sni || "",
@@ -311,16 +307,16 @@ export function parseShareLink(url: string): ShareForm | null {
     url.toLowerCase().startsWith("hy2://")
   ) {
     const u = parseURL(url);
-    let password = decodeURIComponent(u.username);
+    let password = decodeSafe(u.username);
     const userInfoEnd = u.source.indexOf("@");
     if (
       userInfoEnd !== -1 &&
       u.source.slice(u.source.indexOf("://") + 3, userInfoEnd).includes(":")
     ) {
-      password += `:${decodeURIComponent(u.password)}`;
+      password += `:${decodeSafe(u.password)}`;
     }
     return {
-      name: decodeURIComponent(u.hash),
+      name: decodeSafe(u.hash),
       password: password,
       server: u.host,
       port: u.port,
@@ -346,29 +342,29 @@ export function parseShareLink(url: string): ShareForm | null {
   ) {
     const u = parseURL(url);
     return {
-      username: decodeURIComponent(u.username),
-      password: decodeURIComponent(u.password),
+      username: decodeSafe(u.username),
+      password: decodeSafe(u.password),
       host: u.host,
       port: u.port,
       protocol: u.protocol,
-      name: decodeURIComponent(u.hash),
+      name: decodeSafe(u.hash),
     };
   } else if (url.toLowerCase().startsWith("socks5://")) {
     const u = parseURL(url);
     return {
-      username: decodeURIComponent(u.username),
-      password: decodeURIComponent(u.password),
+      username: decodeSafe(u.username),
+      password: decodeSafe(u.password),
       host: u.host,
       port: u.port,
       protocol: u.protocol,
-      name: decodeURIComponent(u.hash),
+      name: decodeSafe(u.hash),
     };
   } else if (url.toLowerCase().startsWith("anytls://")) {
     const u = parseURL(url);
-    const auth = u.username ? decodeURIComponent(u.username) : "";
+    const auth = u.username ? decodeSafe(u.username) : "";
     const sni = u.params.peer || u.params.sni || "";
     return {
-      name: decodeURIComponent(u.hash),
+      name: decodeSafe(u.hash),
       host: u.host,
       port: u.port,
       auth: auth,
@@ -390,10 +386,10 @@ export function parseShareLink(url: string): ShareForm | null {
     const u = parseURL(url);
     return {
       protocol: "wireguard",
-      name: decodeURIComponent(u.hash),
+      name: decodeSafe(u.hash),
       address: u.host,
       port: u.port,
-      privateKey: decodeURIComponent(u.username || ""),
+      privateKey: decodeSafe(u.username || ""),
       publicKey: u.params.publicKey || "",
       localAddress: u.params.address || "",
       dns: u.params.dns || "",

@@ -32,7 +32,7 @@ export function parseURL(source: string) {
   for (const segment of anchor.search.replace(/^\?/, "").split("&")) {
     if (!segment) continue;
     const [key, raw] = segment.split("=");
-    params[key] = decodeURIComponent(raw);
+    params[key] = decodeSafe(raw);
   }
   return {
     source,
@@ -76,4 +76,13 @@ export function generateURL({
     .query(params || {})
     .hash(hash || "")
     .toString();
+}
+
+/** decodeSafe decodes a URI component, or returns the text as it is when it is not encoded (a name with a literal %). */
+export function decodeSafe(text: string): string {
+  try {
+    return decodeURIComponent(text);
+  } catch {
+    return text;
+  }
 }

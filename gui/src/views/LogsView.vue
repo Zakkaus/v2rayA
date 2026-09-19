@@ -36,8 +36,6 @@ const scroller = ref<{
   scrollToIndex(i: number): void;
   $el: HTMLElement;
 } | null>(null);
-/** phones show the tail only: a virtual list of long lines shows their left edge */
-const tailLimit = 300;
 
 const shown = computed(() => {
   let list = lines.value;
@@ -48,10 +46,6 @@ const shown = computed(() => {
   if (search) list = list.filter((l) => l.text.toLowerCase().includes(search));
   return list;
 });
-const tail = computed(() =>
-  shown.value.length > tailLimit ? shown.value.slice(-tailLimit) : shown.value,
-);
-const skipped = computed(() => Math.max(0, shown.value.length - tailLimit));
 const sourceItems = computed(() => [
   { value: "all", title: t("log.sources.all") },
   ...sources.value.map((s) => ({ value: s, title: s })),
@@ -189,36 +183,15 @@ onMounted(() => {
         :title="t('log.logsLabel')"
         class="py-8"
       />
-      <template v-else-if="compact">
-        <p
-          v-if="skipped"
-          class="md3-body-small text-on-surface-variant px-2 py-1"
-        >
-          {{ t("log.tailOnly", { count: tailLimit, skipped }) }}
-        </p>
-        <div
-          v-for="(line, i) in tail"
-          :key="line.id"
-          class="logs__row logs__row--wrap"
-        >
-          <span class="logs__number">{{
-            shown.length - tail.length + i + 1
-          }}</span>
-          <span
-            class="logs__text language-accesslog"
-            v-html="highlight(line.text)"
-          />
-        </div>
-      </template>
       <v-virtual-scroll
         v-else
         ref="scroller"
         :items="shown"
-        :item-height="28"
+        :item-height="compact ? undefined : 28"
         class="logs__scroll"
       >
         <template #default="{ item, index }">
-          <div class="logs__row">
+          <div class="logs__row" :class="{ 'logs__row--wrap': compact }">
             <span class="logs__number">{{ index + 1 }}</span>
             <span
               class="logs__text language-accesslog"

@@ -574,7 +574,6 @@ export default {
     sources: {
       all: "全部",
     },
-    tailOnly: "仅显示最近 {count} 行（此屏幕上隐藏了较早的 {skipped} 行）",
     export: "导出",
   },
 
