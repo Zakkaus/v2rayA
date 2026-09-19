@@ -293,7 +293,7 @@ async function save() {
         <SettingRow
           :title="t('gfwList.title')"
           :hint="localVersionStale ? t('setting.messages.gfwlist') : undefined"
-          :subtitle="`${t('common.latest')}: ${remoteGFWListVersion || t('common.checkRunning')} · ${t('common.local')}: ${localGFWListVersion || t('common.none')}`"
+          :subtitle="`${t('common.latest')}: ${remoteGFWListVersion || t('common.checkRunning')}  ${t('common.local')}: ${localGFWListVersion || t('common.none')}`"
           action
           @click="openGfwList"
         />

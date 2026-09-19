@@ -319,7 +319,8 @@ export default {
   },
   configureServer: {
     required: "Obrigatório",
-    title: "Configurar servidor | Servidor",
+    title: "Configurar servidor",
+    titleReadonly: "Servidor",
     servername: "Nome do servidor",
     host: "Host",
     port: "Porta",

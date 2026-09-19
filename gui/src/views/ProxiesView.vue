@@ -283,7 +283,7 @@ onMounted(sync);
                   currentMember
                     ? currentMember.name
                     : preferred
-                      ? `${t("proxies.mode.auto")} · ${preferred.name}`
+                      ? `${t("proxies.mode.auto")}  ${preferred.name}`
                       : t("proxies.mode.auto")
                 }}</span></v-chip
               >

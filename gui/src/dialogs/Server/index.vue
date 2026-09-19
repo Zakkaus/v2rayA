@@ -93,7 +93,13 @@ async function save() {
   <v-card class="server-editor">
     <v-card-item class="px-6 pt-6 pb-2">
       <v-card-title class="md3-headline-small pa-0">
-        {{ t("configureServer.title", readonly ? 2 : 1) }}
+        {{
+          t(
+            readonly
+              ? "configureServer.titleReadonly"
+              : "configureServer.title",
+          )
+        }}
       </v-card-title>
     </v-card-item>
     <v-card-text class="px-6 pb-0">

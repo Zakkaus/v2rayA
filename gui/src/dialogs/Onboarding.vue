@@ -50,7 +50,7 @@ onBeforeUnmount(markSeen);
 <template>
   <v-card rounded="xl">
     <v-card-item class="px-6 pt-6 pb-4">
-      <v-card-title class="md3-title-medium text-wrap pa-0">
+      <v-card-title class="md3-headline-small text-wrap pa-0">
         {{ t("onboarding.title") }}
       </v-card-title>
       <template #append>

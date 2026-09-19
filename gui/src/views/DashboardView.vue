@@ -119,7 +119,7 @@ const selectionItems = computed(() => [
   ...members.value.map((m) => ({
     value: m.key,
     title: m.row.name || m.row.address,
-    subtitle: `${m.row.net} · ${m.latency}`,
+    subtitle: `${m.row.net}  ${m.latency}`,
   })),
 ]);
 function pick(value: string) {
@@ -211,7 +211,7 @@ function pick(value: string) {
           dir="ltr"
         >
           {{ t("dashboard.trafficUsage") }}: ↓
-          {{ formatBytes(traffic.downTotal.value) }} · ↑
+          {{ formatBytes(traffic.downTotal.value) }} ↑
           {{ formatBytes(traffic.upTotal.value) }}
         </p>
       </v-card>

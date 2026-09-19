@@ -147,7 +147,7 @@ export function useDashboard() {
         summary: quota
           ? t("dashboard.usage", quota) +
             (quota.expires
-              ? ` · ${t("dashboard.expires", { date: quota.expires })}`
+              ? `  ${t("dashboard.expires", { date: quota.expires })}`
               : "")
           : subscription.info,
         updatedAt:

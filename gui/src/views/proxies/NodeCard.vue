@@ -56,7 +56,7 @@ const { t } = useI18n();
     </div>
     <div class="d-flex align-center ga-2 mt-1">
       <p class="md3-body-small text-on-surface-variant node-card__source ma-0">
-        {{ row.net }} · {{ source }}
+        {{ row.net }}  {{ source }}
       </p>
       <v-spacer />
       <NodeLatency :latency="row.pingLatency" />

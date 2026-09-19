@@ -52,7 +52,7 @@ export const vuetify = createVuetify({
   },
   defaults: {
     global: { ripple: false },
-    VBtn: { variant: "flat" },
+    VBtn: { variant: "flat", height: 40 },
     VCard: { elevation: 0, rounded: "lg" },
     VDialog: { scrim: "on-surface" },
     // Material's menu: surface-container at elevation 2, 8 dp from its anchor

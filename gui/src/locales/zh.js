@@ -207,7 +207,7 @@ export default {
     autoUpdateSub: "自动更新订阅",
     autoUpdateGfwlist: "自动更新GFWList",
     preferModeWhenUpdate: "解析订阅链接/更新时优先使用",
-    tproxyExcludedInterfaces: "不走代理的网卡前缀",
+    tproxyExcludedInterfaces: "排除的网卡名前缀",
     tproxyExcludedInterfacesPlaceholder: "docker*、veth*、wg*、ppp*、br-*",
     tunAutoRoute: "自动路由",
     ipForwardOn: "开启IP转发",
@@ -306,7 +306,8 @@ export default {
   },
   configureServer: {
     required: "必填",
-    title: "配置节点 | 节点",
+    title: "配置节点",
+    titleReadonly: "节点",
     servername: "节点名称",
     host: "地址",
     port: "端口号",

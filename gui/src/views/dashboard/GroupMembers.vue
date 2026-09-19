@@ -63,7 +63,10 @@ function save() {
   <v-card rounded="xl">
     <v-card-item class="px-6 pt-6 pb-2">
       <v-card-title class="md3-headline-small pa-0">
-        {{ t("dashboard.editGroup") }} · {{ outbound.toUpperCase() }}
+        {{ t("dashboard.editGroup") }}
+        <span class="text-on-surface-variant ms-2">{{
+          outbound.toUpperCase()
+        }}</span>
       </v-card-title>
     </v-card-item>
     <v-card-text class="px-6 pb-0">

@@ -314,7 +314,8 @@ export default {
   },
   configureServer: {
     required: "Обязательно",
-    title: "Настройка сервера | Сервер",
+    title: "Настройка сервера",
+    titleReadonly: "Сервер",
     servername: "Имя сервера",
     host: "Хост",
     port: "Порт",

@@ -43,7 +43,7 @@ const { t } = useI18n();
       row.name
     }}</v-list-item-title>
     <v-list-item-subtitle class="md3-body-small"
-      >{{ row.net }} · {{ source }}</v-list-item-subtitle
+      >{{ row.net }}  {{ source }}</v-list-item-subtitle
     >
     <template #append>
       <div class="node-list-item__append d-flex align-center ga-2">

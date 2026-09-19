@@ -123,7 +123,6 @@ export function parseShareLink(url: string): ShareForm | null {
     if (o.net === "mkcp" || o.net === "kcp") {
       o.path = u.params.seed;
     }
-    console.log(o);
     return o;
   } else if (url.toLowerCase().startsWith("ss://")) {
     const u = parseURL(url);
@@ -207,7 +206,7 @@ export function parseShareLink(url: string): ShareForm | null {
   } else if (url.toLowerCase().startsWith("ssr://")) {
     url = Base64.decode(url.substr(6));
     const arr = url.split("/?");
-    const query = arr[1].split("&");
+    const query = (arr[1] ?? "").split("&");
     const m: ShareForm = {};
     for (const param of query) {
       const [key, val] = param.split("=", 2);
@@ -255,7 +254,6 @@ export function parseShareLink(url: string): ShareForm | null {
       backend: u.params["v2raya-backend"] || "",
     };
     if (url.toLowerCase().startsWith("trojan-go://")) {
-      console.log(u.params.encryption);
       if (u.params.encryption?.startsWith("ss;")) {
         o.method = "shadowsocks";
         const fields = u.params.encryption.split(";");

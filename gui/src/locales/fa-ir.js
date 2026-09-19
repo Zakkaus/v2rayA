@@ -312,7 +312,8 @@ export default {
   },
   configureServer: {
     required: "الزامی",
-    title: "پیکربندی سرور | سرور",
+    title: "پیکربندی سرور",
+    titleReadonly: "سرور",
     servername: "نام سرور",
     host: "میزبان",
     port: "پورت",

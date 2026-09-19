@@ -311,7 +311,8 @@ export default {
   },
   configureServer: {
     required: "필수",
-    title: "서버 구성 | 서버",
+    title: "서버 구성",
+    titleReadonly: "서버",
     servername: "서버 이름",
     host: "호스트",
     port: "포트",

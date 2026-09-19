@@ -1,6 +1,14 @@
 // Where Vuetify's Material 3 blueprint stops short of the spec: the
 // filter chip's outline and corners, the primary tab's indicator.
 
+// Material's state layers: 8 % hover, 10 % focus and pressed (Vuetify's
+// defaults are 4 / 12 / 12)
+.v-application {
+  --v-hover-opacity: 0.08;
+  --v-focus-opacity: 0.1;
+  --v-pressed-opacity: 0.1;
+}
+
 // chips: 8 dp corners, a 1 dp outline-variant border when outlined
 .v-chip.v-chip--variant-outlined {
   border-color: rgb(var(--v-theme-outline-variant));

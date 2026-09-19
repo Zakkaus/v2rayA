@@ -50,7 +50,7 @@ function logout() {
         rounded="xl"
       />
     </template>
-    <v-card width="392">
+    <v-card class="theme-panel">
       <ThemePanel />
     </v-card>
   </v-menu>
@@ -122,3 +122,9 @@ function logout() {
     </v-list>
   </v-menu>
 </template>
+
+<style scoped>
+.theme-panel {
+  width: min(392px, calc(100vw - 32px));
+}
+</style>
