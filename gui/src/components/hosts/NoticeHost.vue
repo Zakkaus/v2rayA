@@ -11,8 +11,8 @@ import {
 import { dismissNotice, noticeState } from "@/composables/useNotify";
 
 const current = computed(() => noticeState.current);
-// Material's snackbar: inverse surface, the action in inverse primary; the
-// kind shows in a leading icon, so every notice follows the theme
+// The snackbar sits on the highest surface container, in the theme's own
+// tint; the kind shows in a leading icon and the action in primary
 const icons = {
   info: mdiInformationOutline,
   success: mdiCheckCircleOutline,
@@ -20,8 +20,8 @@ const icons = {
   error: mdiAlertCircleOutline,
 };
 const iconColors = {
-  info: "inverse-primary",
-  success: "inverse-primary",
+  info: "primary",
+  success: "primary",
   warning: "error",
   error: "error",
 };
@@ -39,7 +39,7 @@ const shown = computed({
     :key="current.id"
     v-model="shown"
     :timeout="current.timeout || -1"
-    color="inverse-surface"
+    color="surface-container-highest"
     location="bottom"
     variant="flat"
     rounded="lg"
@@ -55,7 +55,7 @@ const shown = computed({
     <template v-if="current.action" #actions>
       <v-btn
         variant="text"
-        color="inverse-primary"
+        color="primary"
         @click="
           current.action.onClick();
           dismissNotice(current.id);
