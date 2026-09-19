@@ -190,7 +190,8 @@ async function announceVersion() {
 function onMessage(msg: WsMessage) {
   if (msg.type === "observatory") {
     const { body } = msg as ObservatoryMessage;
-    if (body?.outboundName === store.outboundName) store.observatory = msg;
+    if (body?.outboundName)
+      store.observatory[body.outboundName] = body.outboundStatus ?? [];
   } else if (msg.type === "traffic") {
     traffic.feed(msg as TrafficMessage);
   } else if (msg.type === "running_state") {

@@ -120,12 +120,9 @@ export function useNodes() {
       .map((w) => ({ which: w, row: locate(touch.value, w) }))
       .filter((x): x is { which: Which; row: Row } => x.row !== null),
   );
-  const observatory = computed<OutboundStatus[]>(() => {
-    const frame = store.observatory as {
-      body?: { outboundStatus?: OutboundStatus[] };
-    } | null;
-    return frame?.body?.outboundStatus ?? [];
-  });
+  const observatory = computed<OutboundStatus[]>(
+    () => store.observatory[store.outboundName] ?? [],
+  );
   /** the tabs holding a connected node of the current outbound */
   const connectedTabs = computed(() => {
     const tabs = new Set<Tab>();

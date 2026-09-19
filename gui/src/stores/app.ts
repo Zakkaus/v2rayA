@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { Base64 } from "js-base64";
-import type { Which, VersionResponse, WsMessage } from "@/api/types";
+import type { OutboundStatus, Which, VersionResponse } from "@/api/types";
 import { brandSeed, isSeed } from "@/theme/scheme";
 
 /** normalizeOutbounds keeps the backend's list as names: trimmed, unique, "proxy" first. */
@@ -45,8 +45,8 @@ export const useAppStore = defineStore("app", {
     connectedServer: [] as Which[],
     outboundName: "proxy",
     outbounds: ["proxy"] as string[],
-    /** the last observatory frame for the current outbound */
-    observatory: null as WsMessage | null,
+    /** the last observatory frame of each outbound group: what the core sees of its members */
+    observatory: {} as Record<string, OutboundStatus[]>,
     version: null as VersionResponse | null,
     /** the last /version banner facts, seeded from localStorage before the request answers */
     // "1"/"0" as the backend sends it; the old settings dialog parses it
