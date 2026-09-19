@@ -144,6 +144,12 @@ export default {
     checkFailed: "연결 확인 실패: {message}",
   },
   setting: {
+    sections: {
+      proxy: "프록시",
+      traffic: "트래픽 분할",
+      core: "코어",
+      more: "더보기",
+    },
     transparentProxy: "투명 프록시/시스템 프록시",
     transparentType: "투명 프록시/시스템 프록시 구현 방식",
     logLevel: "로그 수준",

@@ -144,6 +144,12 @@ export default {
     checkFailed: "Connection check failed: {message}",
   },
   setting: {
+    sections: {
+      proxy: "Proxy",
+      traffic: "Traffic splitting",
+      core: "Core",
+      more: "More",
+    },
     transparentProxy: "Transparent Proxy/System Proxy",
     transparentType: "Transparent Proxy/System Proxy Implementation",
     logLevel: "Log Level",
