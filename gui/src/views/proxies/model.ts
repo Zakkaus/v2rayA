@@ -15,6 +15,7 @@ import {
   useOutboundGroups,
 } from "@/composables";
 import ImportDialog from "@/dialogs/Import.vue";
+import OutboundGroupDialog from "@/dialogs/OutboundGroup.vue";
 import ServerDialog from "@/dialogs/Server/index.vue";
 import SharingDialog from "@/dialogs/Sharing.vue";
 import SubscriptionDialog from "@/dialogs/Subscription.vue";
@@ -288,6 +289,10 @@ export function useProxies() {
       notify.success(t("operations.copySelectedDone"));
     });
   }
+  /** the group's balancing: probe URL, interval and strategy */
+  function groupSettings() {
+    open(OutboundGroupDialog, { outbound: store.outboundName }, { width: 440 });
+  }
   async function newGroup() {
     await run(async () => {
       if (await groups.add()) await sync();
@@ -426,6 +431,7 @@ export function useProxies() {
     removeRows,
     exportSelected,
     newGroup,
+    groupSettings,
     newNode,
     importNodes,
     subscriptionSettings,

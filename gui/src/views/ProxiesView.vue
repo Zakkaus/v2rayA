@@ -3,6 +3,7 @@ import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
 import {
+  mdiCheck,
   mdiCogOutline,
   mdiMagnify,
   mdiPlus,
@@ -188,34 +189,53 @@ onMounted(sync);
             }}</v-btn>
           </v-btn-toggle>
         </div>
-        <div
-          v-if="members.length >= 2"
-          class="d-flex flex-wrap align-center ga-2 mb-4"
-        >
+        <div class="d-flex flex-wrap align-center ga-3 mb-4">
           <v-btn-toggle
             :model-value="mode"
             mandatory
             divided
             variant="outlined"
             rounded="xl"
-            :disabled="disabled"
+            :disabled="disabled || members.length < 2"
             selected-class="bg-secondary-container text-on-secondary-container"
+            :aria-label="t('proxies.groupMode')"
             @update:model-value="model.setMode"
           >
-            <v-btn value="auto">{{ t("proxies.mode.auto") }}</v-btn>
-            <v-btn value="manual">{{ t("proxies.mode.manual") }}</v-btn>
+            <v-btn
+              value="auto"
+              :prepend-icon="mode === 'auto' ? mdiCheck : undefined"
+              >{{ t("proxies.mode.auto") }}</v-btn
+            >
+            <v-btn
+              value="manual"
+              :prepend-icon="mode === 'manual' ? mdiCheck : undefined"
+              >{{ t("proxies.mode.manual") }}</v-btn
+            >
           </v-btn-toggle>
           <span
-            v-if="mode === 'manual' && !model.selectedMember.value"
+            v-if="members.length < 2"
+            class="md3-body-small text-on-surface-variant"
+            >{{ t("proxies.modeNeedsMembers") }}</span
+          >
+          <span
+            v-else-if="mode === 'manual' && !model.selectedMember.value"
             class="md3-body-small text-on-surface-variant"
             >{{ t("proxies.chooseManually") }} ·
             {{ t("proxies.useThis") }}</span
           >
           <span
-            v-if="mode === 'auto' && preferred"
+            v-else-if="mode === 'auto' && preferred"
             class="md3-body-medium"
             dir="auto"
-            >{{ preferred.name }}</span
+            >{{ t("proxies.inUse") }}: {{ preferred.name }}</span
+          >
+          <v-spacer />
+          <v-btn
+            variant="text"
+            :prepend-icon="mdiCogOutline"
+            :disabled="disabled"
+            @click="model.groupSettings"
+            >{{ t("proxies.groupSettings") }}</v-btn
           >
         </div>
         <v-empty-state

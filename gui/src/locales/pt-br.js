@@ -34,6 +34,10 @@ export default {
     membersOnly: "Somente membros",
     mode: { auto: "Automático (mais rápido)", manual: "Manual" },
     inUse: "Em uso",
+    groupMode: "Modo do grupo",
+    modeNeedsMembers:
+      "Com dois ou mais nós, o núcleo usa automaticamente o de menor latência.",
+    groupSettings: "Configurações do grupo",
     useThis: "Usar este nó",
     unselect: "Desmarcar",
     addToGroup: "Adicionar ao grupo",

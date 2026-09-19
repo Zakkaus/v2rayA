@@ -34,6 +34,10 @@ export default {
     membersOnly: "구성원만",
     mode: { auto: "자동 (가장 빠른 노드)", manual: "수동" },
     inUse: "사용 중",
+    groupMode: "그룹 모드",
+    modeNeedsMembers:
+      "노드가 두 개 이상이면 코어가 지연이 가장 낮은 노드를 자동으로 사용합니다.",
+    groupSettings: "그룹 설정",
     useThis: "이 노드 사용",
     unselect: "선택 해제",
     addToGroup: "그룹에 추가",

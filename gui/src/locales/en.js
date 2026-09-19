@@ -34,6 +34,10 @@ export default {
     membersOnly: "Members only",
     mode: { auto: "Auto (fastest)", manual: "Manual" },
     inUse: "In use",
+    groupMode: "Group mode",
+    modeNeedsMembers:
+      "Balancing needs at least two members; the core then routes through the one with the lowest latency.",
+    groupSettings: "Group settings",
     useThis: "Use this node",
     unselect: "Clear selection",
     addToGroup: "Add to group",

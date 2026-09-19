@@ -34,6 +34,10 @@ export default {
     membersOnly: "فقط اعضا",
     mode: { auto: "خودکار (سریع‌ترین)", manual: "دستی" },
     inUse: "در حال استفاده",
+    groupMode: "حالت گروه",
+    modeNeedsMembers:
+      "با دست‌کم دو گره، هسته به‌طور خودکار کم‌تأخیرترین را انتخاب می‌کند.",
+    groupSettings: "تنظیمات گروه",
     useThis: "استفاده از این گره",
     unselect: "لغو انتخاب",
     addToGroup: "افزودن به گروه",
