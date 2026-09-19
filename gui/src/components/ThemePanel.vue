@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // The theme choices, as list content: the appearance (auto, light, dark)
-// and the seed colour the palettes derive from, as the colour picker's
-// swatches. Rendered inside the app bar's menu and the drawer's menu.
+// and the seed colour the palettes derive from: the colour picker's
+// swatches for the presets and its hex field for any other (the Material
+// Theme Builder's seed pastes in). Rendered inside the shell's menus.
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { mdiThemeLightDark, mdiWeatherNight, mdiWeatherSunny } from "@mdi/js";
@@ -60,7 +61,6 @@ const seed = computed({
       show-swatches
       hide-canvas
       hide-sliders
-      hide-inputs
       swatches-max-height="72"
       elevation="0"
       class="bg-transparent swatches"

@@ -124,22 +124,28 @@ export const getDnsRules = () =>
 export const putDnsRules = (body: unknown) =>
   call<unknown>({ url: "dnsRules", method: "put", data: body });
 export const getDomainsExcluded = () =>
-  call<unknown>({ url: "domainsExcluded", method: "get" });
-export const putDomainsExcluded = (body: unknown) =>
+  call<{ domains: string }>({ url: "domainsExcluded", method: "get" });
+export const putDomainsExcluded = (body: { domains: string }) =>
   call<unknown>({ url: "domainsExcluded", method: "put", data: body });
 export const getTproxyWhiteIpGroups = () =>
-  call<unknown>({ url: "tproxyWhiteIpGroups", method: "get" });
-export const putTproxyWhiteIpGroups = (body: unknown) =>
-  call<unknown>({ url: "tproxyWhiteIpGroups", method: "put", data: body });
+  call<{ countryCodes: string[]; customIps: string[] }>({
+    url: "tproxyWhiteIpGroups",
+    method: "get",
+  });
+export const putTproxyWhiteIpGroups = (body: {
+  countryCodes: string[];
+  customIps: string[];
+}) => call<unknown>({ url: "tproxyWhiteIpGroups", method: "put", data: body });
 export const getRemoteGFWListVersion = () =>
   call<{ remoteGFWListVersion: string }>({
     url: "remoteGFWListVersion",
     method: "get",
   });
-export const putGfwList = () =>
-  call<{ localGFWListVersion: string }>({
+export const putGfwList = (body: { downloadLink: string }) =>
+  call<{ localGFWListVersion: string; alreadyUpToDate?: boolean }>({
     url: "gfwList",
     method: "put",
+    data: body,
     timeout: timeouts.none,
   });
 export const deleteGfwList = () =>
