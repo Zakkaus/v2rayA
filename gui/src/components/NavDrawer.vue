@@ -44,7 +44,7 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
         <span class="md3-label-large"
           >v2rayA {{ store.version?.version ?? "" }}</span
         >
-        <v-tooltip activator="parent" location="top">
+        <v-tooltip activator="parent" location="end" :offset="12">
           {{ t("common.about") }}
         </v-tooltip>
       </v-btn>
