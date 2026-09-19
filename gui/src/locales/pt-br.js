@@ -7,6 +7,9 @@ export default {
     groupTitle: "Adicionar ao grupo",
     groupBody:
       "Na página Proxies, selecione nós para adicioná-los a um grupo. Com vários nós, o núcleo escolhe o de menor latência. Você também pode escolher um único nó.",
+    rulesTitle: "Regras de divisão",
+    rulesBody:
+      "Escolha o modo de divisão no painel. Com o RoutingA você escreve suas próprias regras: quais sites e IPs vão direto, pelo proxy ou são bloqueados. O editor lista as regras, verifica cada linha e mantém a sintaxe à mão.",
     startTitle: "Iniciar",
     startBody:
       "Inicie o núcleo no Painel. O proxy transparente, o modo de roteamento e o compartilhamento na rede local também são alterados ali.",

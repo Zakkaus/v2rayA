@@ -52,11 +52,11 @@ describe("onboarding", () => {
         tutorial
           .findAll(".onboarding-dot")
           .map((dot) => dot.classes().includes("onboarding-dot--active")),
-      ).toEqual([index === 0, index === 1, index === 2]);
+      ).toEqual([index === 0, index === 1, index === 2, index === 3]);
       expect(tutorial.get('[role="status"]').attributes("aria-label")).toBe(
         en.onboarding.progress
           .replace("{current}", String(index + 1))
-          .replace("{total}", "3"),
+          .replace("{total}", "4"),
       );
     };
     expectStep(0, en.onboarding.importTitle);
@@ -69,7 +69,9 @@ describe("onboarding", () => {
     expectStep(0, en.onboarding.importTitle);
     await button(tutorial, en.onboarding.next).trigger("click");
     await button(tutorial, en.onboarding.next).trigger("click");
-    expectStep(2, en.onboarding.startTitle);
+    expectStep(2, en.onboarding.rulesTitle);
+    await button(tutorial, en.onboarding.next).trigger("click");
+    expectStep(3, en.onboarding.startTitle);
     expect(localStorage.getItem("onboardingSeen")).toBeNull();
   });
 
@@ -103,6 +105,7 @@ describe("onboarding", () => {
     expect(useAppStore().view).toBe("proxies");
     expect(host.findComponent(OnboardingDialog).exists()).toBe(true);
     expect(localStorage.getItem("onboardingSeen")).toBeNull();
+    await button(tutorial, en.onboarding.next).trigger("click");
     await button(tutorial, en.onboarding.next).trigger("click");
     await button(tutorial, en.onboarding.finish).trigger("click");
     expect(await handle.result).toBe(true);

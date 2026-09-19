@@ -10,12 +10,14 @@ import { useI18n } from "vue-i18n";
 import {
   mdiClose,
   mdiPower,
+  mdiRoutes,
   mdiServerNetwork,
   mdiTrayArrowDown,
 } from "@mdi/js";
 import { useDialog } from "@/composables/useDialog";
 import ImportDialog from "@/dialogs/Import.vue";
 import ServerDialog from "@/dialogs/Server/index.vue";
+import RoutingADialog from "@/dialogs/settings/RoutingA.vue";
 import { useAppStore } from "@/stores/app";
 
 defineOptions({ name: "OnboardingDialog" });
@@ -27,6 +29,7 @@ const step = ref(0);
 const steps = [
   { key: "import", icon: mdiTrayArrowDown },
   { key: "group", icon: mdiServerNetwork },
+  { key: "rules", icon: mdiRoutes },
   { key: "start", icon: mdiPower },
 ] as const;
 
@@ -103,6 +106,14 @@ onBeforeUnmount(markSeen);
             @click="store.view = 'proxies'"
           >
             {{ t("onboarding.goToProxies") }}
+          </v-btn>
+          <v-btn
+            v-else-if="index === 2"
+            variant="tonal"
+            class="mt-6"
+            @click="open(RoutingADialog, {}, { width: 960 })"
+          >
+            {{ t("routingA.editor") }}
           </v-btn>
         </v-window-item>
       </v-window>
