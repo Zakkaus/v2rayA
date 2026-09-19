@@ -74,6 +74,16 @@ const fixed = {
 };
 
 /** isSeed accepts a #rrggbb colour. */
+/** seedFromHue gives a vivid seed at a hue (0–360): HCT chroma 48, tone 60, as the theme builder's wheel does. */
+export function seedFromHue(hue: number): string {
+  return hexFromArgb(Hct.from(((hue % 360) + 360) % 360, 48, 60).toInt());
+}
+
+/** hueOf reads a seed's HCT hue, for the slider's position. */
+export function hueOf(seed: string): number {
+  return isSeed(seed) ? Hct.fromInt(argbFromHex(seed)).hue : 0;
+}
+
 export function isSeed(value: string): boolean {
   return /^#[0-9a-f]{6}$/i.test(value);
 }

@@ -3,7 +3,7 @@
 // and the seed colour the palettes derive from: a row of preset swatches
 // and a rainbow one that unfolds the colour picker for any other seed
 // (the Material Theme Builder's hex pastes in). In the shell's menus.
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   mdiCheck,
@@ -12,7 +12,7 @@ import {
   mdiWeatherSunny,
 } from "@mdi/js";
 import { useAppStore, type ThemePreference } from "@/stores/app";
-import { presetSeeds } from "@/theme/scheme";
+import { hueOf, isSeed, presetSeeds, seedFromHue } from "@/theme/scheme";
 
 const { t } = useI18n();
 const store = useAppStore();
@@ -30,6 +30,24 @@ const isPreset = computed(() =>
   presetSeeds.some((p) => p.seed === store.themeSeed),
 );
 const pickerOpen = ref(false);
+// the custom seed: a hue slider (Material's slider, the track painted with
+// the hues) and the hex, so a Theme Builder seed pastes in
+const hue = computed({
+  get: () => hueOf(store.themeSeed),
+  set: (h: number) => store.setThemeSeed(seedFromHue(h)),
+});
+const hex = ref(store.themeSeed);
+watch(
+  () => store.themeSeed,
+  (v) => (hex.value = v),
+);
+function applyHex() {
+  const value = hex.value.trim().startsWith("#")
+    ? hex.value.trim()
+    : `#${hex.value.trim()}`;
+  if (isSeed(value)) store.setThemeSeed(value);
+  else hex.value = store.themeSeed;
+}
 </script>
 
 <template>
@@ -93,21 +111,65 @@ const pickerOpen = ref(false);
     </div>
     <v-expand-transition>
       <div v-if="pickerOpen" class="mt-3">
-        <v-color-picker
-          v-model="seed"
-          mode="hex"
-          :modes="['hex']"
-          elevation="0"
-          class="bg-transparent mx-auto"
-          width="100%"
-          canvas-height="120"
+        <v-slider
+          v-model="hue"
+          :min="0"
+          :max="359"
+          :step="1"
+          hide-details
+          track-size="8"
+          thumb-size="20"
+          class="hue-slider"
+          :aria-label="t('theme.custom')"
         />
+        <v-text-field
+          v-model="hex"
+          label="HEX"
+          variant="outlined"
+          density="compact"
+          hide-details
+          dir="ltr"
+          maxlength="7"
+          class="mt-3 hue-hex"
+          @change="applyHex"
+          @keydown.enter="applyHex"
+        >
+          <template #prepend-inner>
+            <span class="hue-swatch" aria-hidden="true" />
+          </template>
+        </v-text-field>
       </div>
     </v-expand-transition>
   </v-card-text>
 </template>
 
 <style scoped>
+/* the hue slider's track shows the hues it selects from */
+.hue-slider :deep(.v-slider-track__background),
+.hue-slider :deep(.v-slider-track__fill) {
+  background: linear-gradient(
+    to right,
+    hsl(0 80% 60%),
+    hsl(60 80% 60%),
+    hsl(120 80% 60%),
+    hsl(180 80% 60%),
+    hsl(240 80% 60%),
+    hsl(300 80% 60%),
+    hsl(360 80% 60%)
+  );
+  opacity: 1;
+}
+.hue-hex {
+  max-width: 200px;
+}
+.hue-swatch {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgb(var(--v-theme-primary));
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+}
 .swatch__check {
   position: relative;
   color: rgba(0, 0, 0, 0.72);
