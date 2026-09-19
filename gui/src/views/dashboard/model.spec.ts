@@ -289,8 +289,8 @@ describe("dashboard", () => {
     const picker = () =>
       wrapper.getComponent(".dashboard-connection .v-select") as VueWrapper;
     const memberKey = (
-      picker().props("items") as { value: string; title: string }[]
-    ).find((item) => item.value !== "auto")!.value;
+      picker().props() as { items: { value: string; title: string }[] }
+    ).items.find((item) => item.value !== "auto")!.value;
     picker().vm.$emit("update:modelValue", memberKey);
     await flushPromises();
     expect(putOutboundSelection).toHaveBeenNthCalledWith(1, {
