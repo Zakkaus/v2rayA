@@ -1,15 +1,93 @@
 <script setup lang="ts">
-// The anytls tab of the node editor. Contract: the model comes in by
-// v-model and is edited in place; `readonly` shows a subscription node's
-// values without editing; fields hidden by their conditions are not
-// validated. Replace this placeholder with the form.
+import { useI18n } from "vue-i18n";
 import type { AnytlsModel } from "../models";
-import PendingForm from "../PendingForm.vue";
+import { required } from "./parts/rules";
 
-defineModel<AnytlsModel>({ required: true });
+const model = defineModel<AnytlsModel>({ required: true });
 defineProps<{ readonly?: boolean }>();
+const { t } = useI18n();
 </script>
 
 <template>
-  <PendingForm protocol="anytls" />
+  <v-row dense>
+    <v-col cols="12">
+      <v-text-field
+        v-model="model.name"
+        :label="t('configureServer.servername')"
+        :readonly="readonly"
+      />
+    </v-col>
+    <v-col cols="12" sm="8">
+      <v-text-field
+        v-model="model.host"
+        :label="t('configureServer.host')"
+        :rules="[required]"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="4">
+      <v-text-field
+        v-model="model.port"
+        type="number"
+        :label="t('configureServer.port')"
+        :rules="[required]"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.auth"
+        :label="t('configureServer.auth')"
+        :placeholder="t('configureServer.authKey')"
+        :rules="[required]"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.sni"
+        label="SNI(Peer)"
+        :placeholder="`SNI / Peer (${t('common.optional')})`"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.pinnedPeerCertSha256"
+        :label="t('pinnedPeerCertSha256')"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.verifyPeerCertByName"
+        :label="t('verifyPeerCertByName')"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-switch
+        v-model="model.allowInsecure"
+        :label="t('configureServer.allowInsecure')"
+        :hint="model.allowInsecure ? t('operations.yes') : t('operations.no')"
+        persistent-hint
+        :readonly="readonly"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.minIdleSession"
+        type="number"
+        :label="t('configureServer.minIdleSession')"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+  </v-row>
 </template>
