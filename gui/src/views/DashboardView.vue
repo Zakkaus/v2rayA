@@ -599,6 +599,10 @@ function pick(value: string) {
   display: flex;
   flex-direction: column;
 }
+/* nothing but the action row takes the tile's spare height (a v-input would) */
+.dashboard-grid > .v-card > :not(.dashboard-actions) {
+  flex: 0 0 auto;
+}
 .dashboard-actions {
   margin-top: auto;
   padding-top: 12px;
@@ -631,6 +635,8 @@ function pick(value: string) {
   max-width: 100%;
   white-space: normal;
   text-align: start;
+  justify-content: flex-start;
+  align-self: flex-start;
 }
 /* the core's state at a glance: a 12 dp dot, grey until the core runs */
 .dashboard-state-dot {
