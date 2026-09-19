@@ -1,13 +1,4 @@
 import "@/pwa";
-import "@/plugins/apiRoot";
-import "@/plugins/buefy";
-import "@/plugins/axios";
-import "@/plugins/backendPort";
-import "@/plugins/dayjs";
-import "@/plugins/virtual-scroll";
-import "pace-js";
-import "pace-js/themes/blue/pace-theme-corner-indicator.css";
-
-import { buildApp } from "@/plugins/session";
+import { buildApp } from "@/session/boot";
 
 buildApp().mount("#app");

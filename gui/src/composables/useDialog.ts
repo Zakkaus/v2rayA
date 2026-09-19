@@ -1,6 +1,6 @@
 import { markRaw, reactive, readonly, type Component } from "vue";
 
-// Dialogs open from code, the way the old GUI called $buefy.modal.open with
+// Dialogs open programmatically with
 // a component: the host renders them from this stack, the caller gets a
 // handle and a promise for the result. Nested dialogs close child first.
 export interface DialogEntry {

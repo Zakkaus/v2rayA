@@ -3,14 +3,12 @@ import vue from "@vitejs/plugin-vue";
 import vuetify from "vite-plugin-vuetify";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
-import lucideSubset from "./build/lucide-subset.mjs";
 import en from "./src/locales/en.js";
 
 export default defineConfig(({ mode }) => ({
   // vuetify(): per-component style and component imports; nothing of the
   // library ends up in the bundle that a template does not use.
   plugins: [
-    lucideSubset(),
     vue(),
     vuetify({ autoImport: true }),
     VitePWA({
