@@ -583,8 +583,6 @@ export default {
     sources: {
       all: "전체",
     },
-    tailOnly:
-      "최근 {count}줄만 표시합니다(이 화면에서는 이전 {skipped}줄이 숨겨짐)",
     export: "내보내기",
   },
   tproxyWhiteIpGroups: {

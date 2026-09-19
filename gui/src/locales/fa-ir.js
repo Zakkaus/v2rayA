@@ -586,8 +586,6 @@ export default {
     sources: {
       all: "همه",
     },
-    tailOnly:
-      "نمایش {count} خط آخر ({skipped} خط قدیمی‌تر در این صفحه پنهان است)",
     export: "برون‌ریزی",
   },
   tproxyWhiteIpGroups: {

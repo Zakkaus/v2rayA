@@ -598,8 +598,6 @@ export default {
     sources: {
       all: "Todas",
     },
-    tailOnly:
-      "Mostrando as últimas {count} linhas ({skipped} linhas mais antigas ocultas nesta tela)",
     export: "Exportar",
   },
   tproxyWhiteIpGroups: {
