@@ -2,7 +2,7 @@
   <div class="modal-card" style="max-width: 520px; margin: auto">
     <header class="modal-card-head">
       <p class="modal-card-title">
-        {{ $tc("configureServer.title", readonly ? 2 : 1) }}
+        {{ $t("configureServer.title", readonly ? 2 : 1) }}
       </p>
       <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
     </header>

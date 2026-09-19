@@ -984,7 +984,7 @@ export default {
   methods: {
     unix2datetime(x) {
       x = dayjs.unix(x);
-      return dayjs().locale(DAYJS_LOCALES[i18n.global.locale] || "en").to(x);
+      return dayjs().locale(DAYJS_LOCALES[i18n.global.locale.value] || "en").to(x);
     },
     handleWindowScroll(e) {
       clearTimeout(this.scrollTimer);

@@ -6,6 +6,8 @@ import Buefy from "@/plugins/buefy";
 import VirtualScroller from "@/plugins/virtual-scroll";
 import { install as installAxios } from "@/plugins/axios";
 import { install as installDayjs } from "@/plugins/dayjs";
+import { createPinia } from "pinia";
+import { vuetify } from "@/theme";
 
 // Programmatic instances that mount on <body> (modals, loadings, snackbars)
 // outlive the root tree, so restart() must close them before unmounting.
@@ -16,6 +18,10 @@ let app = null;
 export function buildApp() {
   app = createApp(App);
   app.use(store);
+  // A fresh Pinia per session: restart() must not carry the previous
+  // token's state into the next root.
+  app.use(createPinia());
+  app.use(vuetify);
   app.use(i18n);
   app.use(Buefy);
   app.use(VirtualScroller);

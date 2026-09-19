@@ -2,7 +2,7 @@
   <div class="modal-card log-modal">
     <header class="modal-card-head">
       <p class="modal-card-title">
-        {{ $tc("log.logModalTitle") }}
+        {{ $t("log.logModalTitle") }}
       </p>
       <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
     </header>
@@ -50,7 +50,7 @@
       <div class="log-footer">
         <div class="log-footer-left">
           <div class="log-footer-item">
-            <div class="log-footer-label">{{ $tc("log.refreshInterval") }}</div>
+            <div class="log-footer-label">{{ $t("log.refreshInterval") }}</div>
             <div class="log-footer-control">
               <b-select v-model="intervalTime" @update:model-value="changeInterval">
                 <option
@@ -58,13 +58,13 @@
                   :key="candidate"
                   :value="candidate"
                 >
-                  {{ `${candidate} ${$tc("log.seconds")}` }}
+                  {{ `${candidate} ${$t("log.seconds")}` }}
                 </option>
               </b-select>
             </div>
           </div>
           <div class="log-footer-item">
-            <div class="log-footer-label">{{ $tc("log.category") }}</div>
+            <div class="log-footer-label">{{ $t("log.category") }}</div>
             <div class="log-footer-control">
               <b-select v-model="levelFilter">
                 <option
@@ -78,7 +78,7 @@
             </div>
           </div>
           <div class="log-footer-item">
-            <div class="log-footer-label">{{ $tc("log.source") }}</div>
+            <div class="log-footer-label">{{ $t("log.source") }}</div>
             <div class="log-footer-control">
               <b-select v-model="sourceFilter">
                 <option
@@ -94,7 +94,7 @@
         </div>
         <div class="log-footer-right">
           <div class="log-footer-item">
-            <div class="log-footer-label">{{ $tc("log.autoShowNew") }}</div>
+            <div class="log-footer-label">{{ $t("log.autoShowNew") }}</div>
             <div class="log-footer-control">
               <b-switch v-model="autoScoll" @update:model-value="changeScoll" />
             </div>

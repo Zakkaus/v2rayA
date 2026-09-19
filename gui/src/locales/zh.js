@@ -439,16 +439,6 @@ export default {
     subscriptionTitle: "分享订阅",
     failed: "无法创建分享链接：{message}",
   },
-  driver: {
-    welcome: [
-      "首先导入节点服务器",
-      "初次使用，还没有任何节点服务器，在这里导入或创建节点服务器。",
-    ],
-    tabs: [
-      "订阅与节点服务器",
-      "导入订阅、节点服务器后，在这里切换和管理你的订阅、普通节点以及订阅节点。",
-    ],
-  },
   log: {
     logModalTitle: "查看日志",
     logsLabel: "日志",
