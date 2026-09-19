@@ -111,7 +111,7 @@ onMounted(() => {
   <div class="logs">
     <v-sheet color="surface-container-low" rounded="xl" class="pa-4 mb-4">
       <div class="d-flex flex-wrap align-center ga-3">
-        <v-chip-group v-model="level" mandatory selected-class="text-primary">
+        <v-chip-group v-model="level" mandatory>
           <v-chip
             v-for="l in levels"
             :key="l"

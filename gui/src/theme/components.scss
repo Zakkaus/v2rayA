@@ -1,0 +1,13 @@
+// Where Vuetify's Material 3 blueprint stops short of the spec: the
+// filter chip's outline and corners, the primary tab's indicator.
+
+// chips: 8 dp corners, a 1 dp outline-variant border when outlined
+.v-chip.v-chip--variant-outlined {
+  border-color: rgb(var(--v-theme-outline-variant));
+}
+
+// primary tabs: a 3 dp indicator with rounded top corners
+.v-tabs:not(.v-tabs--inset) .v-tab__slider {
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+}

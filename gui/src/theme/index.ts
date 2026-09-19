@@ -4,6 +4,7 @@ import { md3 } from "vuetify/blueprints";
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
 import { en, fa, ko, pt, ru, zhHans } from "vuetify/locale";
 import "./typography.scss";
+import "./components.scss";
 import { brandSeed, schemeColors } from "./scheme";
 
 // The interface's locale codes (localStorage _lang, the locales/ files)
@@ -66,6 +67,11 @@ export const vuetify = createVuetify({
     VCombobox: { variant: "outlined", density: "comfortable" },
     VTextarea: { variant: "outlined", density: "comfortable" },
     VSwitch: { inset: true, color: "primary" },
+    // Material's chips: 8 dp corners; a selected filter chip is secondary-container
+    VChip: { rounded: "lg" },
+    VChipGroup: {
+      selectedClass: "bg-secondary-container text-on-secondary-container",
+    },
     VDataTable: { density: "comfortable" },
   },
 });

@@ -4,7 +4,6 @@
 // as list content, and the theme, language and account menus at the
 // bottom. There is no top app bar at this width; the page titles itself.
 import { useI18n } from "vue-i18n";
-import { mdiMenuOpen } from "@mdi/js";
 import { destinations } from "./destinations";
 import ShellMenus from "./ShellMenus.vue";
 import { useAppStore } from "@/stores/app";
@@ -19,13 +18,6 @@ const store = useAppStore();
     <div class="drawer__brand">
       <img :src="logo" alt="" class="drawer__logo" />
       <span class="md3-title-large">v2rayA</span>
-      <v-spacer />
-      <v-btn
-        :icon="mdiMenuOpen"
-        variant="text"
-        :aria-label="t('common.menu')"
-        @click="store.setNavCollapsed(true)"
-      />
     </div>
     <v-list nav density="default" class="px-3 py-0">
       <v-list-item
@@ -58,7 +50,7 @@ const store = useAppStore();
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 8px 12px 28px;
+  padding: 20px 28px 12px;
 }
 .drawer__logo {
   width: 28px;

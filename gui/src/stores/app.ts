@@ -62,8 +62,6 @@ export const useAppStore = defineStore("app", {
     })(),
     language: localStorage.getItem("_lang") ?? "",
     view: "nodes" as View,
-    /** expanded windows: the drawer collapsed to a rail */
-    navCollapsed: localStorage.getItem("navCollapsed") === "true",
   }),
   getters: {
     loggedIn: (s) => s.token !== "",
@@ -109,10 +107,6 @@ export const useAppStore = defineStore("app", {
       if (!isSeed(seed)) return;
       this.themeSeed = seed.toLowerCase();
       localStorage.setItem("themeSeed", this.themeSeed);
-    },
-    setNavCollapsed(collapsed: boolean) {
-      this.navCollapsed = collapsed;
-      localStorage.setItem("navCollapsed", String(collapsed));
     },
     setLanguage(code: string) {
       this.language = code;

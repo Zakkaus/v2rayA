@@ -2,30 +2,18 @@
 // The navigation rail (Material 3: 80 dp wide at the start edge, the
 // brand at the top, one item per destination with the 56×32 indicator
 // pill behind the active icon and the label under it). Shown from
-// 600 dp up; the bottom bar takes over below. Standing in for the
-// collapsed drawer it also carries the core's state and the menus.
+// 600 dp up to 840, where the drawer takes over; the bottom bar below.
 import { useI18n } from "vue-i18n";
-import { mdiMenu } from "@mdi/js";
 import { destinations } from "./destinations";
-import ShellMenus from "./ShellMenus.vue";
 import { useAppStore } from "@/stores/app";
 import logo from "@/assets/img/v2raya-icon.svg";
 
-/** collapsible: the rail stands in for the drawer and offers the way back */
-defineProps<{ collapsible?: boolean }>();
 const { t } = useI18n();
 const store = useAppStore();
 </script>
 
 <template>
   <v-navigation-drawer permanent :width="80" color="surface" class="rail">
-    <v-btn
-      v-if="collapsible"
-      :icon="mdiMenu"
-      variant="text"
-      :aria-label="t('common.menu')"
-      @click="store.setNavCollapsed(false)"
-    />
     <div class="rail__brand">
       <img :src="logo" alt="v2rayA" class="rail__logo" />
     </div>
@@ -48,17 +36,6 @@ const store = useAppStore();
         <span class="md3-label-medium">{{ t(d.label) }}</span>
       </button>
     </nav>
-    <template v-if="collapsible">
-      <v-divider class="my-3 rail__divider" />
-      <div class="rail__extras">
-        <slot name="core" />
-      </div>
-    </template>
-    <template v-if="collapsible" #append>
-      <div class="rail__menus">
-        <ShellMenus variant="icons" />
-      </div>
-    </template>
   </v-navigation-drawer>
 </template>
 
@@ -115,20 +92,6 @@ const store = useAppStore();
 .rail__item--active .rail__indicator {
   background: rgb(var(--v-theme-secondary-container));
   color: rgb(var(--v-theme-on-secondary-container));
-}
-.rail__divider {
-  width: 48px;
-  flex: none;
-}
-.rail__extras,
-.rail__menus {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-.rail__menus {
-  padding: 12px 0 16px;
 }
 .rail__item:focus-visible {
   outline: 2px solid rgb(var(--v-theme-primary));

@@ -324,7 +324,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
 
 <template>
   <v-app>
-    <NavDrawer v-if="expanded && !store.navCollapsed">
+    <NavDrawer v-if="expanded">
       <template #core>
         <v-list-item
           :prepend-icon="mdiPower"
@@ -352,23 +352,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
         <OutboundMenu variant="list" @changed="nodesRef?.sync()" />
       </template>
     </NavDrawer>
-    <NavRail v-else-if="!compact" :collapsible="expanded">
-      <template #core>
-        <v-tooltip :text="labelOf(store.running)" location="end">
-          <template #activator="{ props: tip }">
-            <v-btn
-              v-bind="tip"
-              :icon="mdiPower"
-              :color="statusColor"
-              variant="tonal"
-              :aria-label="labelOf(store.running)"
-              @click="toggleRunning"
-            />
-          </template>
-        </v-tooltip>
-        <OutboundMenu variant="icon" @changed="nodesRef?.sync()" />
-      </template>
-    </NavRail>
+    <NavRail v-else-if="!compact" />
 
     <v-app-bar
       v-if="!expanded"
