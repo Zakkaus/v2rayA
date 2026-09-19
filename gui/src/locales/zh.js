@@ -1,4 +1,22 @@
 export default {
+  onboarding: {
+    title: "使用教程",
+    importTitle: "导入节点",
+    importBody: "从订阅地址或分享链接导入，或手动新建节点。",
+    groupTitle: "加入分组",
+    groupBody:
+      "在代理页面选择节点加入分组。分组内有多个节点时，核心会自动选择延迟最低的节点，也可以指定只用某一个。",
+    startTitle: "启动",
+    startBody:
+      "在仪表板启动核心；透明代理、分流模式、局域网共享都在仪表板上切换。",
+    newNode: "新建节点",
+    goToProxies: "前往代理页面",
+    back: "上一步",
+    next: "下一步",
+    finish: "开始使用",
+    viewTutorial: "查看教程",
+    progress: "第 {current} 步，共 {total} 步",
+  },
   traffic: {
     upload: "上传",
     download: "下载",

@@ -55,6 +55,9 @@ import ShellMenus from "@/components/ShellMenus.vue";
 import { destinations } from "@/components/destinations";
 import { languages } from "@/components/languages";
 import LoginDialog from "@/dialogs/Login.vue";
+import OnboardingDialog, {
+  shouldShowOnboarding,
+} from "@/dialogs/Onboarding.vue";
 import { onSessionTeardown, resetSession, setSessionStarter } from "@/session";
 import { useAppStore, type Running } from "@/stores/app";
 import { vuetifyLocales } from "@/theme";
@@ -217,7 +220,11 @@ async function startSession() {
     // the client hooks announce an unreachable backend
   });
   void getOutbounds()
-    .then((r) => store.setOutbounds(r.outbounds))
+    .then((r) => {
+      store.setOutbounds(r.outbounds);
+      if (shouldShowOnboarding())
+        openDialog(OnboardingDialog, {}, { width: 560 });
+    })
     .catch(() => {
       // an expired token: the 401 hook resets the session
     });

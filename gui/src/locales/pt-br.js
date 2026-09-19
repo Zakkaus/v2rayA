@@ -1,4 +1,23 @@
 export default {
+  onboarding: {
+    title: "Tutorial rápido",
+    importTitle: "Importar nós",
+    importBody:
+      "Importe nós por um endereço de assinatura ou link de compartilhamento, ou crie um nó manualmente.",
+    groupTitle: "Adicionar ao grupo",
+    groupBody:
+      "Na página Proxies, selecione nós para adicioná-los a um grupo. Com vários nós, o núcleo escolhe o de menor latência. Você também pode escolher um único nó.",
+    startTitle: "Iniciar",
+    startBody:
+      "Inicie o núcleo no Painel. O proxy transparente, o modo de roteamento e o compartilhamento na rede local também são alterados ali.",
+    newNode: "Novo nó",
+    goToProxies: "Ir para Proxies",
+    back: "Voltar",
+    next: "Próximo",
+    finish: "Começar a usar",
+    viewTutorial: "Ver tutorial",
+    progress: "Etapa {current} de {total}",
+  },
   traffic: {
     upload: "Envio",
     download: "Recebimento",

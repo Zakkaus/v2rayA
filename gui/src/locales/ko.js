@@ -1,4 +1,23 @@
 export default {
+  onboarding: {
+    title: "사용 안내",
+    importTitle: "노드 가져오기",
+    importBody:
+      "구독 주소나 공유 링크로 노드를 가져오거나 직접 새 노드를 만드세요.",
+    groupTitle: "그룹에 추가",
+    groupBody:
+      "프록시 페이지에서 노드를 선택해 그룹에 추가하세요. 노드가 여러 개면 코어가 지연 시간이 가장 짧은 노드를 자동으로 선택합니다. 하나의 노드만 사용하도록 지정할 수도 있습니다.",
+    startTitle: "시작",
+    startBody:
+      "대시보드에서 코어를 시작하세요. 투명 프록시, 라우팅 모드, LAN 공유도 대시보드에서 전환할 수 있습니다.",
+    newNode: "새 노드",
+    goToProxies: "프록시 페이지로 이동",
+    back: "이전",
+    next: "다음",
+    finish: "사용 시작",
+    viewTutorial: "사용 안내 보기",
+    progress: "{total}단계 중 {current}단계",
+  },
   traffic: {
     upload: "업로드",
     download: "다운로드",
