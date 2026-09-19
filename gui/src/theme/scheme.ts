@@ -9,6 +9,7 @@ import {
   Hct,
   hexFromArgb,
   MaterialDynamicColors,
+  SchemeNeutral,
   SchemeTonalSpot,
 } from "@material/material-color-utilities";
 
@@ -112,11 +113,13 @@ export type SchemeColors = Record<string, string> &
 
 /** schemeColors gives the Vuetify colour set for one seed in one brightness. */
 export function schemeColors(seed: string, dark: boolean): SchemeColors {
-  const scheme = new SchemeTonalSpot(
-    Hct.fromInt(argbFromHex(isSeed(seed) ? seed : brandSeed)),
-    dark,
-    0,
-  );
+  const hct = Hct.fromInt(argbFromHex(isSeed(seed) ? seed : brandSeed));
+  // a grey, black or white seed has no hue to speak of: tonal spot would
+  // paint it pink from hue 0, so those get the neutral scheme instead
+  const scheme =
+    hct.chroma < 5
+      ? new SchemeNeutral(hct, dark, 0)
+      : new SchemeTonalSpot(hct, dark, 0);
   const colors: Record<string, string> = {};
   for (const [role, key] of Object.entries(roles)) {
     const color = MaterialDynamicColors[role as keyof typeof roles];
