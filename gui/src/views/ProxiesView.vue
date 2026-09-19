@@ -149,50 +149,6 @@ onMounted(sync);
         <h2 class="md3-title-medium mb-4">
           {{ t("common.nodes") }} · {{ rows.length }}
         </h2>
-        <div class="proxies__filters mb-4">
-          <v-chip-group v-model="source" mandatory class="proxies__sources">
-            <v-chip
-              v-for="item in sources"
-              :key="item.value"
-              :value="item.value"
-              variant="outlined"
-              filter
-              >{{ item.title }}</v-chip
-            >
-          </v-chip-group>
-          <v-chip
-            :model-value="true"
-            :aria-pressed="membersOnly"
-            :variant="membersOnly ? 'tonal' : 'outlined'"
-            @click="membersOnly = !membersOnly"
-            >{{ t("proxies.membersOnly") }}</v-chip
-          >
-          <v-spacer />
-          <v-btn
-            variant="tonal"
-            :prepend-icon="mdiSpeedometer"
-            :loading="testing"
-            :disabled="disabled || !listed.length"
-            @click="model.testListed()"
-            >{{ t("proxies.testLatency") }}</v-btn
-          >
-          <v-btn-toggle
-            v-model="view"
-            mandatory
-            divided
-            variant="outlined"
-            rounded="xl"
-            selected-class="bg-secondary-container text-on-secondary-container"
-            :aria-label="t('operations.view')"
-          >
-            <v-btn value="cards" :prepend-icon="mdiViewGridOutline">{{
-              t("proxies.cards")
-            }}</v-btn>
-            <v-btn value="list" :prepend-icon="mdiViewListOutline">{{
-              t("proxies.list")
-            }}</v-btn>
-          </v-btn-toggle>
-        </div>
         <div class="proxies__groups mb-4">
           <v-chip-group
             :model-value="store.outboundName"
@@ -282,6 +238,50 @@ onMounted(sync);
             @click="model.removeGroup"
             >{{ t("proxies.deleteGroup") }}</v-btn
           >
+        </div>
+        <div class="proxies__filters mb-4">
+          <v-chip-group v-model="source" mandatory class="proxies__sources">
+            <v-chip
+              v-for="item in sources"
+              :key="item.value"
+              :value="item.value"
+              variant="outlined"
+              filter
+              >{{ item.title }}</v-chip
+            >
+          </v-chip-group>
+          <v-chip
+            :model-value="true"
+            :aria-pressed="membersOnly"
+            :variant="membersOnly ? 'tonal' : 'outlined'"
+            @click="membersOnly = !membersOnly"
+            >{{ t("proxies.membersOnly") }}</v-chip
+          >
+          <v-spacer />
+          <v-btn
+            variant="tonal"
+            :prepend-icon="mdiSpeedometer"
+            :loading="testing"
+            :disabled="disabled || !listed.length"
+            @click="model.testListed()"
+            >{{ t("proxies.testLatency") }}</v-btn
+          >
+          <v-btn-toggle
+            v-model="view"
+            mandatory
+            divided
+            variant="outlined"
+            rounded="xl"
+            selected-class="bg-secondary-container text-on-secondary-container"
+            :aria-label="t('operations.view')"
+          >
+            <v-btn value="cards" :prepend-icon="mdiViewGridOutline">{{
+              t("proxies.cards")
+            }}</v-btn>
+            <v-btn value="list" :prepend-icon="mdiViewListOutline">{{
+              t("proxies.list")
+            }}</v-btn>
+          </v-btn-toggle>
         </div>
         <v-empty-state
           v-if="!rows.length"
