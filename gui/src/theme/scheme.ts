@@ -13,12 +13,12 @@ import {
   SchemeTonalSpot,
 } from "@material/material-color-utilities";
 
-/** The default seed (the owner's Material Theme Builder export, 2026-09-19). */
-export const brandSeed = "#13aab7";
+/** The default seed: Google yellow. */
+export const brandSeed = "#fbbc04";
 
 export const presetSeeds: { name: string; seed: string }[] = [
   { name: "brand", seed: brandSeed },
-  { name: "yellow", seed: "#fbbc04" },
+  { name: "teal", seed: "#13aab7" },
   { name: "blue", seed: "#4a6fd5" },
   { name: "green", seed: "#3d8f5a" },
   { name: "purple", seed: "#7b57c7" },
