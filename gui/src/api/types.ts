@@ -122,7 +122,7 @@ export interface DnsRulesResponse {
   rules?: Partial<DnsRule>[] | null;
 }
 
-/** The WebSocket frames on /api/message: the two the interface reads, and any other the backend may add. */
+/** The WebSocket frames on /api/message: the ones the interface reads, and any other the backend may add. */
 export interface RunningStateMessage {
   type: "running_state";
   body: { running: boolean; networkPaused?: boolean };
@@ -139,5 +139,14 @@ export interface OutboundStatus {
 export interface ObservatoryMessage {
   type: "observatory";
   body: { outboundName: string; outboundStatus: OutboundStatus[] };
+}
+export interface TrafficMessage {
+  type: "traffic";
+  body: {
+    up: number;
+    down: number;
+    upTotal: number;
+    downTotal: number;
+  };
 }
 export type WsMessage = { type: string; body?: unknown };

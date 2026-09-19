@@ -1,4 +1,9 @@
 export default {
+  traffic: {
+    upload: "上传",
+    download: "下载",
+    total: "累计：{value}",
+  },
   common: {
     dashboard: "仪表板",
     proxies: "代理",

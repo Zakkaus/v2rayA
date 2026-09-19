@@ -1,4 +1,9 @@
 export default {
+  traffic: {
+    upload: "ارسال",
+    download: "دریافت",
+    total: "مجموع: {value}",
+  },
   common: {
     dashboard: "داشبورد",
     proxies: "پروکسی‌ها",
