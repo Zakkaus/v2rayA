@@ -442,6 +442,86 @@ export default {
     },
   },
   routingA: {
+    export: "Export",
+    import: {
+      title: "Import",
+      confirm: "Replace the current rules with the imported file?",
+    },
+    form: {
+      title: "Form",
+      text: "Text",
+      default: "Default outbound",
+      orderHint: "Rules are evaluated in order; the first match wins.",
+      addRule: "Add rule",
+      editRule: "Edit rule",
+      condition: "Condition",
+      arguments: "Arguments",
+      addCondition: "Add condition",
+      outbound: "Outbound",
+      customOutbounds: "Custom outbounds",
+      addOutbound: "Add outbound",
+      editOutbound: "Edit outbound",
+      name: "Name",
+      protocol: "Protocol",
+      address: "Address",
+      port: "Port",
+      user: "Username",
+      pass: "Password",
+      required: "This field is required.",
+      invalidArguments:
+        "Enter comma-separated arguments with balanced quotes and parentheses.",
+      invalidName: "Use a unique name without spaces or syntax characters.",
+      deleteConfirm: "Delete this entry?",
+      moveUp: "Move up",
+      moveDown: "Move down",
+      actions: "Entry actions",
+      raw: "Unrecognized syntax; preserved in the text editor.",
+    },
+    editor: "RoutingA rules",
+    loading: "Loading rules",
+    resetDefault: "Restore defaults",
+    resetConfirm: "Replace the current rules with the default template?",
+    discard: "Discard unsaved changes?",
+    insert: "Insert",
+    lineError: "Line {line}: {message}",
+    errors: {
+      noArrow: "Expected a condition followed by -> and an outbound.",
+      brackets: "Brackets are unbalanced.",
+      noOutbound: "An outbound is required after ->.",
+    },
+    reference: {
+      title: "Syntax",
+      format: {
+        title: "Rule format",
+        description:
+          "Use condition [&& condition] -> outbound, one rule per line. The first match wins; # starts a comment.",
+      },
+      domain: {
+        title: "Domains",
+        description:
+          "Match an exact domain with full, a domain and its subdomains with domain, or text with contains and regexp. Use geosite for a domain list; one call can contain several entries.",
+      },
+      ip: {
+        title: "IP addresses",
+        description:
+          "Match an IP address, a CIDR range or a geoip list. Put IPv6 addresses in quotes.",
+      },
+      ports: {
+        title: "Ports and protocols",
+        description:
+          "Match ports or port ranges, network transport, application protocol or source address. Combine conditions with &&.",
+      },
+      outbound: {
+        title: "Outbounds",
+        description:
+          "Built-in outbounds are proxy, direct and block; default selects the fallback. Define a named SOCKS or HTTP outbound with optional user and pass.",
+      },
+      examples: {
+        title: "Examples",
+        description:
+          "Insert the default template or a rule that blocks domains in the advertising list.",
+      },
+    },
     messages: ["click the button 'Help&Manual' for help"],
     inboundDeprecated:
       "Defining inbounds in RoutingA is deprecated. The generated JSON config will NOT include those inbound ports. Please use the custom inbound settings with RoutingA rules instead.",

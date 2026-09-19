@@ -430,6 +430,84 @@ export default {
     },
   },
   routingA: {
+    export: "导出",
+    import: {
+      title: "导入",
+      confirm: "将当前规则替换为导入文件的内容？",
+    },
+    form: {
+      title: "表单",
+      text: "文本",
+      default: "默认出口",
+      orderHint: "按顺序匹配规则，首条匹配的规则生效。",
+      addRule: "添加规则",
+      editRule: "修改规则",
+      condition: "条件",
+      arguments: "参数",
+      addCondition: "添加条件",
+      outbound: "出口",
+      customOutbounds: "自定义出口",
+      addOutbound: "添加出口",
+      editOutbound: "修改出口",
+      name: "名称",
+      protocol: "协议",
+      address: "地址",
+      port: "端口",
+      user: "用户名",
+      pass: "密码",
+      required: "此项不能为空。",
+      invalidArguments: "参数须以逗号分隔，引号和括号须成对。",
+      invalidName: "名称不能重复，也不能包含空格或语法符号。",
+      deleteConfirm: "删除此条目？",
+      moveUp: "上移",
+      moveDown: "下移",
+      actions: "条目操作",
+      raw: "无法识别此语法，已在文本编辑器中保留原文。",
+    },
+    editor: "RoutingA 规则",
+    loading: "正在加载规则",
+    resetDefault: "恢复默认",
+    resetConfirm: "将当前规则替换为默认模板？",
+    discard: "放弃修改？",
+    insert: "插入",
+    lineError: "第 {line} 行：{message}",
+    errors: {
+      noArrow: "规则需要包含条件、-> 和出口。",
+      brackets: "括号不匹配。",
+      noOutbound: "-> 后缺少出口。",
+    },
+    reference: {
+      title: "语法",
+      format: {
+        title: "规则格式",
+        description:
+          "格式为 条件 [&& 条件] -> 出口，每行一条规则。按顺序匹配，首条匹配的规则生效；# 表示注释。",
+      },
+      domain: {
+        title: "域名",
+        description:
+          "full 精确匹配域名，domain 匹配域名及其子域名，contains 和 regexp 分别匹配文本和正则表达式。geosite 使用域名列表，一次调用可包含多个条目。",
+      },
+      ip: {
+        title: "IP 地址",
+        description:
+          "支持 IP 地址、CIDR 网段和 geoip 列表。IPv6 地址需要加引号。",
+      },
+      ports: {
+        title: "端口与协议",
+        description:
+          "可匹配端口或端口范围、传输协议、应用协议和源地址。使用 && 组合条件。",
+      },
+      outbound: {
+        title: "出口",
+        description:
+          "内置出口为 proxy、direct 和 block，default 指定未匹配规则时的出口。可定义命名的 SOCKS 或 HTTP 出口，user 和 pass 为可选认证参数。",
+      },
+      examples: {
+        title: "示例",
+        description: "插入默认模板，或插入拦截广告列表中域名的规则。",
+      },
+    },
     messages: ["点击“查看帮助”按钮以获取帮助"],
     inboundDeprecated:
       "RoutingA 中定义入站(inbound)的功能已弃用，生成的 JSON 配置将不会包含对应的入站端口。请使用自定义入站设置中的 RoutingA 规则功能替代。",

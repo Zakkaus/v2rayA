@@ -438,6 +438,85 @@ export default {
     },
   },
   routingA: {
+    export: "내보내기",
+    import: {
+      title: "가져오기",
+      confirm: "현재 규칙을 가져온 파일의 내용으로 바꾸시겠습니까?",
+    },
+    form: {
+      title: "양식",
+      text: "텍스트",
+      default: "기본 아웃바운드",
+      orderHint: "규칙은 순서대로 확인하며 처음 일치하는 규칙이 적용됩니다.",
+      addRule: "규칙 추가",
+      editRule: "규칙 수정",
+      condition: "조건",
+      arguments: "인수",
+      addCondition: "조건 추가",
+      outbound: "아웃바운드",
+      customOutbounds: "사용자 지정 아웃바운드",
+      addOutbound: "아웃바운드 추가",
+      editOutbound: "아웃바운드 수정",
+      name: "이름",
+      protocol: "프로토콜",
+      address: "주소",
+      port: "포트",
+      user: "사용자 이름",
+      pass: "비밀번호",
+      required: "필수 항목입니다.",
+      invalidArguments: "인수를 쉼표로 구분하고 따옴표와 괄호의 짝을 맞추세요.",
+      invalidName: "공백이나 문법 기호가 없는 고유한 이름을 입력하세요.",
+      deleteConfirm: "이 항목을 삭제하시겠습니까?",
+      moveUp: "위로 이동",
+      moveDown: "아래로 이동",
+      actions: "항목 작업",
+      raw: "인식할 수 없는 문법입니다. 텍스트 편집기에 원문을 보존합니다.",
+    },
+    editor: "RoutingA 규칙",
+    loading: "규칙 불러오는 중",
+    resetDefault: "기본값 복원",
+    resetConfirm: "현재 규칙을 기본 템플릿으로 바꾸시겠습니까?",
+    discard: "저장하지 않은 변경 사항을 버리시겠습니까?",
+    insert: "삽입",
+    lineError: "{line}행: {message}",
+    errors: {
+      noArrow: "조건 뒤에 ->와 아웃바운드가 필요합니다.",
+      brackets: "괄호의 짝이 맞지 않습니다.",
+      noOutbound: "-> 뒤에 아웃바운드가 필요합니다.",
+    },
+    reference: {
+      title: "문법",
+      format: {
+        title: "규칙 형식",
+        description:
+          "조건 [&& 조건] -> 아웃바운드 형식으로 한 줄에 규칙 하나를 작성합니다. 처음 일치하는 규칙이 적용되며 #은 주석을 시작합니다.",
+      },
+      domain: {
+        title: "도메인",
+        description:
+          "full은 정확한 도메인, domain은 하위 도메인까지, contains와 regexp는 각각 텍스트와 정규식을 일치시킵니다. geosite는 도메인 목록을 사용하며 한 호출에 여러 항목을 넣을 수 있습니다.",
+      },
+      ip: {
+        title: "IP 주소",
+        description:
+          "IP 주소, CIDR 범위 또는 geoip 목록을 일치시킵니다. IPv6 주소는 따옴표로 묶으세요.",
+      },
+      ports: {
+        title: "포트 및 프로토콜",
+        description:
+          "포트나 포트 범위, 전송 프로토콜, 응용 프로토콜 또는 출발지 주소를 일치시킵니다. &&로 조건을 결합합니다.",
+      },
+      outbound: {
+        title: "아웃바운드",
+        description:
+          "기본 아웃바운드는 proxy, direct, block이며 default는 일치하는 규칙이 없을 때 사용할 아웃바운드를 지정합니다. 이름이 있는 SOCKS 또는 HTTP 아웃바운드를 정의하고 user와 pass를 선택적으로 지정할 수 있습니다.",
+      },
+      examples: {
+        title: "예제",
+        description:
+          "기본 템플릿이나 광고 목록의 도메인을 차단하는 규칙을 삽입합니다.",
+      },
+    },
     messages: ["도움말을 보려면 '도움말 및 설명서' 버튼을 클릭하세요"],
     inboundDeprecated:
       "RoutingA에서 인바운드를 정의하는 기능은 더 이상 사용되지 않습니다. 생성된 JSON 구성에는 해당 인바운드 포트가 포함되지 않습니다. 대신 RoutingA 규칙과 함께 사용자 지정 인바운드 설정을 사용하세요.",
