@@ -79,6 +79,17 @@ export function compareConnection(a: Row, b: Row, asc = true): number {
   return compareLatency(a, b, asc);
 }
 
+export function filterRows(rows: Row[], query: string): Row[] {
+  if (!query) return rows;
+  const search = query.toLowerCase();
+  return rows.filter(
+    (row) =>
+      row.name.toLowerCase().includes(search) ||
+      row.address.toLowerCase().includes(search) ||
+      row.net.toLowerCase().includes(search),
+  );
+}
+
 export function useNodes() {
   const store = useAppStore();
   const touch = ref<Touch>({
@@ -268,14 +279,51 @@ export function useNodes() {
     }
   }
 
+  async function connectFastest(
+    rows: Row[],
+    group: string,
+  ): Promise<Row | null> {
+    let fastest: Row | null = null;
+    let lowest = Infinity;
+    for (const row of rows) {
+      const latency = latencyOf(row);
+      if (latency < lowest) {
+        fastest = row;
+        lowest = latency;
+      }
+    }
+    if (!fastest) return null;
+    const loading = openLoading();
+    try {
+      apply(
+        await putOutboundConnections({
+          outbound: group,
+          touches: [whichOf(fastest)],
+        }),
+      );
+      return fastest;
+    } finally {
+      loading.close();
+    }
+  }
+
   /** testLatency measures the selected rows by TCP ping or an HTTP request; rows show "testing" meanwhile. */
   async function testLatency(
     http: boolean,
     testingText: string,
   ): Promise<void> {
-    const rows = selected.value.filter(
-      (r): r is Row => r._type !== "subscription",
+    return testAll(
+      selected.value.filter((r): r is Row => r._type !== "subscription"),
+      http,
+      testingText,
     );
+  }
+
+  async function testAll(
+    rows: Row[],
+    http: boolean,
+    testingText: string,
+  ): Promise<void> {
     const whiches = rows.map(
       (r) => ({ ...whichOf(r), sub: r.sub ?? null }) as Which,
     );
@@ -337,6 +385,8 @@ export function useNodes() {
     disconnect,
     inGroup,
     toggleGroup,
+    connectFastest,
+    testAll,
     testLatency,
     deleteSelected,
     sharingLinks,
