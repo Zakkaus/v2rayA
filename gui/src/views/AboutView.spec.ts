@@ -4,10 +4,9 @@ import { mountWithApp } from "@/test/mount";
 import About from "./AboutView.vue";
 
 describe("the about dialog", () => {
-  test("lists the ports and links the discussions", () => {
+  test("says what v2rayA is and links the discussions", () => {
     const w = mountWithApp(About);
-    expect(w.text()).toContain("2017");
-    expect(w.text()).toContain("v2rayA service port");
+    expect(w.text()).toContain("v2rayA is a web GUI");
     expect(w.find('a[href$="/discussions"]').exists()).toBe(true);
     w.unmount();
   });

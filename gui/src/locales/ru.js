@@ -44,6 +44,7 @@ export default {
     core: "Ядро",
   },
   common: {
+    optional: "необязательно",
     dashboard: "Панель",
     proxies: "Прокси",
     subscriptions: "Подписки",
@@ -120,6 +121,8 @@ export default {
     updateFailed: "Не удалось обновить подписку: {message}",
   },
   operations: {
+    yes: "Да",
+    no: "Нет",
     name: "Операции",
     tproxyWhiteIpGroups: "Группы IP-адресов прямого доступа",
     update: "Обновить",
@@ -412,15 +415,6 @@ export default {
   },
   about: {
     intro: "v2rayA — веб-клиент с графическим интерфейсом для V2Ray.",
-    defaultPorts: "Порты по умолчанию:",
-    otherPorts: "Другие порты:",
-    ports: {
-      service: "порт сервиса v2rayA",
-      socks: "протокол SOCKS",
-      http: "протокол HTTP",
-      httpRules: "протокол HTTP с «Правилом разделения трафика»",
-      tproxy: "tproxy, необходим для прозрачного прокси",
-    },
     local: "Все данные хранятся локально, а не в облаке.",
     report:
       "О проблемах, обнаруженных при использовании, можно сообщить в разделе {discussions}.",

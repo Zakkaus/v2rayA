@@ -44,6 +44,7 @@ export default {
     core: "Núcleo",
   },
   common: {
+    optional: "opcional",
     dashboard: "Painel",
     proxies: "Proxies",
     subscriptions: "Assinaturas",
@@ -120,6 +121,8 @@ export default {
     updateFailed: "Falha ao atualizar a assinatura: {message}",
   },
   operations: {
+    yes: "Sim",
+    no: "Não",
     name: "Operações",
     tproxyWhiteIpGroups: "Grupos de IPs na lista branca direta",
     update: "Atualizar",
@@ -416,15 +419,6 @@ export default {
   },
   about: {
     intro: "v2rayA é um cliente web do V2Ray.",
-    defaultPorts: "Portas padrão:",
-    otherPorts: "Outras portas:",
-    ports: {
-      service: "porta de serviço do v2rayA",
-      socks: "protocolo SOCKS",
-      http: "protocolo HTTP",
-      httpRules: 'protocolo HTTP com a "Regra de divisão de tráfego"',
-      tproxy: "tproxy, necessária para o proxy transparente",
-    },
     local: "Todos os dados são armazenados localmente, não na nuvem.",
     report:
       "Problemas encontrados durante o uso podem ser relatados em {discussions}.",

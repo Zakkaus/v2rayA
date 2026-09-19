@@ -44,6 +44,7 @@ export default {
     core: "هسته",
   },
   common: {
+    optional: "اختیاری",
     dashboard: "داشبورد",
     proxies: "پروکسی‌ها",
     subscriptions: "اشتراک‌ها",
@@ -120,6 +121,8 @@ export default {
     updateFailed: "به‌روزرسانی اشتراک ناموفق بود: {message}",
   },
   operations: {
+    yes: "بله",
+    no: "خیر",
     name: "عملیات",
     tproxyWhiteIpGroups: "گروه‌های IP مجاز برای اتصال مستقیم",
     update: "به‌روزرسانی",
@@ -409,15 +412,6 @@ export default {
   },
   about: {
     intro: "v2rayA یک رابط وب برای V2Ray است.",
-    defaultPorts: "پورت‌های پیش‌فرض:",
-    otherPorts: "پورت‌های دیگر:",
-    ports: {
-      service: "پورت سرویس v2rayA",
-      socks: "پروتکل SOCKS",
-      http: "پروتکل HTTP",
-      httpRules: "پروتکل HTTP با «قانون تفکیک ترافیک»",
-      tproxy: "tproxy، موردنیاز پروکسی شفاف",
-    },
     local: "همه داده‌ها به‌صورت محلی و نه در فضای ابری ذخیره می‌شوند.",
     report:
       "مشکلات مشاهده‌شده هنگام استفاده را می‌توانید در {discussions} گزارش کنید.",

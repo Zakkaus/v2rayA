@@ -43,6 +43,7 @@ export default {
     core: "核心",
   },
   common: {
+    optional: "可选",
     dashboard: "仪表板",
     proxies: "代理",
     subscriptions: "订阅",
@@ -118,6 +119,8 @@ export default {
     updateFailed: "无法更新订阅：{message}",
   },
   operations: {
+    yes: "是",
+    no: "否",
     tproxyWhiteIpGroups: "直通白名单IP组",
     name: "操作",
     update: "更新",
@@ -402,15 +405,6 @@ export default {
   },
   about: {
     intro: "v2rayA 是 V2Ray 的一个 Web 客户端。",
-    defaultPorts: "默认端口：",
-    otherPorts: "其他端口：",
-    ports: {
-      service: "v2rayA后端端口",
-      socks: "SOCKS协议",
-      http: "HTTP协议",
-      httpRules: "带分流规则的HTTP协议",
-      tproxy: "tproxy，透明代理所需",
-    },
     local: "所有数据均存储在本地，不上传云端。",
     report: "在使用中如果发现任何问题，欢迎到{discussions}反馈。",
     discussions: "讨论区",

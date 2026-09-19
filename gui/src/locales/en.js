@@ -44,6 +44,7 @@ export default {
     core: "Core",
   },
   common: {
+    optional: "optional",
     dashboard: "Dashboard",
     proxies: "Proxies",
     subscriptions: "Subscriptions",
@@ -120,6 +121,8 @@ export default {
     updateFailed: "Failed to update subscription: {message}",
   },
   operations: {
+    yes: "Yes",
+    no: "No",
     name: "Operations",
     tproxyWhiteIpGroups: "Direct Whitelist IP Groups",
     update: "Update",
@@ -410,15 +413,6 @@ export default {
   },
   about: {
     intro: "v2rayA is a web GUI client of V2Ray.",
-    defaultPorts: "Default ports:",
-    otherPorts: "Other ports:",
-    ports: {
-      service: "v2rayA service port",
-      socks: "SOCKS protocol",
-      http: "HTTP protocol",
-      httpRules: 'HTTP protocol with "Rule of Splitting Traffic"',
-      tproxy: "tproxy, needed by transparent proxy",
-    },
     local: "All data is stored in local instead of in the cloud.",
     report: "Problems found during use can be reported in {discussions}.",
     discussions: "discussions",

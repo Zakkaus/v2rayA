@@ -44,6 +44,7 @@ export default {
     core: "코어",
   },
   common: {
+    optional: "선택",
     dashboard: "대시보드",
     proxies: "프록시",
     subscriptions: "구독",
@@ -119,6 +120,8 @@ export default {
     updateFailed: "구독 업데이트 실패: {message}",
   },
   operations: {
+    yes: "예",
+    no: "아니요",
     name: "작업",
     tproxyWhiteIpGroups: "직접 연결 허용 IP 그룹",
     update: "업데이트",
@@ -408,15 +411,6 @@ export default {
   },
   about: {
     intro: "v2rayA는 V2Ray의 웹 GUI 클라이언트입니다.",
-    defaultPorts: "기본 포트:",
-    otherPorts: "기타 포트:",
-    ports: {
-      service: "v2rayA 서비스 포트",
-      socks: "SOCKS 프로토콜",
-      http: "HTTP 프로토콜",
-      httpRules: '"트래픽 분할 규칙"이 있는 HTTP 프로토콜',
-      tproxy: "tproxy, 투명 프록시에 필요",
-    },
     local: "모든 데이터는 클라우드가 아닌 로컬에 저장됩니다.",
     report: "사용 중 발견한 문제는 {discussions}에 제보할 수 있습니다.",
     discussions: "discussions",
