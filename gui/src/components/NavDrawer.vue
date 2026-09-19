@@ -35,13 +35,24 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
       />
     </v-list>
     <template #append>
+      <v-divider class="mx-7" />
       <v-btn
         variant="plain"
-        size="small"
-        class="drawer__version text-none md3-label-medium"
+        class="drawer__version text-none"
         @click="openAbout"
       >
-        v2rayA {{ store.version?.version ?? "" }}
+        <span class="d-flex flex-column align-start">
+          <span class="md3-label-large"
+            >v2rayA {{ store.version?.version ?? "" }}</span
+          >
+          <span
+            v-if="store.version?.coreVersion"
+            class="md3-label-small"
+            dir="ltr"
+          >
+            {{ store.version.variant }} {{ store.version.coreVersion }}
+          </span>
+        </span>
         <v-tooltip activator="parent" location="top">
           {{ t("common.about") }}
         </v-tooltip>
@@ -62,8 +73,9 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
 }
 /* the version is a footnote aligned with the brand: outline text, no container; it opens About */
 .drawer__version {
-  margin: 8px 16px 20px;
-  padding-inline: 12px;
+  height: auto;
+  margin: 12px 16px 20px;
+  padding: 4px 12px;
   color: rgb(var(--v-theme-outline));
   opacity: 1;
 }
