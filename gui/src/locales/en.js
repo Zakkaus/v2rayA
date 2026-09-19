@@ -36,6 +36,7 @@ export default {
     source: "Source",
     mode: { auto: "Auto (fastest)", manual: "Manual" },
     inUse: "In use",
+    inUseAfterStart: "Shown once the core runs",
     groupMode: "Group mode",
     modeNeedsMembers:
       "Balancing needs at least two members; the core then routes through the one with the lowest latency.",

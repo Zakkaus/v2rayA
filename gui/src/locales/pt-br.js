@@ -36,6 +36,7 @@ export default {
     source: "Origem",
     mode: { auto: "Automático (mais rápido)", manual: "Manual" },
     inUse: "Em uso",
+    inUseAfterStart: "Aparece quando o núcleo estiver em execução",
     groupMode: "Modo do grupo",
     modeNeedsMembers:
       "Com dois ou mais nós, o núcleo usa automaticamente o de menor latência.",

@@ -35,6 +35,7 @@ export default {
     source: "来源",
     mode: { auto: "自动（最快）", manual: "手动" },
     inUse: "使用中",
+    inUseAfterStart: "启动核心后显示使用中的节点",
     groupMode: "分组模式",
     modeNeedsMembers: "分组里有两个以上节点时核心会自动走延迟最低的那个。",
     groupSettings: "分组设置",

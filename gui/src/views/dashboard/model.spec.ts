@@ -313,7 +313,7 @@ describe("dashboard", () => {
     wrapper = mountWithApp(DashboardView);
     await flushPromises();
     await wrapper
-      .get('.dashboard-sharing input[type="checkbox"]')
+      .get('.dashboard-transparent input[type="checkbox"]')
       .setValue(true);
     await flushPromises();
     const saved = vi.mocked(putSetting).mock.calls[0][0];
@@ -331,7 +331,7 @@ describe("dashboard", () => {
     await flushPromises();
     expect(
       wrapper
-        .get('.dashboard-sharing input[type="checkbox"]')
+        .get('.dashboard-transparent input[type="checkbox"]')
         .attributes("disabled"),
     ).toBeDefined();
     vi.mocked(getSetting).mockResolvedValue({
@@ -342,7 +342,7 @@ describe("dashboard", () => {
     await flushPromises();
     expect(
       (
-        wrapper.get('.dashboard-sharing input[type="checkbox"]')
+        wrapper.get('.dashboard-transparent input[type="checkbox"]')
           .element as HTMLInputElement
       ).checked,
     ).toBe(false);

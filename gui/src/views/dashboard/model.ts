@@ -256,6 +256,24 @@ export function useDashboard() {
     }
   }
 
+  /** testMembers pings every member of the group; the latency tile ranks the results. */
+  async function testMembers() {
+    if (!members.value.length || testing.value) return;
+    testing.value = "all";
+    try {
+      const result = await getPingLatency(members.value.map((m) => m.which));
+      for (const which of result.whiches) {
+        const member = members.value.find((m) => sameWhich(m.which, which));
+        if (member && which.pingLatency)
+          measured.value.set(member.key, which.pingLatency);
+      }
+    } catch (err) {
+      notify.warning(errorText(err));
+    } finally {
+      testing.value = undefined;
+    }
+  }
+
   async function refreshSubscription(id: number) {
     updating.value = id;
     try {
@@ -344,6 +362,7 @@ export function useDashboard() {
     toggleSettings,
     selectNode,
     testNode,
+    testMembers,
     updateAll,
     updateSubscription,
   };

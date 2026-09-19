@@ -11,7 +11,6 @@ import {
   mdiServerNetwork,
   mdiShieldOutline,
   mdiRoutes,
-  mdiLan,
   mdiChartLine,
   mdiSwapVertical,
   mdiRss,
@@ -60,6 +59,7 @@ const {
   toggleSettings,
   selectNode,
   testNode,
+  testMembers,
   updateAll,
   updateSubscription,
 } = useDashboard();
@@ -181,13 +181,26 @@ function switchNode() {
         />
         <template v-else-if="members.length">
           <p class="md3-title-medium mb-2 dashboard-wrap" dir="auto">
-            {{ nodeInUse ? nodeInUse.row.name || nodeInUse.row.address : "—" }}
+            {{
+              nodeInUse
+                ? nodeInUse.row.name || nodeInUse.row.address
+                : t("dashboard.balanced", { n: members.length })
+            }}
           </p>
           <div class="d-flex align-center flex-wrap ga-2 mb-4">
-            <span class="md3-body-medium text-on-surface-variant" dir="ltr"
-              >{{ nodeInUse?.row.net || "—" }} ·
-              {{ nodeInUse?.latency || "—" }}</span
+            <span
+              v-if="nodeInUse"
+              class="md3-body-medium text-on-surface-variant"
+              dir="ltr"
+              >{{ nodeInUse.row.net }} · {{ nodeInUse.latency }}</span
             >
+            <span v-else class="md3-body-medium text-on-surface-variant">{{
+              t(
+                store.running === "running"
+                  ? "common.checkRunning"
+                  : "dashboard.inUseAfterStart",
+              )
+            }}</span>
             <v-chip
               v-if="nodeInUse?.which.selected"
               size="small"
@@ -195,7 +208,7 @@ function switchNode() {
               >{{ t("dashboard.pinned") }}</v-chip
             >
             <v-chip
-              v-else-if="members.length >= 2"
+              v-else-if="nodeInUse && members.length >= 2"
               size="small"
               variant="tonal"
               >{{ t("dashboard.balanced", { n: members.length }) }}</v-chip
@@ -248,16 +261,33 @@ function switchNode() {
           type="list-item"
           class="bg-transparent"
         />
-        <v-select
-          v-else
-          :model-value="quick.transparent"
-          :aria-label="t('setting.transparentProxy')"
-          :items="transparentItems"
-          :disabled="quickDisabled"
-          density="compact"
-          hide-details
-          @update:model-value="(value) => setQuick('transparent', value)"
-        />
+        <template v-else>
+          <v-select
+            :model-value="quick.transparent"
+            :aria-label="t('setting.transparentProxy')"
+            :items="transparentItems"
+            :disabled="quickDisabled"
+            density="compact"
+            hide-details
+            @update:model-value="(value) => setQuick('transparent', value)"
+          />
+          <v-switch
+            :model-value="quick.portSharing"
+            :label="t('setting.portSharingOn')"
+            :disabled="quickDisabled"
+            hide-details
+            class="mt-2"
+            @update:model-value="(value) => setQuick('portSharing', !!value)"
+          />
+          <v-switch
+            v-if="store.version?.os === 'linux' && !store.lite"
+            :model-value="quick.ipforward"
+            :label="t('setting.ipForwardOn')"
+            :disabled="quickDisabled"
+            hide-details
+            @update:model-value="(value) => setQuick('ipforward', !!value)"
+          />
+        </template>
       </v-card>
 
       <v-card
@@ -292,40 +322,6 @@ function switchNode() {
             :label="item.title"
           />
         </v-radio-group>
-      </v-card>
-
-      <v-card
-        color="surface-container-low"
-        rounded="xl"
-        class="dashboard-sharing pa-4"
-        :loading="quickSaving"
-      >
-        <div class="d-flex align-center ga-2 mb-3">
-          <v-icon :icon="mdiLan" size="20" color="on-surface-variant" />
-          <h2 class="md3-title-small">{{ t("setting.portSharingOn") }}</h2>
-        </div>
-        <v-skeleton-loader
-          v-if="quickLoading"
-          type="list-item"
-          class="bg-transparent"
-        />
-        <template v-else>
-          <v-switch
-            :model-value="quick.portSharing"
-            :label="t('setting.portSharingOn')"
-            :disabled="quickDisabled"
-            hide-details
-            @update:model-value="(value) => setQuick('portSharing', !!value)"
-          />
-          <v-switch
-            v-if="store.version?.os === 'linux' && !store.lite"
-            :model-value="quick.ipforward"
-            :label="t('setting.ipForwardOn')"
-            :disabled="quickDisabled"
-            hide-details
-            @update:model-value="(value) => setQuick('ipforward', !!value)"
-          />
-        </template>
       </v-card>
 
       <v-card color="surface-container-low" rounded="xl" class="pa-4">
@@ -364,7 +360,17 @@ function switchNode() {
       >
         <div class="d-flex align-center ga-2 mb-3">
           <v-icon :icon="mdiSpeedometer" size="20" color="on-surface-variant" />
-          <h2 class="md3-title-small">{{ t("dashboard.nodeLatency") }}</h2>
+          <h2 class="md3-title-small flex-grow-1">
+            {{ t("dashboard.nodeLatency") }}
+          </h2>
+          <v-btn
+            variant="tonal"
+            size="small"
+            :loading="testing === 'all'"
+            :disabled="!members.length || !!testing"
+            @click="testMembers"
+            >{{ t("dashboard.testLatency") }}</v-btn
+          >
         </div>
         <v-skeleton-loader
           v-if="loading"
@@ -597,7 +603,8 @@ function switchNode() {
       <v-card
         color="surface-container-low"
         rounded="xl"
-        class="dashboard-wide pa-4"
+        class="pa-4"
+        :class="{ 'dashboard-full': showSettings }"
       >
         <div class="d-flex align-center ga-2 mb-3">
           <v-icon :icon="mdiTune" size="20" color="on-surface-variant" />
@@ -641,6 +648,10 @@ function switchNode() {
 }
 .dashboard-grid--wide .dashboard-wide {
   grid-column: span 2;
+}
+/* the expanded settings list takes the whole row */
+.dashboard-grid--wide .dashboard-full {
+  grid-column: 1 / -1;
 }
 @container (width < 536px) {
   .dashboard-grid--wide {
