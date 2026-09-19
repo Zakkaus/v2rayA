@@ -138,7 +138,6 @@ const openWhiteIps = () => open(TproxyWhiteIpsDialog, {}, { width: 520 });
           v-if="transparentOn"
           :model-value="form.transparentType"
           :title="t('setting.transparentType')"
-          :hint="t('setting.messages.transparentType')"
           :items="transparentTypes"
           @update:model-value="(v) => set('transparentType', v)"
         />

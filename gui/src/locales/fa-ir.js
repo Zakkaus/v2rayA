@@ -36,7 +36,6 @@ export default {
     source: "منبع",
     mode: { auto: "خودکار (سریع‌ترین)", manual: "دستی" },
     inUse: "در حال استفاده",
-    inUseAfterStart: "پس از اجرای هسته نمایش داده می‌شود",
     groupMode: "حالت گروه",
     modeNeedsMembers:
       "با دست‌کم دو گره، هسته به‌طور خودکار کم‌تأخیرترین را انتخاب می‌کند.",
@@ -55,7 +54,6 @@ export default {
     deleteSubscriptionNodes: "گره‌های اشتراک را نمی‌توان جداگانه حذف کرد.",
   },
   dashboard: {
-    quick: "تنظیمات سریع",
     status: "وضعیت هسته",
     networkSpeed: "سرعت شبکه",
     trafficUsage: "مصرف ترافیک",
@@ -65,6 +63,7 @@ export default {
     version: "نسخه",
     core: "هسته",
     inUse: "گره در حال استفاده",
+    inUseAfterStart: "پس از اجرای هسته نمایش داده می‌شود",
     pinned: "ثابت",
     balanced: "خودکار · {n} عضو",
     switchNode: "تغییر",

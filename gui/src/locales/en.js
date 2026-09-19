@@ -36,7 +36,6 @@ export default {
     source: "Source",
     mode: { auto: "Auto (fastest)", manual: "Manual" },
     inUse: "In use",
-    inUseAfterStart: "Shown once the core runs",
     groupMode: "Group mode",
     modeNeedsMembers:
       "Balancing needs at least two members; the core then routes through the one with the lowest latency.",
@@ -56,7 +55,6 @@ export default {
       "Subscription nodes cannot be deleted individually.",
   },
   dashboard: {
-    quick: "Quick settings",
     status: "Core status",
     networkSpeed: "Network speed",
     trafficUsage: "Traffic usage",
@@ -66,6 +64,7 @@ export default {
     version: "Version",
     core: "Core",
     inUse: "Node in use",
+    inUseAfterStart: "Shown once the core runs",
     pinned: "Pinned",
     balanced: "Auto · {n} members",
     switchNode: "Switch",

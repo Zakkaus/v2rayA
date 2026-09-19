@@ -36,7 +36,6 @@ export default {
     source: "출처",
     mode: { auto: "자동 (가장 빠른 노드)", manual: "수동" },
     inUse: "사용 중",
-    inUseAfterStart: "코어를 시작하면 표시됩니다",
     groupMode: "그룹 모드",
     modeNeedsMembers:
       "노드가 두 개 이상이면 코어가 지연이 가장 낮은 노드를 자동으로 사용합니다.",
@@ -55,7 +54,6 @@ export default {
     deleteSubscriptionNodes: "구독 노드는 개별적으로 삭제할 수 없습니다.",
   },
   dashboard: {
-    quick: "빠른 설정",
     status: "코어 상태",
     networkSpeed: "네트워크 속도",
     trafficUsage: "트래픽 사용량",
@@ -65,6 +63,7 @@ export default {
     version: "버전",
     core: "코어",
     inUse: "사용 중인 노드",
+    inUseAfterStart: "코어를 시작하면 표시됩니다",
     pinned: "고정됨",
     balanced: "자동 · 멤버 {n}개",
     switchNode: "전환",

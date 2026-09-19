@@ -14,10 +14,8 @@ import {
   mdiShieldOutline,
   mdiRoutes,
   mdiChartLine,
-  mdiSwapVertical,
   mdiRss,
   mdiInformationOutline,
-  mdiTune,
 } from "@mdi/js";
 import { backendAddress } from "@/api/client";
 import { useDialog } from "@/composables";
@@ -160,6 +158,14 @@ function switchNode() {
             :up="traffic.upSeries.value"
           />
         </div>
+        <p
+          class="md3-body-small text-on-surface-variant dashboard-figures mt-2 mb-0"
+          dir="ltr"
+        >
+          {{ t("dashboard.trafficUsage") }}: ↓
+          {{ formatBytes(traffic.downTotal.value) }} · ↑
+          {{ formatBytes(traffic.upTotal.value) }}
+        </p>
       </v-card>
 
       <v-card
@@ -291,6 +297,16 @@ function switchNode() {
             hide-details
             @update:model-value="(value) => setQuick('ipforward', !!value)"
           />
+          <v-btn
+            variant="text"
+            class="dashboard-text-button mt-2"
+            :append-icon="showSettings ? mdiChevronUp : mdiChevronDown"
+            :disabled="quickLoading || quickSaving"
+            :aria-expanded="showSettings"
+            aria-controls="dashboard-proxy-settings"
+            @click="toggleSettings"
+            >{{ t("dashboard.allProxySettings") }}</v-btn
+          >
         </template>
       </v-card>
 
@@ -326,35 +342,6 @@ function switchNode() {
             :label="item.title"
           />
         </v-radio-group>
-      </v-card>
-
-      <v-card color="surface-container-low" rounded="xl" class="pa-4">
-        <div class="d-flex align-center ga-2 mb-3">
-          <v-icon
-            :icon="mdiSwapVertical"
-            size="20"
-            color="on-surface-variant"
-          />
-          <h2 class="md3-title-small">{{ t("dashboard.trafficUsage") }}</h2>
-        </div>
-        <div class="d-flex flex-wrap ga-4 dashboard-figures">
-          <div>
-            <p class="md3-body-small text-on-surface-variant mb-2">
-              {{ t("traffic.download") }}
-            </p>
-            <p class="md3-title-large ma-0" dir="ltr">
-              ↓ {{ formatBytes(traffic.downTotal.value) }}
-            </p>
-          </div>
-          <div>
-            <p class="md3-body-small text-on-surface-variant mb-2">
-              {{ t("traffic.upload") }}
-            </p>
-            <p class="md3-title-large ma-0" dir="ltr">
-              ↑ {{ formatBytes(traffic.upTotal.value) }}
-            </p>
-          </div>
-        </div>
       </v-card>
 
       <v-card
@@ -430,7 +417,7 @@ function switchNode() {
       <v-card
         color="surface-container-low"
         rounded="xl"
-        class="dashboard-subscriptions pa-4"
+        class="dashboard-subscriptions dashboard-full pa-4"
       >
         <div class="d-flex align-center flex-wrap ga-2 mb-3">
           <v-icon :icon="mdiRss" size="20" color="on-surface-variant" />
@@ -470,7 +457,7 @@ function switchNode() {
         <v-list
           v-else-if="subscriptions.length"
           bg-color="transparent"
-          class="pa-0"
+          class="pa-0 dashboard-subscription-rows"
         >
           <v-list-item
             v-for="subscription in subscriptions.slice(0, 4)"
@@ -620,34 +607,12 @@ function switchNode() {
           }}</v-btn>
         </div>
       </v-card>
-
-      <v-card
-        color="surface-container-low"
-        rounded="xl"
-        class="pa-4"
-        :class="{ 'dashboard-full': showSettings }"
-      >
-        <div class="d-flex align-center ga-2 mb-3">
-          <v-icon :icon="mdiTune" size="20" color="on-surface-variant" />
-          <h2 class="md3-title-small">{{ t("dashboard.quick") }}</h2>
-        </div>
-        <v-btn
-          variant="text"
-          class="dashboard-text-button"
-          :append-icon="showSettings ? mdiChevronUp : mdiChevronDown"
-          :disabled="quickLoading || quickSaving"
-          :aria-expanded="showSettings"
-          aria-controls="dashboard-proxy-settings"
-          @click="toggleSettings"
-          >{{ t("dashboard.allProxySettings") }}</v-btn
-        >
-        <v-expand-transition>
-          <div v-if="showSettings" id="dashboard-proxy-settings" class="mt-4">
-            <ProxySettings />
-          </div>
-        </v-expand-transition>
-      </v-card>
     </div>
+    <v-expand-transition>
+      <div v-if="showSettings" id="dashboard-proxy-settings" class="mt-4">
+        <ProxySettings />
+      </div>
+    </v-expand-transition>
   </div>
 </template>
 
@@ -659,8 +624,7 @@ function switchNode() {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
-  /* each tile is as tall as its content; a long list does not stretch its row */
-  align-items: start;
+  align-items: stretch;
 }
 .dashboard-grid > * {
   min-width: 0;
@@ -671,7 +635,7 @@ function switchNode() {
 .dashboard-grid--wide .dashboard-wide {
   grid-column: span 2;
 }
-/* the expanded settings list takes the whole row */
+/* the subscriptions run the whole row, their rows side by side */
 .dashboard-grid--wide .dashboard-full {
   grid-column: 1 / -1;
 }
@@ -685,6 +649,12 @@ function switchNode() {
 }
 .dashboard-wrap {
   overflow-wrap: anywhere;
+}
+/* subscriptions side by side on a wide row */
+.dashboard-grid--wide .dashboard-subscription-rows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0 24px;
 }
 .dashboard-chart {
   height: 120px;

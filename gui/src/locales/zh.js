@@ -35,7 +35,6 @@ export default {
     source: "来源",
     mode: { auto: "自动（最快）", manual: "手动" },
     inUse: "使用中",
-    inUseAfterStart: "启动核心后显示使用中的节点",
     groupMode: "分组模式",
     modeNeedsMembers: "分组里有两个以上节点时核心会自动走延迟最低的那个。",
     groupSettings: "分组设置",
@@ -53,7 +52,6 @@ export default {
     deleteSubscriptionNodes: "无法单独删除订阅中的节点。",
   },
   dashboard: {
-    quick: "快捷设置",
     status: "核心状态",
     networkSpeed: "网络速度",
     trafficUsage: "流量用量",
@@ -63,6 +61,7 @@ export default {
     version: "版本",
     core: "核心",
     inUse: "当前节点",
+    inUseAfterStart: "启动核心后显示使用中的节点",
     pinned: "已指定",
     balanced: "自动 · {n} 个成员",
     switchNode: "切换",

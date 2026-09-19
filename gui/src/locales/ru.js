@@ -36,7 +36,6 @@ export default {
     source: "Источник",
     mode: { auto: "Авто (самый быстрый)", manual: "Вручную" },
     inUse: "Используется",
-    inUseAfterStart: "Появится после запуска ядра",
     groupMode: "Режим группы",
     modeNeedsMembers:
       "Балансировка требует минимум двух узлов; ядро выбирает узел с наименьшей задержкой.",
@@ -55,7 +54,6 @@ export default {
     deleteSubscriptionNodes: "Узлы подписки нельзя удалять по отдельности.",
   },
   dashboard: {
-    quick: "Быстрые настройки",
     status: "Состояние ядра",
     networkSpeed: "Скорость сети",
     trafficUsage: "Расход трафика",
@@ -65,6 +63,7 @@ export default {
     version: "Версия",
     core: "Ядро",
     inUse: "Текущий узел",
+    inUseAfterStart: "Появится после запуска ядра",
     pinned: "Закреплён",
     balanced: "Авто · участников: {n}",
     switchNode: "Сменить",
