@@ -416,6 +416,92 @@ function switchNode() {
       <v-card
         color="surface-container-low"
         rounded="xl"
+        class="dashboard-instance pa-4"
+      >
+        <div class="d-flex align-center ga-2 mb-3">
+          <v-icon
+            :icon="mdiInformationOutline"
+            size="20"
+            color="on-surface-variant"
+          />
+          <h2 class="md3-title-small">{{ t("dashboard.facts") }}</h2>
+        </div>
+        <dl class="dashboard-facts md3-body-medium">
+          <div>
+            <dt class="md3-label-medium text-on-surface-variant">
+              {{ t("dashboard.version") }}
+            </dt>
+            <dd class="d-flex align-center flex-wrap ga-2">
+              <span dir="ltr">{{ store.version?.version || "—" }}</span>
+              <v-chip
+                v-if="store.version?.foundNew"
+                variant="tonal"
+                size="small"
+                href="https://github.com/v2rayA/v2rayA/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+                >{{
+                  t("dashboard.newVersion", {
+                    version: store.version.remoteVersion.replace(/^v/, ""),
+                  })
+                }}</v-chip
+              >
+            </dd>
+          </div>
+          <div>
+            <dt class="md3-label-medium text-on-surface-variant">
+              {{ t("dashboard.core") }}
+            </dt>
+            <dd class="d-flex align-center flex-wrap ga-2">
+              <span dir="ltr">{{ store.version?.variant || "—" }}</span>
+              <v-tooltip
+                v-if="store.version && !store.version.coreVersionValid"
+                :text="store.version.coreVersionErr"
+                max-width="360"
+                open-on-click
+              >
+                <template #activator="{ props }">
+                  <v-chip
+                    v-bind="props"
+                    color="error"
+                    variant="tonal"
+                    size="small"
+                    tabindex="0"
+                    >{{ t("dashboard.coreError") }}</v-chip
+                  >
+                </template>
+              </v-tooltip>
+            </dd>
+          </div>
+          <div>
+            <dt class="md3-label-medium text-on-surface-variant">
+              {{ t("dashboard.ports") }}
+            </dt>
+            <dd dir="ltr" class="dashboard-figures">
+              <div>SOCKS: {{ ports?.socks5 ?? "—" }}</div>
+              <div>HTTP: {{ ports?.http ?? "—" }}</div>
+              <div>
+                {{ t("dashboard.httpWithRules") }}:
+                {{ ports?.httpWithPac ?? "—" }}
+              </div>
+            </dd>
+          </div>
+        </dl>
+        <div class="d-flex flex-wrap ga-2 mt-4">
+          <v-btn
+            variant="text"
+            :prepend-icon="mdiPencilOutline"
+            @click="editPorts"
+            >{{ t("customAddressPort.title") }}</v-btn
+          >
+          <v-btn variant="text" @click="store.view = 'logs'">{{
+            t("common.log")
+          }}</v-btn>
+        </div>
+      </v-card>
+      <v-card
+        color="surface-container-low"
+        rounded="xl"
         class="dashboard-subscriptions dashboard-full pa-4"
       >
         <div class="d-flex align-center flex-wrap ga-2 mb-3">
@@ -520,92 +606,6 @@ function switchNode() {
         >
       </v-card>
 
-      <v-card
-        color="surface-container-low"
-        rounded="xl"
-        class="dashboard-instance pa-4"
-      >
-        <div class="d-flex align-center ga-2 mb-3">
-          <v-icon
-            :icon="mdiInformationOutline"
-            size="20"
-            color="on-surface-variant"
-          />
-          <h2 class="md3-title-small">{{ t("dashboard.facts") }}</h2>
-        </div>
-        <dl class="dashboard-facts md3-body-medium">
-          <div>
-            <dt class="md3-label-medium text-on-surface-variant">
-              {{ t("dashboard.version") }}
-            </dt>
-            <dd class="d-flex align-center flex-wrap ga-2">
-              <span dir="ltr">{{ store.version?.version || "—" }}</span>
-              <v-chip
-                v-if="store.version?.foundNew"
-                variant="tonal"
-                size="small"
-                href="https://github.com/v2rayA/v2rayA/releases"
-                target="_blank"
-                rel="noopener noreferrer"
-                >{{
-                  t("dashboard.newVersion", {
-                    version: store.version.remoteVersion.replace(/^v/, ""),
-                  })
-                }}</v-chip
-              >
-            </dd>
-          </div>
-          <div>
-            <dt class="md3-label-medium text-on-surface-variant">
-              {{ t("dashboard.core") }}
-            </dt>
-            <dd class="d-flex align-center flex-wrap ga-2">
-              <span dir="ltr">{{ store.version?.variant || "—" }}</span>
-              <v-tooltip
-                v-if="store.version && !store.version.coreVersionValid"
-                :text="store.version.coreVersionErr"
-                max-width="360"
-                open-on-click
-              >
-                <template #activator="{ props }">
-                  <v-chip
-                    v-bind="props"
-                    color="error"
-                    variant="tonal"
-                    size="small"
-                    tabindex="0"
-                    >{{ t("dashboard.coreError") }}</v-chip
-                  >
-                </template>
-              </v-tooltip>
-            </dd>
-          </div>
-          <div>
-            <dt class="md3-label-medium text-on-surface-variant">
-              {{ t("dashboard.ports") }}
-            </dt>
-            <dd dir="ltr" class="dashboard-figures">
-              <div>SOCKS: {{ ports?.socks5 ?? "—" }}</div>
-              <div>HTTP: {{ ports?.http ?? "—" }}</div>
-              <div>
-                {{ t("dashboard.httpWithRules") }}:
-                {{ ports?.httpWithPac ?? "—" }}
-              </div>
-            </dd>
-          </div>
-        </dl>
-        <div class="d-flex flex-wrap ga-2 mt-4">
-          <v-btn
-            variant="text"
-            :prepend-icon="mdiPencilOutline"
-            @click="editPorts"
-            >{{ t("customAddressPort.title") }}</v-btn
-          >
-          <v-btn variant="text" @click="store.view = 'logs'">{{
-            t("common.log")
-          }}</v-btn>
-        </div>
-      </v-card>
     </div>
     <v-expand-transition>
       <div v-if="showSettings" id="dashboard-proxy-settings" class="mt-4">
