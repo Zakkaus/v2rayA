@@ -1,11 +1,9 @@
-// The five destinations the drawer, the rail and the bottom bar offer; the
+// The destinations the drawer, the rail and the bottom bar offer; the
 // app bar titles the current one. About lives at the bottom of the
 // settings page.
 import {
   mdiCogOutline,
   mdiCog,
-  mdiRss,
-  mdiRssBox,
   mdiScriptTextOutline,
   mdiScriptText,
   mdiServerNetworkOutline,
@@ -36,12 +34,6 @@ export const destinations: Destination[] = [
     label: "common.proxies",
     icon: mdiServerNetworkOutline,
     activeIcon: mdiServerNetwork,
-  },
-  {
-    view: "subscriptions",
-    label: "common.subscriptions",
-    icon: mdiRss,
-    activeIcon: mdiRssBox,
   },
   {
     view: "settings",
