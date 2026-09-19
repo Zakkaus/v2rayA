@@ -18,7 +18,7 @@ import {
   mdiViewGridOutline,
   mdiViewListOutline,
 } from "@mdi/js";
-import { rowKey } from "./nodes/model";
+import { rowKey, sameWhich, whichOf } from "./nodes/model";
 import { useProxies } from "./proxies/model";
 import NodeCard from "./proxies/NodeCard.vue";
 import NodeListItem from "./proxies/NodeListItem.vue";
@@ -44,7 +44,6 @@ const {
   subscriptions,
   members,
   groupList,
-  mode,
   listed,
   selected,
   selectedKeys,
@@ -54,6 +53,13 @@ const {
   sync,
 } = model;
 const disabled = computed(() => busy.value || loading.value);
+/** the member the group routes through alone, as a row; null while balancing */
+const currentMember = computed(() => {
+  const which = model.selectedMember.value;
+  return which
+    ? (members.value.find((row) => sameWhich(whichOf(row), which)) ?? null)
+    : null;
+});
 // the subscriptions fold away once the user has seen them
 const subscriptionsOpen = ref(
   localStorage.getItem("proxies.subscriptions") !== "closed",
@@ -82,6 +88,9 @@ onMounted(sync);
         @click:clear="query = ''"
       />
       <v-spacer />
+      <v-btn variant="text" :disabled="disabled" @click="model.editRoutingA">{{
+        t("routingA.editor")
+      }}</v-btn>
       <v-btn
         variant="outlined"
         :prepend-icon="mdiPlus"
@@ -258,12 +267,6 @@ onMounted(sync);
             >{{ t("proxies.newGroup") }}</v-btn
           >
           <v-spacer />
-          <span
-            v-if="members.length >= 2 && mode === 'auto' && preferred"
-            class="md3-body-small text-on-surface-variant"
-            dir="auto"
-            >{{ t("proxies.inUse") }}: {{ preferred.name }}</span
-          >
           <v-menu>
             <template #activator="{ props: menu }">
               <v-chip
@@ -271,21 +274,39 @@ onMounted(sync);
                 variant="text"
                 class="proxies__chip"
                 :append-icon="mdiChevronDown"
-                :disabled="disabled || members.length < 2"
-                :aria-label="t('proxies.groupMode')"
-                >{{ t(`proxies.mode.${mode}`) }}</v-chip
+                :disabled="disabled || !members.length"
+                :aria-label="t('proxies.inUse')"
+                ><span class="text-on-surface-variant me-1"
+                  >{{ t("proxies.inUse") }}:</span
+                >
+                <span dir="auto">{{
+                  currentMember
+                    ? currentMember.name
+                    : preferred
+                      ? `${t("proxies.mode.auto")} · ${preferred.name}`
+                      : t("proxies.mode.auto")
+                }}</span></v-chip
               >
             </template>
-            <v-list density="compact" min-width="260">
+            <v-list density="compact" min-width="280">
               <v-list-item
-                v-for="value in ['auto', 'manual']"
-                :key="value"
-                :active="mode === value"
-                :title="t(`proxies.mode.${value}`)"
-                :subtitle="t(`proxies.modeHint.${value}`)"
+                :title="t('proxies.mode.auto')"
+                :subtitle="t('proxies.modeHint.auto')"
+                :active="!currentMember"
                 role="menuitemradio"
-                :aria-checked="mode === value"
-                @click="model.setMode(value)"
+                :aria-checked="!currentMember"
+                @click="model.selectMember(null)"
+              />
+              <v-divider />
+              <v-list-item
+                v-for="row in members"
+                :key="rowKey(row)"
+                :title="row.name || row.address"
+                :subtitle="`${row.net}${row.pingLatency ? ' ' + row.pingLatency : ''}`"
+                :active="currentMember === row"
+                role="menuitemradio"
+                :aria-checked="currentMember === row"
+                @click="model.selectMember(row)"
               />
             </v-list>
           </v-menu>

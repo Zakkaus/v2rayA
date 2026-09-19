@@ -89,8 +89,7 @@ function save() {
           v-for="row in rows"
           :key="rowKey(row)"
           :title="row.name || row.address"
-          :subtitle="`${row.net} · ${sourceOf(row)}`"
-          :active="isChosen(row)"
+          :subtitle="[row.net, sourceOf(row)].filter((x) => x).join('  ')"
           rounded="lg"
           @click="toggle(row)"
         >
