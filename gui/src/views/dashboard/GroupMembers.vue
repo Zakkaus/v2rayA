@@ -85,7 +85,7 @@ function save() {
         @click:clear="query = ''"
       />
       <p class="md3-body-small text-on-surface-variant mb-2">
-        {{ t("common.selectedCount", { n: chosen.size }) }}
+        {{ t("common.selectedCount", chosen.size) }}
       </p>
       <v-list class="group-members__list pa-0" bg-color="transparent">
         <v-list-item

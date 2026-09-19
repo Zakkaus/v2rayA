@@ -255,7 +255,7 @@ onMounted(sync);
             >
               <span class="proxies__name">{{ g.name.toUpperCase() }}</span>
               <span class="ms-2 md3-label-medium">
-                {{ t("proxies.members", { n: g.count }) }}
+                {{ t("proxies.members", g.count) }}
               </span>
             </v-chip>
           </v-chip-group>
@@ -383,7 +383,7 @@ onMounted(sync);
               @update:model-value="model.selectAll(!!$event)"
             />
             <span class="md3-label-large">{{
-              t("common.selectedCount", { n: selected.length })
+              t("common.selectedCount", selected.length)
             }}</span>
             <template v-if="selected.length">
               <v-btn

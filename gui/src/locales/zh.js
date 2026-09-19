@@ -404,7 +404,7 @@ export default {
   },
   delete: {
     title: "删除所选项",
-    message: "确定删除所选的 {n} 个节点或订阅？此操作不可撤销。",
+    message: "删除选中的 {n} 项？此操作不可撤销。",
     failed: "删除失败：{message}",
   },
   latency: {

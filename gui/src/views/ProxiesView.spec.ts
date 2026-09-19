@@ -92,7 +92,7 @@ describe("unified proxies page", () => {
     expect(wrapper.get(".proxies__batch").text()).toContain("1 selected");
     expect(button("Delete").attributes("disabled")).toBeUndefined();
     await all.get("input").setValue(false);
-    expect(wrapper.get(".proxies__batch").text()).toContain("0 selected");
+    expect(wrapper.get(".proxies__batch").text()).toContain("none selected");
   });
   test("toolbar and subscription settings open their dialogs", async () => {
     await button("New node").trigger("click");

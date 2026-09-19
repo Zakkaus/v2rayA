@@ -372,7 +372,7 @@ export function useDashboard() {
       if (action === "delete") {
         const ok = await confirm({
           title: t("delete.title"),
-          message: t("delete.message", { n: 1 }),
+          message: t("delete.message", 1),
           confirmText: t("operations.delete"),
           destructive: true,
         });

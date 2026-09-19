@@ -293,7 +293,7 @@ defineExpose({ sync });
               v-else-if="members.length >= 2"
               size="small"
               variant="tonal"
-              >{{ t("dashboard.balanced", { n: members.length }) }}</v-chip
+              >{{ t("dashboard.balanced", members.length) }}</v-chip
             >
           </div>
           <div class="dashboard-actions d-flex justify-end">
@@ -485,7 +485,7 @@ defineExpose({ sync });
           class="dashboard-actions d-flex"
         >
           <v-btn variant="text" @click="store.view = 'proxies'">{{
-            t("dashboard.moreMembers", { n: members.length - latencyRows })
+            t("dashboard.moreMembers", members.length - latencyRows)
           }}</v-btn>
         </div>
       </v-card>
