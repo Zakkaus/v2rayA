@@ -9,6 +9,7 @@ import axios, {
   type AxiosResponse,
 } from "axios";
 import { nanoid } from "nanoid";
+import { reactive, readonly } from "vue";
 
 export type ApiErrorKind =
   "http" | "network" | "timeout" | "mixed-content" | "cancelled" | "stale";
@@ -189,17 +190,27 @@ client.interceptors.response.use(
   },
 );
 
+// how many calls are in flight; the shell's progress bar reads it
+const activity = reactive({ inFlight: 0 });
+export const requestActivity = readonly(activity);
+
 /** call performs one backend operation and unwraps the envelope; a FAIL envelope is an ApiError of kind http with status 200. */
 export async function call<T>(
   config: AxiosRequestConfig & { url: string },
 ): Promise<T> {
-  const res = await client.request<ApiEnvelope<T>>({
-    ...config,
-    url:
-      config.url.startsWith("http") || config.url.startsWith("/")
-        ? config.url
-        : `${apiRoot()}/${config.url}`,
-  });
+  activity.inFlight++;
+  let res;
+  try {
+    res = await client.request<ApiEnvelope<T>>({
+      ...config,
+      url:
+        config.url.startsWith("http") || config.url.startsWith("/")
+          ? config.url
+          : `${apiRoot()}/${config.url}`,
+    });
+  } finally {
+    activity.inFlight--;
+  }
   const body = res.data;
   if (!body || body.code !== "SUCCESS") {
     throw new ApiError("http", body?.message ?? "request failed", config.url, {
