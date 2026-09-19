@@ -32,6 +32,8 @@ export default {
     chooseManually: "Выбрать вручную",
     sources: { all: "Все", local: "Локальные" },
     membersOnly: "Только участники",
+    members: "{n} узл.",
+    source: "Источник",
     mode: { auto: "Авто (самый быстрый)", manual: "Вручную" },
     inUse: "Используется",
     groupMode: "Режим группы",

@@ -32,6 +32,8 @@ export default {
     chooseManually: "직접 선택",
     sources: { all: "전체", local: "로컬" },
     membersOnly: "구성원만",
+    members: "노드 {n}개",
+    source: "출처",
     mode: { auto: "자동 (가장 빠른 노드)", manual: "수동" },
     inUse: "사용 중",
     groupMode: "그룹 모드",

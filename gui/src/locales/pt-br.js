@@ -32,6 +32,8 @@ export default {
     chooseManually: "Escolher manualmente",
     sources: { all: "Todos", local: "Locais" },
     membersOnly: "Somente membros",
+    members: "{n} nós",
+    source: "Origem",
     mode: { auto: "Automático (mais rápido)", manual: "Manual" },
     inUse: "Em uso",
     groupMode: "Modo do grupo",

@@ -32,6 +32,8 @@ export default {
     chooseManually: "انتخاب دستی",
     sources: { all: "همه", local: "محلی" },
     membersOnly: "فقط اعضا",
+    members: "{n} گره",
+    source: "منبع",
     mode: { auto: "خودکار (سریع‌ترین)", manual: "دستی" },
     inUse: "در حال استفاده",
     groupMode: "حالت گروه",

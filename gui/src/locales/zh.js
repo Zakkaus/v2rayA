@@ -31,6 +31,8 @@ export default {
     chooseManually: "手动选择",
     sources: { all: "全部", local: "本地" },
     membersOnly: "仅成员",
+    members: "{n} 个节点",
+    source: "来源",
     mode: { auto: "自动（最快）", manual: "手动" },
     inUse: "使用中",
     groupMode: "分组模式",

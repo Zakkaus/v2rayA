@@ -32,6 +32,8 @@ export default {
     chooseManually: "Choose manually",
     sources: { all: "All", local: "Local" },
     membersOnly: "Members only",
+    members: "{n} nodes",
+    source: "Source",
     mode: { auto: "Auto (fastest)", manual: "Manual" },
     inUse: "In use",
     groupMode: "Group mode",

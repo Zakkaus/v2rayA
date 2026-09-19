@@ -140,35 +140,67 @@ onMounted(sync);
         </v-card>
       </section>
       <section>
-        <h2 class="md3-title-medium mb-4">
-          {{ t("common.nodes") }} · {{ rows.length }}
-        </h2>
         <div class="proxies__row mb-3">
+          <h2 class="md3-title-medium ma-0">
+            {{ t("common.nodes") }} · {{ rows.length }}
+          </h2>
+          <v-spacer />
+          <v-btn
+            variant="tonal"
+            :prepend-icon="mdiSpeedometer"
+            :loading="testing"
+            :disabled="disabled || !listed.length"
+            @click="model.testListed()"
+            >{{ t("proxies.testLatency") }}</v-btn
+          >
+          <v-btn-toggle
+            v-model="view"
+            mandatory
+            divided
+            variant="outlined"
+            rounded="xl"
+            selected-class="bg-secondary-container text-on-secondary-container"
+            :aria-label="t('operations.view')"
+          >
+            <v-btn value="cards" :aria-label="t('proxies.cards')" width="48">
+              <v-icon :icon="mdiViewGridOutline" size="20" />
+            </v-btn>
+            <v-btn value="list" :aria-label="t('proxies.list')" width="48">
+              <v-icon :icon="mdiViewListOutline" size="20" />
+            </v-btn>
+          </v-btn-toggle>
+        </div>
+        <div class="proxies__row mb-3">
+          <span class="proxies__label md3-label-large text-on-surface-variant">
+            {{ t("proxyGroup.group") }}
+          </span>
           <v-chip-group
             :model-value="store.outboundName"
             mandatory
             :disabled="disabled"
+            selected-class="proxies__chip--on"
             @update:model-value="(v: string) => v && (store.outboundName = v)"
           >
             <v-chip
               v-for="g in groupList"
               :key="g.name"
               :value="g.name"
-              variant="outlined"
+              variant="text"
               filter
+              class="proxies__chip"
             >
               <span class="proxies__name">{{ g.name.toUpperCase() }}</span>
-              <span class="ms-2 md3-label-medium text-on-surface-variant">{{
-                g.count
-              }}</span>
+              <span class="ms-2 md3-label-medium">
+                {{ t("proxies.members", { n: g.count }) }}
+              </span>
             </v-chip>
           </v-chip-group>
-          <v-chip
-            variant="outlined"
+          <v-btn
+            variant="text"
             :prepend-icon="mdiPlus"
             :disabled="disabled"
             @click="model.newGroup"
-            >{{ t("proxies.newGroup") }}</v-chip
+            >{{ t("proxies.newGroup") }}</v-btn
           >
           <v-spacer />
           <v-menu>
@@ -237,49 +269,34 @@ onMounted(sync);
           >
         </p>
         <div class="proxies__row mb-4">
-          <v-chip-group v-model="source" mandatory>
+          <span class="proxies__label md3-label-large text-on-surface-variant">
+            {{ t("proxies.source") }}
+          </span>
+          <v-chip-group
+            v-model="source"
+            mandatory
+            selected-class="proxies__chip--on"
+          >
             <v-chip
               v-for="item in sources"
               :key="item.value"
               :value="item.value"
-              variant="outlined"
+              variant="text"
               filter
+              class="proxies__chip"
               >{{ item.title }}</v-chip
             >
           </v-chip-group>
           <v-chip
             :model-value="true"
             :aria-pressed="membersOnly"
-            :variant="membersOnly ? 'tonal' : 'outlined'"
+            variant="text"
             :prepend-icon="membersOnly ? mdiCheck : undefined"
+            class="proxies__chip"
+            :class="{ 'proxies__chip--on': membersOnly }"
             @click="membersOnly = !membersOnly"
             >{{ t("proxies.membersOnly") }}</v-chip
           >
-          <v-spacer />
-          <v-btn
-            variant="tonal"
-            :prepend-icon="mdiSpeedometer"
-            :loading="testing"
-            :disabled="disabled || !listed.length"
-            @click="model.testListed()"
-            >{{ t("proxies.testLatency") }}</v-btn
-          >
-          <v-btn-toggle
-            v-model="view"
-            mandatory
-            divided
-            variant="outlined"
-            rounded="xl"
-            selected-class="bg-secondary-container text-on-secondary-container"
-            :aria-label="t('operations.view')"
-          >
-            <v-btn value="cards" :aria-label="t('proxies.cards')" width="48">
-              <v-icon :icon="mdiViewGridOutline" size="20" />
-            </v-btn>
-            <v-btn value="list" :aria-label="t('proxies.list')" width="48">
-              <v-icon :icon="mdiViewListOutline" size="20" />
-            </v-btn>
-          </v-btn-toggle>
         </div>
         <v-empty-state
           v-if="!rows.length"
@@ -403,6 +420,18 @@ onMounted(sync);
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+}
+.proxies__label {
+  min-width: 40px;
+}
+/* choice chips without the outline: a quiet pill, tonal when chosen */
+.proxies__chip {
+  background: rgb(var(--v-theme-surface-container-high));
+  color: rgb(var(--v-theme-on-surface));
+}
+.proxies__chip--on {
+  background: rgb(var(--v-theme-secondary-container));
+  color: rgb(var(--v-theme-on-secondary-container));
 }
 .proxies {
   padding-bottom: 96px;
