@@ -59,7 +59,7 @@ export default {
     moreMembers: "其他 {n} 个",
     inUse: "当前节点",
     pinned: "已指定",
-    balanced: "自动 · {n} 个成员",
+    balanced: "自动（{n} 个成员）",
     switchNode: "选择节点",
     editGroup: "编辑分组",
     autoFastest: "自动（延迟最低）",

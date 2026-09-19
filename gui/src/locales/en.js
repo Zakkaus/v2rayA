@@ -62,7 +62,7 @@ export default {
     moreMembers: "{n} more",
     inUse: "Node in use",
     pinned: "Pinned",
-    balanced: "Auto · {n} members",
+    balanced: "Auto ({n} members)",
     switchNode: "Switch",
     editGroup: "Edit group",
     autoFastest: "Auto (lowest latency)",

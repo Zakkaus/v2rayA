@@ -235,20 +235,32 @@ function pick(value: string) {
               />
             </v-list>
           </v-menu>
-          <p class="md3-body-medium text-on-surface-variant mb-3" dir="ltr">
-            <template v-if="nodeInUse"
-              >{{ nodeInUse.row.net }} · {{ nodeInUse.latency }}
-              <template v-if="nodeInUse.which.selected">
-                · {{ t("dashboard.pinned") }}</template
-              >
-              <template v-else-if="members.length >= 2">
-                · {{ t("dashboard.balanced", { n: members.length }) }}</template
-              ></template
+          <div class="d-flex align-center flex-wrap ga-2 mb-3">
+            <span
+              v-if="nodeInUse"
+              class="md3-body-medium text-on-surface-variant"
+              dir="ltr"
+              >{{ nodeInUse.row.net }}</span
             >
-            <template v-else>{{
-              t("dashboard.balanced", { n: members.length })
-            }}</template>
-          </p>
+            <span
+              v-if="nodeInUse"
+              class="md3-body-medium text-on-surface-variant dashboard-figures"
+              dir="ltr"
+              >{{ nodeInUse.latency }}</span
+            >
+            <v-chip
+              v-if="nodeInUse?.which.selected"
+              size="small"
+              variant="tonal"
+              >{{ t("dashboard.pinned") }}</v-chip
+            >
+            <v-chip
+              v-else-if="members.length >= 2"
+              size="small"
+              variant="tonal"
+              >{{ t("dashboard.balanced", { n: members.length }) }}</v-chip
+            >
+          </div>
           <div class="d-flex justify-end">
             <v-btn variant="text" @click="editGroup">{{
               t("dashboard.editGroup")

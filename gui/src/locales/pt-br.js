@@ -62,7 +62,7 @@ export default {
     moreMembers: "Mais {n}",
     inUse: "Nó em uso",
     pinned: "Fixado",
-    balanced: "Automático · {n} membros",
+    balanced: "Automático ({n} membros)",
     switchNode: "Trocar",
     editGroup: "Editar grupo",
     autoFastest: "Automático (menor latência)",

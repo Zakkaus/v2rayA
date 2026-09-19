@@ -61,7 +61,7 @@ export default {
     moreMembers: "{n} مورد دیگر",
     inUse: "گره در حال استفاده",
     pinned: "ثابت",
-    balanced: "خودکار · {n} عضو",
+    balanced: "خودکار ({n} عضو)",
     switchNode: "تغییر",
     editGroup: "ویرایش گروه",
     autoFastest: "خودکار (کمترین تأخیر)",

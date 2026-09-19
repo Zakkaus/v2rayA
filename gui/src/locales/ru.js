@@ -61,7 +61,7 @@ export default {
     moreMembers: "Ещё {n}",
     inUse: "Текущий узел",
     pinned: "Закреплён",
-    balanced: "Авто · участников: {n}",
+    balanced: "Авто (участников: {n})",
     switchNode: "Сменить",
     editGroup: "Изменить группу",
     autoFastest: "Авто (минимальная задержка)",

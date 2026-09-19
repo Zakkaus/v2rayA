@@ -61,7 +61,7 @@ export default {
     moreMembers: "{n}개 더 보기",
     inUse: "사용 중인 노드",
     pinned: "고정됨",
-    balanced: "자동 · 멤버 {n}개",
+    balanced: "자동 (멤버 {n}개)",
     switchNode: "전환",
     editGroup: "그룹 편집",
     autoFastest: "자동 (최저 지연 시간)",
