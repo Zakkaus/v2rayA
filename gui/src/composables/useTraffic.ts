@@ -1,9 +1,9 @@
 import { computed, ref, shallowRef, triggerRef } from "vue";
 import type { TrafficMessage } from "@/api/types";
 
-const capacity = 60;
+const capacity = 30;
 
-/** createTraffic retains one minute of one-second traffic frames, oldest sample first. */
+/** createTraffic retains the last thirty one-second traffic frames, oldest sample first. */
 export function createTraffic() {
   const up = ref(0);
   const down = ref(0);
@@ -13,7 +13,7 @@ export function createTraffic() {
   const downSamples = shallowRef<number[]>([]);
   let next = 0;
 
-  // oldest first, padded with zeros to the minute so the chart is a flat
+  // oldest first, padded with zeros to the window so the chart is a flat
   // line before the first frame and keeps one time scale as frames come in
   const ordered = (samples: number[]) => [
     ...new Array<number>(capacity - samples.length).fill(0),

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { formatBytes, formatRate } from "@/lib/format";
+import TrafficChart from "./TrafficChart.vue";
 
 const props = defineProps<{
   up: number;
@@ -12,16 +12,6 @@ const props = defineProps<{
   downSeries: number[];
 }>();
 const { t } = useI18n();
-// both lines share one scale so their heights compare
-const max = computed(() => Math.max(1, ...props.upSeries, ...props.downSeries));
-const downFill = [
-  "rgba(var(--v-theme-primary), 0.35)",
-  "rgba(var(--v-theme-primary), 0.02)",
-];
-const upFill = [
-  "rgba(var(--v-theme-tertiary), 0.3)",
-  "rgba(var(--v-theme-tertiary), 0.02)",
-];
 </script>
 
 <template>
@@ -51,52 +41,7 @@ const upFill = [
       </div>
     </div>
     <div class="traffic__chart mt-4">
-      <v-sparkline
-        :model-value="props.downSeries"
-        :max="max"
-        :min="0"
-        type="trend"
-        smooth
-        fill
-        :padding="2"
-        :gradient="downFill"
-        aria-hidden="true"
-      />
-      <v-sparkline
-        :model-value="props.upSeries"
-        :max="max"
-        :min="0"
-        type="trend"
-        smooth
-        fill
-        :padding="2"
-        :gradient="upFill"
-        aria-hidden="true"
-      />
-      <v-sparkline
-        :model-value="props.downSeries"
-        :max="max"
-        :min="0"
-        type="trend"
-        smooth
-        :line-width="1.5"
-        :padding="2"
-        color="rgb(var(--v-theme-primary))"
-        role="img"
-        :aria-label="t('traffic.download')"
-      />
-      <v-sparkline
-        :model-value="props.upSeries"
-        :max="max"
-        :min="0"
-        type="trend"
-        smooth
-        :line-width="1.5"
-        :padding="2"
-        color="rgb(var(--v-theme-tertiary))"
-        role="img"
-        :aria-label="t('traffic.upload')"
-      />
+      <TrafficChart :down="props.downSeries" :up="props.upSeries" />
     </div>
   </v-card>
 </template>
@@ -111,15 +56,7 @@ const upFill = [
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
-/* one plot of four layers: the two soft fills, then the two lines */
 .traffic__chart {
-  position: relative;
   height: 96px;
-}
-.traffic__chart :deep(svg) {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
 }
 </style>

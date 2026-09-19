@@ -29,8 +29,8 @@ describe("traffic card", () => {
     expect(wrapper.text()).toContain("1.3 MiB/s");
     expect(wrapper.text()).toContain("2.0 GiB");
     expect(wrapper.text()).toContain("3.5 GiB");
-    const chart = wrapper.get('svg[aria-label="Download"]');
-    const path = chart.get('path[fill="none"]').attributes("d");
+    const chart = wrapper.get("svg.traffic-chart");
+    const path = chart.get(".traffic-chart__down").attributes("d");
     await wrapper.setProps({
       down: 512,
       downTotal: 4 * 1024 ** 3,
@@ -38,6 +38,6 @@ describe("traffic card", () => {
     });
     expect(wrapper.text()).toContain("512.0 B/s");
     expect(wrapper.text()).toContain("4.0 GiB");
-    expect(chart.get('path[fill="none"]').attributes("d")).not.toBe(path);
+    expect(chart.get(".traffic-chart__down").attributes("d")).not.toBe(path);
   });
 });

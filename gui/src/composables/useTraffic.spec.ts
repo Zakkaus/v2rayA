@@ -11,16 +11,16 @@ function message(n: number): TrafficMessage {
 }
 
 describe("traffic history", () => {
-  test("keeps the newest 60 rates in order across repeated wraps, padded to the minute", () => {
+  test("keeps the newest 30 rates in order across repeated wraps, padded to the window", () => {
     const traffic = createTraffic();
-    expect(traffic.upSeries.value).toEqual(new Array(60).fill(0));
+    expect(traffic.upSeries.value).toEqual(new Array(30).fill(0));
     for (let n = 1; n <= 125; n++) {
       traffic.feed(message(n));
       const expected = [
-        ...new Array(Math.max(0, 60 - n)).fill(0),
+        ...new Array(Math.max(0, 30 - n)).fill(0),
         ...Array.from(
-          { length: Math.min(n, 60) },
-          (_, i) => Math.max(1, n - 59) + i,
+          { length: Math.min(n, 30) },
+          (_, i) => Math.max(1, n - 29) + i,
         ),
       ];
       expect(traffic.upSeries.value).toEqual(expected);
@@ -36,8 +36,8 @@ describe("traffic history", () => {
     const traffic = createTraffic();
     for (let n = 1; n <= 65; n++) traffic.feed(message(n));
     traffic.reset();
-    expect(traffic.upSeries.value).toEqual(new Array(60).fill(0));
-    expect(traffic.downSeries.value).toEqual(new Array(60).fill(0));
+    expect(traffic.upSeries.value).toEqual(new Array(30).fill(0));
+    expect(traffic.downSeries.value).toEqual(new Array(30).fill(0));
     expect([
       traffic.up.value,
       traffic.down.value,
