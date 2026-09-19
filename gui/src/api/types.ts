@@ -67,6 +67,8 @@ export interface VersionResponse {
   lite: number;
   loadBalanceValid: boolean;
   variant: string;
+  /** the core binary's version; empty when it could not be asked */
+  coreVersion?: string;
   os: string;
   isRoot: boolean;
   tunSupported: boolean;
