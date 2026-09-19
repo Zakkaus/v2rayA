@@ -1,4 +1,23 @@
 export default {
+  onboarding: {
+    title: "Quick tutorial",
+    importTitle: "Import nodes",
+    importBody:
+      "Import a subscription URL or share link, or create a node manually.",
+    groupTitle: "Join a group",
+    groupBody:
+      "On the Proxies page, select nodes to add them to a group. With multiple nodes, the core picks the one with the lowest latency. You can also choose a single node.",
+    startTitle: "Start",
+    startBody:
+      "Start the core on the Dashboard. You can also switch transparent proxy, routing mode and LAN sharing there.",
+    newNode: "New node",
+    goToProxies: "Go to Proxies",
+    back: "Back",
+    next: "Next",
+    finish: "Get started",
+    viewTutorial: "View tutorial",
+    progress: "Step {current} of {total}",
+  },
   traffic: {
     upload: "Upload",
     download: "Download",

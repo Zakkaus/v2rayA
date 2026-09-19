@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
+import { useDialog } from "@/composables/useDialog";
+import OnboardingDialog from "@/dialogs/Onboarding.vue";
 import AboutView from "../AboutView.vue";
 
 defineOptions({ name: "AboutDialog" });
 const emit = defineEmits<{ close: [result?: boolean] }>();
 const { t } = useI18n();
+const { open } = useDialog();
 </script>
 
 <template>
@@ -18,6 +21,9 @@ const { t } = useI18n();
       <AboutView />
     </v-card-text>
     <v-card-actions class="px-6 pb-4">
+      <v-btn variant="text" @click="open(OnboardingDialog, {}, { width: 560 })">
+        {{ t("onboarding.viewTutorial") }}
+      </v-btn>
       <v-spacer />
       <v-btn variant="text" @click="emit('close')">
         {{ t("operations.close") }}
