@@ -15,7 +15,6 @@ const store = useAppStore();
     :model-value="store.view"
     :height="80"
     bg-color="surface-container"
-    mode="shift"
     class="bar"
     tag="nav"
     @update:model-value="
