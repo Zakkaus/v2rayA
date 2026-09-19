@@ -5,11 +5,15 @@
 // language and account menus; the core's state lives on the dashboard.
 import { useI18n } from "vue-i18n";
 import { destinations } from "./destinations";
+import { useDialog } from "@/composables";
+import AboutDialog from "@/views/settings/AboutDialog.vue";
 import { useAppStore } from "@/stores/app";
 import logo from "@/assets/img/v2raya-icon.svg";
 
 const { t } = useI18n();
 const store = useAppStore();
+const { open } = useDialog();
+const openAbout = () => open(AboutDialog, {}, { width: 640 });
 </script>
 
 <template>
@@ -31,9 +35,19 @@ const store = useAppStore();
       />
     </v-list>
     <template #append>
-      <p class="drawer__version md3-label-medium text-on-surface-variant">
-        v2rayA {{ store.version?.version ?? "" }}
-      </p>
+      <v-tooltip :text="t('common.about')" location="top">
+        <template #activator="{ props: tip }">
+          <v-btn
+            v-bind="tip"
+            variant="text"
+            size="small"
+            class="drawer__version text-none md3-label-medium"
+            @click="openAbout"
+          >
+            v2rayA {{ store.version?.version ?? "" }}
+          </v-btn>
+        </template>
+      </v-tooltip>
     </template>
   </v-navigation-drawer>
 </template>
@@ -46,8 +60,8 @@ const store = useAppStore();
   padding: 28px 28px 20px;
 }
 .drawer__version {
-  padding: 16px 28px 20px;
-  margin: 0;
+  margin: 12px 16px 16px;
+  color: rgb(var(--v-theme-outline));
 }
 .drawer__logo {
   width: 28px;
