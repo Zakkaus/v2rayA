@@ -96,6 +96,7 @@ export interface Ports {
   socks5WithPac: number;
   httpWithPac: number;
   vmess: number;
+  vmessLink?: string;
   api: { port: number; services: string[] };
 }
 
