@@ -4,7 +4,7 @@
 // indicator pill behind the active icon and the label under it).
 import { useI18n } from "vue-i18n";
 import { destinations } from "./destinations";
-import { useAppStore } from "@/stores/app";
+import { useAppStore, type View } from "@/stores/app";
 
 const { t } = useI18n();
 const store = useAppStore();
@@ -12,19 +12,24 @@ const store = useAppStore();
 
 <template>
   <v-bottom-navigation
+    :model-value="store.view"
     :height="80"
     bg-color="surface-container"
+    mode="shift"
     class="bar"
     tag="nav"
+    @update:model-value="
+      (v: unknown) => typeof v === 'string' && (store.view = v as View)
+    "
   >
-    <button
+    <v-btn
       v-for="d in destinations"
       :key="d.view"
-      type="button"
+      :value="d.view"
+      variant="text"
+      height="80"
       class="bar__item"
-      :class="{ 'bar__item--active': store.view === d.view }"
       :aria-current="store.view === d.view ? 'page' : undefined"
-      @click="store.view = d.view"
     >
       <span class="bar__indicator">
         <v-icon
@@ -32,32 +37,34 @@ const store = useAppStore();
           size="24"
         />
       </span>
-      <span class="md3-label-medium">{{ t(d.label) }}</span>
-    </button>
+      <span class="md3-label-medium bar__label">{{ t(d.label) }}</span>
+    </v-btn>
   </v-bottom-navigation>
 </template>
 
 <style scoped>
+/* Material's navigation bar item: a 64×32 pill indicator over the label,
+   drawn inside Vuetify's own button so the state layers and focus come
+   from the component */
 .bar :deep(.v-bottom-navigation__content) {
   display: flex;
   justify-content: space-evenly;
-  align-items: center;
-  padding: 12px 0 16px;
+  align-items: stretch;
 }
 .bar__item {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 0;
-  border: 0;
-  background: none;
+  min-width: 0;
   color: rgb(var(--v-theme-on-surface-variant));
-  cursor: pointer;
 }
-.bar__item--active {
+.bar__item :deep(.v-btn__content) {
+  flex-direction: column;
+  gap: 4px;
+}
+.bar__item.v-btn--active {
   color: rgb(var(--v-theme-on-surface));
+}
+.bar__item.v-btn--active :deep(.v-btn__overlay) {
+  opacity: 0;
 }
 .bar__indicator {
   width: 64px;
@@ -68,16 +75,12 @@ const store = useAppStore();
   justify-content: center;
   transition: background-color 200ms cubic-bezier(0.2, 0, 0, 1);
 }
-.bar__item:hover .bar__indicator {
-  background: rgba(var(--v-theme-on-surface), 0.08);
-}
-.bar__item--active .bar__indicator {
+.bar__item.v-btn--active .bar__indicator {
   background: rgb(var(--v-theme-secondary-container));
   color: rgb(var(--v-theme-on-secondary-container));
 }
-.bar__item:focus-visible {
-  outline: 2px solid rgb(var(--v-theme-primary));
-  outline-offset: -2px;
-  border-radius: 8px;
+.bar__label {
+  text-transform: none;
+  letter-spacing: 0.5px;
 }
 </style>

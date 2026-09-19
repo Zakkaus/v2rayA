@@ -3,7 +3,7 @@
 // primary, secondary, tertiary and neutral tonal palettes, and each role
 // is a fixed tone of one palette, in a light and a dark version. The
 // scheme is "tonal spot", Material's default. Only the seed is the user's
-// choice; success, warning and info are the interface's own fixed hues.
+// choice; success, warning and info are the primary, error and tertiary roles.
 import {
   argbFromHex,
   Hct,
@@ -64,15 +64,19 @@ const roles = {
   surfaceTint: "surface-tint",
 } as const;
 
-const fixed = {
-  light: { success: "#506da4", warning: "#dc8e47", info: "#4497a5" },
-  dark: { success: "#4fc3d9", warning: "#ffb300", info: "#4fc3d9" },
-  on: {
-    "on-success": "#ffffff",
-    "on-warning": "#ffffff",
-    "on-info": "#ffffff",
-  },
-};
+// Vuetify's success / warning / info keys, which v-alert's `type` uses,
+// follow the scheme: success is the primary, info the tertiary, warning
+// the error role, each with its "on" colour
+function statusColors(colors: Record<string, string>) {
+  return {
+    success: colors.primary,
+    "on-success": colors["on-primary"],
+    warning: colors.error,
+    "on-warning": colors["on-error"],
+    info: colors.tertiary,
+    "on-info": colors["on-tertiary"],
+  };
+}
 
 /** isSeed accepts a #rrggbb colour. */
 /** seedFromHue gives a vivid seed at a hue (0–360): HCT chroma 48, tone 60, as the theme builder's wheel does. */
@@ -125,9 +129,5 @@ export function schemeColors(seed: string, dark: boolean): SchemeColors {
     const color = MaterialDynamicColors[role as keyof typeof roles];
     colors[key] = hexFromArgb(color.getArgb(scheme));
   }
-  return {
-    ...colors,
-    ...fixed[dark ? "dark" : "light"],
-    ...fixed.on,
-  } as SchemeColors;
+  return { ...colors, ...statusColors(colors) } as SchemeColors;
 }
