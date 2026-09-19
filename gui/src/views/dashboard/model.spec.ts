@@ -287,9 +287,7 @@ describe("dashboard", () => {
       .mockResolvedValueOnce(pinned)
       .mockResolvedValueOnce(response());
     const picker = () =>
-      wrapper.getComponent(".dashboard-connection .v-select") as VueWrapper<{
-        $emit: (event: string, value: string) => void;
-      }>;
+      wrapper.getComponent(".dashboard-connection .v-select") as VueWrapper;
     const memberKey = (
       picker().props("items") as { value: string; title: string }[]
     ).find((item) => item.value !== "auto")!.value;
