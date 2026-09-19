@@ -58,8 +58,7 @@ async function remove(outbound: string) {
           <v-btn
             v-bind="{ ...menu, ...tip }"
             :icon="mdiSitemapOutline"
-            variant="tonal"
-            color="tertiary"
+            variant="text"
             :aria-label="t('common.proxyGroups')"
           />
         </template>

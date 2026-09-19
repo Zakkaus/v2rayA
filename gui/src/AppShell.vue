@@ -354,7 +354,8 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
         :color="statusColor"
         variant="tonal"
         :prepend-icon="mdiPower"
-        class="me-2 text-none"
+        height="40"
+        class="text-none"
         @mouseenter="hovering = true"
         @mouseleave="hovering = false"
         @click="toggleRunning"
@@ -363,7 +364,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
       </v-btn>
       <OutboundMenu
         :variant="compact ? 'icon' : 'chip'"
-        class="me-2"
+        :class="compact ? 'ms-1' : 'mx-2'"
         @changed="pageRef?.sync?.()"
       />
       <template #append>
