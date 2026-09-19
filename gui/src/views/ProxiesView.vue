@@ -141,7 +141,26 @@ onMounted(sync);
       </section>
       <section>
         <div class="proxies__row mb-3">
-          <h2 class="md3-title-medium ma-0">{{ t("common.nodes") }}</h2>
+          <h2 class="md3-title-medium ma-0 me-2">{{ t("common.nodes") }}</h2>
+          <v-select
+            v-model="source"
+            :items="sources"
+            :label="t('proxies.source')"
+            variant="outlined"
+            density="compact"
+            hide-details
+            class="proxies__source"
+          />
+          <v-chip
+            :model-value="true"
+            :aria-pressed="membersOnly"
+            variant="text"
+            :prepend-icon="membersOnly ? mdiCheck : undefined"
+            class="proxies__chip"
+            :class="{ 'proxies__chip--on': membersOnly }"
+            @click="membersOnly = !membersOnly"
+            >{{ t("proxies.membersOnly") }}</v-chip
+          >
           <v-spacer />
           <v-btn
             variant="tonal"
@@ -201,6 +220,12 @@ onMounted(sync);
             >{{ t("proxies.newGroup") }}</v-btn
           >
           <v-spacer />
+          <span
+            v-if="members.length >= 2 && mode === 'auto' && preferred"
+            class="md3-body-small text-on-surface-variant"
+            dir="auto"
+            >{{ t("proxies.inUse") }}: {{ preferred.name }}</span
+          >
           <v-menu>
             <template #activator="{ props: menu }">
               <v-chip
@@ -253,49 +278,6 @@ onMounted(sync);
               />
             </v-list>
           </v-menu>
-        </div>
-        <p
-          v-if="members.length >= 2 && (preferred || mode === 'manual')"
-          class="md3-body-small text-on-surface-variant mt-0 mb-3"
-          dir="auto"
-        >
-          <template v-if="mode === 'auto' && preferred"
-            >{{ t("proxies.inUse") }}: {{ preferred.name }}</template
-          >
-          <template v-else-if="!model.selectedMember.value"
-            >{{ t("proxies.chooseManually") }} ·
-            {{ t("proxies.useThis") }}</template
-          >
-        </p>
-        <div class="proxies__row mb-4">
-          <span class="proxies__label md3-label-large text-on-surface-variant">
-            {{ t("proxies.source") }}
-          </span>
-          <v-chip-group
-            v-model="source"
-            mandatory
-            selected-class="proxies__chip--on"
-          >
-            <v-chip
-              v-for="item in sources"
-              :key="item.value"
-              :value="item.value"
-              variant="text"
-              filter
-              class="proxies__chip"
-              >{{ item.title }}</v-chip
-            >
-          </v-chip-group>
-          <v-chip
-            :model-value="true"
-            :aria-pressed="membersOnly"
-            variant="text"
-            :prepend-icon="membersOnly ? mdiCheck : undefined"
-            class="proxies__chip"
-            :class="{ 'proxies__chip--on': membersOnly }"
-            @click="membersOnly = !membersOnly"
-            >{{ t("proxies.membersOnly") }}</v-chip
-          >
         </div>
         <v-empty-state
           v-if="!rows.length"
@@ -422,6 +404,10 @@ onMounted(sync);
 }
 .proxies__label {
   min-width: 40px;
+}
+.proxies__source {
+  max-width: 220px;
+  min-width: 160px;
 }
 /* choice chips without the outline: a quiet pill, tonal when chosen */
 .proxies__chip {
