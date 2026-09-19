@@ -29,7 +29,7 @@ const shown = computed({
     v-model="shown"
     :timeout="current.timeout || -1"
     :color="color"
-    location="top"
+    location="bottom"
     variant="flat"
     rounded="lg"
   >

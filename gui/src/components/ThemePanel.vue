@@ -98,8 +98,8 @@ const pickerOpen = ref(false);
           mode="hex"
           :modes="['hex']"
           elevation="0"
-          class="bg-transparent"
-          width="300"
+          class="bg-transparent mx-auto"
+          width="100%"
           canvas-height="120"
         />
       </div>
@@ -109,9 +109,18 @@ const pickerOpen = ref(false);
 
 <style scoped>
 .swatch__check {
+  position: relative;
   color: rgba(0, 0, 0, 0.72);
 }
 .swatch--custom {
+  position: relative;
+  overflow: hidden;
+}
+.swatch--custom::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
   background: conic-gradient(
     #f44336,
     #ff9800,
