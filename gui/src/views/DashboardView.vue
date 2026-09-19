@@ -140,6 +140,46 @@ defineExpose({ sync });
       <v-card
         color="surface-container-low"
         rounded="xl"
+        class="dashboard-wide pa-4"
+      >
+        <div class="d-flex align-center flex-wrap ga-2 mb-3">
+          <v-icon :icon="mdiChartLine" size="20" color="on-surface-variant" />
+          <h2 class="md3-title-small flex-grow-1">
+            {{ t("dashboard.networkSpeed") }}
+          </h2>
+          <div
+            class="d-flex flex-wrap ga-4 md3-label-large dashboard-figures"
+            dir="ltr"
+          >
+            <span
+              :aria-label="`${t('traffic.download')}: ${formatRate(traffic.down.value)}`"
+              >↓ {{ formatRate(traffic.down.value) }}</span
+            >
+            <span
+              :aria-label="`${t('traffic.upload')}: ${formatRate(traffic.up.value)}`"
+              >↑ {{ formatRate(traffic.up.value) }}</span
+            >
+          </div>
+        </div>
+        <div class="dashboard-chart">
+          <TrafficChart
+            :down="traffic.downSeries.value"
+            :up="traffic.upSeries.value"
+          />
+        </div>
+        <p
+          class="md3-body-small text-on-surface-variant dashboard-figures mt-2 mb-0"
+          dir="ltr"
+        >
+          {{ t("dashboard.trafficUsage") }}: ↓
+          {{ formatBytes(traffic.downTotal.value) }} ↑
+          {{ formatBytes(traffic.upTotal.value) }}
+        </p>
+      </v-card>
+
+      <v-card
+        color="surface-container-low"
+        rounded="xl"
         class="dashboard-status pa-4"
       >
         <div class="d-flex align-center ga-2 mb-3">
@@ -176,46 +216,6 @@ defineExpose({ sync });
             t("common.log")
           }}</v-btn>
         </div>
-      </v-card>
-
-      <v-card
-        color="surface-container-low"
-        rounded="xl"
-        class="dashboard-wide pa-4"
-      >
-        <div class="d-flex align-center flex-wrap ga-2 mb-3">
-          <v-icon :icon="mdiChartLine" size="20" color="on-surface-variant" />
-          <h2 class="md3-title-small flex-grow-1">
-            {{ t("dashboard.networkSpeed") }}
-          </h2>
-          <div
-            class="d-flex flex-wrap ga-4 md3-label-large dashboard-figures"
-            dir="ltr"
-          >
-            <span
-              :aria-label="`${t('traffic.download')}: ${formatRate(traffic.down.value)}`"
-              >↓ {{ formatRate(traffic.down.value) }}</span
-            >
-            <span
-              :aria-label="`${t('traffic.upload')}: ${formatRate(traffic.up.value)}`"
-              >↑ {{ formatRate(traffic.up.value) }}</span
-            >
-          </div>
-        </div>
-        <div class="dashboard-chart">
-          <TrafficChart
-            :down="traffic.downSeries.value"
-            :up="traffic.upSeries.value"
-          />
-        </div>
-        <p
-          class="md3-body-small text-on-surface-variant dashboard-figures mt-2 mb-0"
-          dir="ltr"
-        >
-          {{ t("dashboard.trafficUsage") }}: ↓
-          {{ formatBytes(traffic.downTotal.value) }} ↑
-          {{ formatBytes(traffic.upTotal.value) }}
-        </p>
       </v-card>
 
       <v-card

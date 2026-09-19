@@ -83,7 +83,9 @@ const vuetifyLocale = useLocale();
 // Material's window size classes: compact < 600, medium < 840, expanded
 const { width } = useDisplay();
 const compact = computed(() => width.value < 600);
-const expanded = computed(() => width.value >= 840);
+// Material's window classes: compact < 600 (bottom bar), medium and
+// expanded < 1200 (rail with an app bar), large ≥ 1200 (standard drawer)
+const expanded = computed(() => width.value >= 1200);
 const pageTitle = computed(() =>
   t(destinations.find((d) => d.view === store.view)?.label ?? "common.about"),
 );
