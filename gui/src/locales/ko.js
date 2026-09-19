@@ -1,5 +1,6 @@
 export default {
   common: {
+    selectedCount: "{n}개 선택됨",
     nodes: "노드",
     menu: "메뉴",
     outboundSetting: "프록시 그룹 설정",

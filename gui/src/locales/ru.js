@@ -1,5 +1,6 @@
 export default {
   common: {
+    selectedCount: "Выбрано: {n}",
     nodes: "Узлы",
     menu: "Меню",
     outboundSetting: "Настройка группы прокси",

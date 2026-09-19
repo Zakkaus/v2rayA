@@ -1,5 +1,6 @@
 export default {
   common: {
+    selectedCount: "{n} selected",
     nodes: "Nodes",
     menu: "Menu",
     outboundSetting: "Proxy Group Setting",

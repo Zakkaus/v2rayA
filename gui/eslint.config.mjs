@@ -62,6 +62,8 @@ export default defineConfigWithVueTs(
       "no-console": "off",
       "no-debugger": "off",
       "@typescript-eslint/no-explicit-any": "warn",
+      // Vuetify names table cell slots item.<column>
+      "vue/valid-v-slot": ["error", { allowModifiers: true }],
     },
   },
   {

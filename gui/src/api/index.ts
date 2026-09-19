@@ -48,7 +48,7 @@ export const getSharingAddress = (touch: Which) =>
     params: { touch },
   });
 export const putSubscription = (which: Which) =>
-  call<TouchResponse>({ url: "subscription", method: "put", data: { which } });
+  call<TouchResponse>({ url: "subscription", method: "put", data: which });
 export const patchSubscription = (body: Record<string, unknown>) =>
   call<TouchResponse>({ url: "subscription", method: "patch", data: body });
 export const getPingLatency = (whiches: Which[]) =>

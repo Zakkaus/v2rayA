@@ -1,5 +1,6 @@
 export default {
   common: {
+    selectedCount: "已选 {n} 项",
     nodes: "节点",
     menu: "菜单",
     outboundSetting: "代理分组设置",

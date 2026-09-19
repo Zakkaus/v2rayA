@@ -1,5 +1,6 @@
 export default {
   common: {
+    selectedCount: "{n} selecionados",
     nodes: "Nós",
     menu: "Menu",
     outboundSetting: "Configuração do grupo de proxy",

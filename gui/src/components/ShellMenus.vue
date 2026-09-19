@@ -50,7 +50,7 @@ function logout() {
         rounded="xl"
       />
     </template>
-    <v-card min-width="340" rounded="lg">
+    <v-card min-width="340">
       <ThemePanel />
     </v-card>
   </v-menu>
@@ -73,7 +73,7 @@ function logout() {
         rounded="xl"
       />
     </template>
-    <v-list density="compact" min-width="220" rounded="lg">
+    <v-list density="compact" min-width="220">
       <v-list-item
         v-for="lang in languages"
         :key="lang.code"
@@ -103,7 +103,7 @@ function logout() {
         rounded="xl"
       />
     </template>
-    <v-list density="compact" min-width="240" rounded="lg">
+    <v-list density="compact" min-width="240">
       <v-list-item disabled>
         <v-list-item-title class="md3-body-medium">
           <i18n-t keypath="common.loggedAs" tag="span" scope="global">

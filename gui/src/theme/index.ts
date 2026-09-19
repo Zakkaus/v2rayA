@@ -54,6 +54,13 @@ export const vuetify = createVuetify({
     VBtn: { variant: "flat" },
     VCard: { elevation: 0, rounded: "lg" },
     VDialog: { scrim: "on-surface" },
+    // Material's menu: surface-container at elevation 2, 8 dp from its anchor
+    VMenu: {
+      offset: 8,
+      VList: { bgColor: "surface-container", elevation: 2, rounded: "lg" },
+      VCard: { color: "surface-container", elevation: 2, rounded: "lg" },
+    },
+    VTooltip: { location: "top" },
     VTextField: { variant: "outlined", density: "comfortable" },
     VSelect: { variant: "outlined", density: "comfortable" },
     VCombobox: { variant: "outlined", density: "comfortable" },

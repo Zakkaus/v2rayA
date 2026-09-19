@@ -1,5 +1,6 @@
 export default {
   common: {
+    selectedCount: "{n} مورد انتخاب شد",
     nodes: "گره‌ها",
     menu: "منو",
     outboundSetting: "تنظیمات گروه پروکسی",

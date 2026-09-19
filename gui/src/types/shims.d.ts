@@ -37,3 +37,23 @@ declare module "@/assets/js/utils" {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   export function locateServer(touch: any, which: any): any;
 }
+
+// qrcode ships no types; the two calls the sharing dialog makes.
+declare module "qrcode" {
+  const QRCode: {
+    toCanvas(
+      canvas: HTMLCanvasElement,
+      text: string,
+      options: { errorCorrectionLevel?: string; width?: number },
+      callback: (error: Error | null | undefined) => void,
+    ): void;
+  };
+  export default QRCode;
+}
+
+// @nuintun/qrcode has types its package exports do not expose.
+declare module "@nuintun/qrcode" {
+  export class Decoder {
+    scan(dataUrl: string): Promise<{ data: string }>;
+  }
+}

@@ -15,7 +15,7 @@ export interface Which {
   outbound?: string;
 }
 
-/** touch.Server */
+/** touch.Server; `sub` and `connected` are the page's own marks on a row */
 export interface TouchServer {
   id: number;
   _type: TouchType;
@@ -23,6 +23,8 @@ export interface TouchServer {
   address: string;
   net: string;
   pingLatency: string;
+  sub?: number;
+  connected?: boolean;
 }
 
 /** touch.Subscription */
@@ -114,8 +116,17 @@ export interface RunningStateMessage {
   type: "running_state";
   body: { running: boolean; networkPaused?: boolean };
 }
+/** kernel/v2ray OutboundStatus: what the core's observatory saw of one connected node */
+export interface OutboundStatus {
+  alive: boolean;
+  delay: number;
+  outbound_tag: string;
+  which: Which;
+  last_seen_time: number;
+  last_try_time: number;
+}
 export interface ObservatoryMessage {
   type: "observatory";
-  body: { outboundName: string } & Record<string, unknown>;
+  body: { outboundName: string; outboundStatus: OutboundStatus[] };
 }
 export type WsMessage = { type: string; body?: unknown };

@@ -17,14 +17,15 @@ const store = useAppStore();
 <template>
   <v-navigation-drawer permanent :width="256" color="surface" class="drawer">
     <div class="drawer__brand">
+      <img :src="logo" alt="" class="drawer__logo" />
+      <span class="md3-title-large">v2rayA</span>
+      <v-spacer />
       <v-btn
         :icon="mdiMenuOpen"
         variant="text"
         :aria-label="t('common.menu')"
         @click="store.setNavCollapsed(true)"
       />
-      <img :src="logo" alt="" class="drawer__logo" />
-      <span class="md3-title-large">v2rayA</span>
     </div>
     <v-list nav density="default" class="px-3 py-0">
       <v-list-item
@@ -56,8 +57,8 @@ const store = useAppStore();
 .drawer__brand {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 12px 12px 8px;
+  gap: 12px;
+  padding: 12px 8px 12px 28px;
 }
 .drawer__logo {
   width: 28px;

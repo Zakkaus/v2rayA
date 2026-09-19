@@ -6,9 +6,7 @@
 // and the loading overlay. The shell also runs the session: it is the
 // starter resetSession() calls.
 //
-// Coexistence period: the node list and the address dialog are still the
-// old Buefy ones; the node list reports the core's state as translated
-// text, which the bridge below turns into the store's enum.
+// Coexistence period: the address dialog is still the old Buefy one.
 import {
   computed,
   onBeforeUnmount,
@@ -20,7 +18,7 @@ import {
 import { useI18n } from "vue-i18n";
 import { useDisplay, useLocale, useTheme } from "vuetify";
 import dayjs from "dayjs";
-import { mdiPower, mdiSitemapOutline } from "@mdi/js";
+import { mdiPower } from "@mdi/js";
 import {
   deleteV2ray,
   getAccount,
@@ -61,14 +59,13 @@ import { useAppStore, type Running } from "@/stores/app";
 import { vuetifyLocales } from "@/theme";
 import { schemeColors } from "@/theme/scheme";
 import logo from "@/assets/img/v2raya-icon.svg";
-// the old page's pieces, replaced view by view
-import NodeList from "@/node.vue";
+// the address dialog is still the old one
 import OutboundMenu from "@/components/OutboundMenu.vue";
 import ModalCustomPorts from "@/components/modalCustomPorts.vue";
 import AboutView from "@/views/AboutView.vue";
 import LogsView from "@/views/LogsView.vue";
+import NodesView from "@/views/NodesView.vue";
 import SettingsView from "@/views/SettingsView.vue";
-import vuex from "@/store";
 
 const store = useAppStore();
 const { t, locale } = useI18n();
@@ -83,31 +80,12 @@ const pageTitle = computed(() =>
   t(destinations.find((d) => d.view === store.view)?.label ?? "common.nodes"),
 );
 
-// ---- the old node list -------------------------------------------------------
+// ---- the node page ----------------------------------------------------------------
 
-interface NodeListInstance {
-  syncLatestNodeOverview(showError?: boolean): Promise<boolean>;
-  notifyRunning(networkPaused?: boolean): void;
-  notifyStopped(networkPaused?: boolean): void;
-}
-interface NodeState {
-  running: string;
-  networkPaused: boolean;
-  connectedServer: Which[] | null;
-}
-const nodeRef = ref<NodeListInstance | null>(null);
-// a new session gets a new node list, as the old root rebuild gave it
+const nodesRef = ref<{ sync(): Promise<void> } | null>(null);
+// a new session gets a new node page
 const sessionSerial = ref(0);
-// the object node.vue reports its state in and watches; the start/stop
-// handlers write into it, as the old App.vue did
-let nodeState: NodeState | null = null;
 
-function runningOf(label: string): Running {
-  if (label === t("common.isRunning")) return "running";
-  if (label === t("common.notRunning")) return "stopped";
-  if (label === t("common.waitingNetwork")) return "paused";
-  return "checking";
-}
 function labelOf(running: Running): string {
   return t(
     {
@@ -118,29 +96,6 @@ function labelOf(running: Running): string {
     }[running],
   );
 }
-function onNodeState(state: NodeState) {
-  nodeState = state;
-  store.setRunning(runningOf(state.running), state.networkPaused);
-  store.connectedServer = state.connectedServer ?? [];
-}
-function pushRunning(running: Running, connectedServer: Which[] | null) {
-  if (nodeState)
-    Object.assign(nodeState, {
-      running: labelOf(running),
-      networkPaused: false,
-      connectedServer,
-    });
-  store.setRunning(running);
-  store.connectedServer = connectedServer ?? [];
-}
-// the old settings dialogs commit the state as text into the Vuex store
-vuex.watch(
-  (s: { running: string }) => s.running,
-  (label: string) => {
-    if (nodeState) nodeState.running = label;
-    store.setRunning(runningOf(label), store.networkPaused);
-  },
-);
 
 // ---- the session -------------------------------------------------------------
 
@@ -221,8 +176,10 @@ function onMessage(msg: WsMessage) {
     const { body } = msg as RunningStateMessage;
     if (!body) return;
     const paused = !!body.networkPaused;
-    if (body.running === false) nodeRef.value?.notifyStopped(paused);
-    else nodeRef.value?.notifyRunning(paused);
+    store.setRunning(
+      paused ? "paused" : body.running ? "running" : "stopped",
+      paused,
+    );
   }
 }
 
@@ -245,7 +202,7 @@ async function startSession() {
   const socket = createMessageSocket({
     onMessage,
     // messages are not replayed: every open re-syncs the state
-    onOpen: () => void nodeRef.value?.syncLatestNodeOverview(),
+    onOpen: () => void nodesRef.value?.sync(),
   });
   onSessionTeardown(() => socket.stop());
   socket.start();
@@ -298,8 +255,11 @@ async function toggleRunning() {
             ),
         },
       );
-      if (res) pushRunning("running", res.touch.connectedServer);
-      else void nodeRef.value?.syncLatestNodeOverview();
+      if (res) {
+        store.setRunning("running");
+        store.connectedServer = res.touch.connectedServer ?? [];
+      }
+      void nodesRef.value?.sync();
     } catch (err) {
       notify.warning(t("v2ray.startFailed", { message: errorText(err) }));
     } finally {
@@ -308,7 +268,9 @@ async function toggleRunning() {
   } else if (store.running === "running") {
     try {
       const res = await deleteV2ray();
-      pushRunning("stopped", res.touch.connectedServer);
+      store.setRunning("stopped");
+      store.connectedServer = res.touch.connectedServer ?? [];
+      void nodesRef.value?.sync();
     } catch (err) {
       notify.warning(t("v2ray.stopFailed", { message: errorText(err) }));
     }
@@ -346,9 +308,6 @@ watch(
     dayjs.locale(languages.find((l) => l.flag === flag)?.dayjs ?? flag);
     document.documentElement.lang = flag;
     document.documentElement.dir = vuetifyLocale.isRtl.value ? "rtl" : "ltr";
-    // the old node list keeps the state as text of the language it was
-    // read in; a re-sync reads it again
-    void nodeRef.value?.syncLatestNodeOverview();
   },
   { immediate: true },
 );
@@ -390,10 +349,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
         </v-list-item>
       </template>
       <template #groups>
-        <OutboundMenu
-          variant="list"
-          @changed="nodeRef?.syncLatestNodeOverview()"
-        />
+        <OutboundMenu variant="list" @changed="nodesRef?.sync()" />
       </template>
     </NavDrawer>
     <NavRail v-else-if="!compact" :collapsible="expanded">
@@ -410,21 +366,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
             />
           </template>
         </v-tooltip>
-        <v-tooltip
-          :text="`${t('common.proxyGroups')}: ${store.outboundName.toUpperCase()}`"
-          location="end"
-        >
-          <template #activator="{ props: tip }">
-            <v-btn
-              v-bind="tip"
-              :icon="mdiSitemapOutline"
-              variant="tonal"
-              color="tertiary"
-              :aria-label="t('common.proxyGroups')"
-              @click="store.setNavCollapsed(false)"
-            />
-          </template>
-        </v-tooltip>
+        <OutboundMenu variant="icon" @changed="nodesRef?.sync()" />
       </template>
     </NavRail>
 
@@ -454,42 +396,30 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
       >
         {{ statusText }}
       </v-chip>
-      <OutboundMenu
-        v-if="!compact"
-        class="me-3"
-        @changed="nodeRef?.syncLatestNodeOverview()"
-      />
+      <OutboundMenu v-if="!compact" class="me-3" @changed="nodesRef?.sync()" />
       <template #append>
         <ShellMenus variant="icons" />
       </template>
     </v-app-bar>
+
+    <NavBar v-if="compact" />
 
     <v-main>
       <div class="page" :class="{ 'page--wide': store.view === 'nodes' }">
         <h1 v-if="expanded" class="md3-headline-medium page__title">
           {{ pageTitle }}
         </h1>
-        <div v-show="store.view === 'nodes'">
-          <NodeList
-            v-if="store.loggedIn"
-            ref="nodeRef"
-            :key="sessionSerial"
-            :outbound="store.outboundName"
-            :outbounds="store.outbounds"
-            :observatory="store.observatory ?? undefined"
-            :load-balance-valid="store.loadBalanceValid"
-            :core-version-valid="store.coreVersionValid"
-            :core-version-err="store.coreVersionErr"
-            @input="onNodeState"
-          />
-        </div>
+        <NodesView
+          v-if="store.loggedIn"
+          v-show="store.view === 'nodes'"
+          ref="nodesRef"
+          :key="sessionSerial"
+        />
         <SettingsView v-if="store.view === 'settings'" />
         <LogsView v-else-if="store.view === 'logs'" />
         <AboutView v-else-if="store.view === 'about'" />
       </div>
     </v-main>
-
-    <NavBar v-if="compact" />
 
     <NoticeHost />
     <DialogHost />

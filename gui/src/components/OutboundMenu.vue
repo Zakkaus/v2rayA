@@ -17,8 +17,8 @@ import { useConfirm, useNotify, usePrompt } from "@/composables";
 import { useAppStore } from "@/stores/app";
 
 defineProps<{
-  /** list item in the drawer instead of a chip */
-  variant?: "chip" | "list";
+  /** a list item in the drawer, an icon button in the rail, else a chip */
+  variant?: "chip" | "list" | "icon";
 }>();
 const emit = defineEmits<{ changed: [] }>();
 const { t } = useI18n();
@@ -82,6 +82,21 @@ async function remove(outbound: string) {
         :subtitle="store.outboundName.toUpperCase()"
         rounded="xl"
       />
+      <v-tooltip
+        v-else-if="variant === 'icon'"
+        :text="`${t('common.proxyGroups')}: ${store.outboundName.toUpperCase()}`"
+        location="end"
+      >
+        <template #activator="{ props: tip }">
+          <v-btn
+            v-bind="{ ...menu, ...tip }"
+            :icon="mdiSitemapOutline"
+            variant="tonal"
+            color="tertiary"
+            :aria-label="t('common.proxyGroups')"
+          />
+        </template>
+      </v-tooltip>
       <v-chip
         v-else
         v-bind="menu"
@@ -94,7 +109,7 @@ async function remove(outbound: string) {
         {{ store.outboundName.toUpperCase() }}
       </v-chip>
     </template>
-    <v-list density="compact" min-width="240" rounded="lg">
+    <v-list density="compact" min-width="240">
       <v-list-subheader>{{ t("common.proxyGroups") }}</v-list-subheader>
       <v-list-item
         v-for="outbound in store.outbounds"
