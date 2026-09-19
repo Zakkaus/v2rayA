@@ -167,10 +167,11 @@ describe("outbound group cards", () => {
       { id: 1, _type: "subscriptionServer", sub: 0 },
     ]);
     await proxies.connectGroup("media");
-    expect(api.postConnection).toHaveBeenCalledWith(
-      { id: 1, _type: "subscriptionServer", sub: 0, outbound: "media" },
-      expect.anything(),
-    );
+    // connectFastest makes the group hold only its fastest member
+    expect(api.putOutboundConnections).toHaveBeenCalledWith({
+      outbound: "media",
+      touches: [{ _type: "subscriptionServer", id: 1, sub: 0 }],
+    });
     await proxies.toggleGroup(proxies.nodes.touch.value.servers[0], "media");
     expect(proxies.tested.value.has("media")).toBe(false);
   });

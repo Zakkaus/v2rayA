@@ -80,8 +80,8 @@ export function compareConnection(a: Row, b: Row, asc = true): number {
 }
 
 export function filterRows(rows: Row[], query: string): Row[] {
-  if (!query) return rows;
-  const search = query.toLowerCase();
+  const search = query.trim().toLowerCase();
+  if (!search) return rows;
   return rows.filter(
     (row) =>
       row.name.toLowerCase().includes(search) ||
