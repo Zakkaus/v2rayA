@@ -138,6 +138,7 @@ export default {
     saveFailed: "구독 저장 실패: {message}",
   },
   operations: {
+    refresh: "새로 고침",
     yes: "예",
     no: "아니요",
     name: "작업",

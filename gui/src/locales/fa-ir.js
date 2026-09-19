@@ -139,6 +139,7 @@ export default {
     saveFailed: "ذخیره اشتراک ناموفق بود: {message}",
   },
   operations: {
+    refresh: "تازه‌سازی",
     yes: "بله",
     no: "خیر",
     name: "عملیات",

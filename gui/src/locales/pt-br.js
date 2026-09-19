@@ -140,6 +140,7 @@ export default {
     saveFailed: "Falha ao salvar a assinatura: {message}",
   },
   operations: {
+    refresh: "Atualizar",
     yes: "Sim",
     no: "Não",
     name: "Operações",

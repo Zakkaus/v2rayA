@@ -1,4 +1,6 @@
 import { reactive, readonly } from "vue";
+import i18n from "@/plugins/i18n";
+import { refresh } from "@/session/refresh";
 
 // Notices show one at a time, in order — the old GUI's defaultNoticeQueue:
 // a failing action clicked five times shows one toast, not a stack. Text
@@ -24,6 +26,13 @@ function advance() {
   state.current = state.queue.shift() ?? null;
 }
 
+/** a notice saying the backend is still busy offers a refresh, so nobody has to guess */
+function refreshActionFor(text: string): Notice["action"] | undefined {
+  const busy = i18n.global.t("backend.REQUEST_IN_PROGRESS");
+  if (!busy || !text.includes(busy)) return undefined;
+  return { label: i18n.global.t("operations.refresh"), onClick: refresh };
+}
+
 function push(
   kind: NoticeKind,
   text: string,
@@ -34,7 +43,7 @@ function push(
     kind,
     text,
     timeout: options.timeout ?? (kind === "error" ? 8000 : 4000),
-    action: options.action,
+    action: options.action ?? refreshActionFor(text),
   };
   state.queue.push(notice);
   if (!state.current) advance();

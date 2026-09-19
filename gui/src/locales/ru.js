@@ -139,6 +139,7 @@ export default {
     saveFailed: "Не удалось сохранить подписку: {message}",
   },
   operations: {
+    refresh: "Обновить",
     yes: "Да",
     no: "Нет",
     name: "Операции",

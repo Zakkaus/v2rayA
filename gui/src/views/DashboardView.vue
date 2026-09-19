@@ -208,42 +208,35 @@ function pick(value: string) {
             <p class="md3-title-medium mb-2 dashboard-wrap" dir="auto">
               {{ nodeInUse.row.name || nodeInUse.row.address }}
             </p>
-            <div class="d-flex align-center flex-wrap ga-2 mb-4">
-              <span class="md3-body-medium text-on-surface-variant" dir="ltr"
-                >{{ nodeInUse.row.net }} · {{ nodeInUse.latency }}</span
+            <p class="md3-body-medium text-on-surface-variant mb-3" dir="ltr">
+              {{ nodeInUse.row.net }} · {{ nodeInUse.latency }}
+              <template v-if="nodeInUse.which.selected">
+                · {{ t("dashboard.pinned") }}</template
               >
-              <v-chip
-                v-if="nodeInUse.which.selected"
-                size="small"
-                variant="tonal"
-                >{{ t("dashboard.pinned") }}</v-chip
+              <template v-else-if="members.length >= 2">
+                · {{ t("dashboard.balanced", { n: members.length }) }}</template
               >
-              <v-chip
-                v-else-if="members.length >= 2"
-                size="small"
-                variant="tonal"
-                >{{ t("dashboard.balanced", { n: members.length }) }}</v-chip
-              >
-            </div>
+            </p>
           </template>
-          <p v-else class="md3-body-medium text-on-surface-variant mb-4">
+          <p v-else class="md3-body-medium text-on-surface-variant mb-3">
             {{ t("dashboard.balanced", { n: members.length }) }}
           </p>
-          <v-select
-            :model-value="selectionValue"
-            :items="selectionItems"
-            :label="t('dashboard.switchNode')"
-            variant="outlined"
-            density="compact"
-            hide-details
-            :disabled="selecting"
-            @update:model-value="pick"
-          >
-            <template #item="{ props: item }">
-              <v-list-item v-bind="item" />
-            </template>
-          </v-select>
-          <div class="d-flex justify-end mt-2">
+          <div class="d-flex align-center ga-2">
+            <v-select
+              :model-value="selectionValue"
+              :items="selectionItems"
+              :label="t('dashboard.switchNode')"
+              variant="outlined"
+              density="compact"
+              hide-details
+              :disabled="selecting"
+              class="flex-grow-1"
+              @update:model-value="pick"
+            >
+              <template #item="{ props: item }">
+                <v-list-item v-bind="item" />
+              </template>
+            </v-select>
             <v-btn variant="text" @click="editGroup">{{
               t("dashboard.editGroup")
             }}</v-btn>

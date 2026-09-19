@@ -136,6 +136,7 @@ export default {
     saveFailed: "无法保存订阅：{message}",
   },
   operations: {
+    refresh: "刷新",
     yes: "是",
     no: "否",
     tproxyWhiteIpGroups: "直通白名单IP组",

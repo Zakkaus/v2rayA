@@ -140,6 +140,7 @@ export default {
     saveFailed: "Failed to save subscription: {message}",
   },
   operations: {
+    refresh: "Refresh",
     yes: "Yes",
     no: "No",
     name: "Operations",

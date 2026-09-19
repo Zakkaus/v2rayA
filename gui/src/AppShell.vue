@@ -59,6 +59,7 @@ import OnboardingDialog, {
   shouldShowOnboarding,
 } from "@/dialogs/Onboarding.vue";
 import { onSessionTeardown, resetSession, setSessionStarter } from "@/session";
+import { setRefresher } from "@/session/refresh";
 import { useAppStore, type Running } from "@/stores/app";
 import { vuetifyLocales } from "@/theme";
 import { schemeColors } from "@/theme/scheme";
@@ -236,6 +237,7 @@ async function startSession() {
 }
 
 setSessionStarter(startSession);
+setRefresher(() => pageRef.value?.sync?.());
 installClientHooks({ openAddressDialog: openPorts });
 
 // ---- the core's state ---------------------------------------------------------
