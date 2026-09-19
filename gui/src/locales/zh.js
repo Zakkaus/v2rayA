@@ -163,6 +163,12 @@ export default {
     checkFailed: "连接状态检测失败：{message}",
   },
   setting: {
+    sections: {
+      proxy: "代理",
+      traffic: "流量分流",
+      core: "内核",
+      more: "更多",
+    },
     inboundSniffing: "嗅探",
     transparentProxy: "透明代理/系统代理",
     transparentType: "透明代理/系统代理实现方式",

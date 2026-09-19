@@ -163,6 +163,12 @@ export default {
     checkFailed: "Не удалось проверить соединение: {message}",
   },
   setting: {
+    sections: {
+      proxy: "Прокси",
+      traffic: "Разделение трафика",
+      core: "Ядро",
+      more: "Ещё",
+    },
     transparentProxy: "Прозрачный прокси/системный прокси",
     transparentType: "Реализация прозрачного прокси/системного прокси",
     logLevel: "Уровень журнала",

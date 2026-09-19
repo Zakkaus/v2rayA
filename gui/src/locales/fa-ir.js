@@ -163,6 +163,12 @@ export default {
     checkFailed: "بررسی اتصال ناموفق بود: {message}",
   },
   setting: {
+    sections: {
+      proxy: "پروکسی",
+      traffic: "تفکیک ترافیک",
+      core: "هسته",
+      more: "بیشتر",
+    },
     transparentProxy: "پروکسی شفاف/پروکسی سیستم",
     transparentType: "پیاده‌سازی پروکسی شفاف/پروکسی سیستم",
     logLevel: "سطح گزارش‌گیری",

@@ -1,19 +1,8 @@
 <script setup lang="ts">
-// The settings page: the proxy (mode, implementation and what each
-// needs), traffic splitting and the lists it updates, the core's
-// options, and the dialogs for the rest — in panes, with one save.
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useDisplay } from "vuetify";
 import dayjs from "dayjs";
-import {
-  mdiCogOutline,
-  mdiDnsOutline,
-  mdiFileDocumentEditOutline,
-  mdiHelpCircleOutline,
-  mdiLanPending,
-  mdiOpenInNew,
-  mdiRefresh,
-} from "@mdi/js";
 import { errorText } from "@/api/errors";
 import { useDialog, useNotify } from "@/composables";
 import CustomInboundDialog from "@/dialogs/settings/CustomInbound.vue";
@@ -29,9 +18,14 @@ import TunRouteScriptDialog, {
 } from "@/dialogs/settings/TunRouteScript.vue";
 import { useAppStore } from "@/stores/app";
 import { useSettings } from "./settings/model";
+import AboutDialog from "./settings/AboutDialog.vue";
+import SettingChoice from "./settings/SettingChoice.vue";
+import SettingRow from "./settings/SettingRow.vue";
 
 defineOptions({ name: "SettingsView" });
 const { t } = useI18n();
+const { width } = useDisplay();
+const compact = computed(() => width.value < 600);
 const store = useAppStore();
 const notify = useNotify();
 const { open } = useDialog();
@@ -201,6 +195,7 @@ const openRoutingA = () => open(RoutingADialog, {}, { width: 720 });
 const openDns = () => open(DnsDialog, {}, { width: 640 });
 const openPorts = () => open(PortsDialog, {}, { width: 520 });
 const openInbounds = () => open(CustomInboundDialog, {}, { width: 640 });
+const openAbout = () => open(AboutDialog, {}, { width: 840 });
 
 async function save() {
   const check = await formRef.value?.validate();
@@ -221,357 +216,326 @@ async function save() {
   <v-form ref="formRef" class="settings" @submit.prevent="save">
     <v-skeleton-loader
       v-if="!ready"
-      type="article, article"
+      type="list-item-two-line@6"
       class="bg-transparent"
     />
     <template v-else>
-      <!-- the proxy -->
-      <v-sheet
-        color="surface-container-low"
-        rounded="xl"
-        class="pa-5 pa-sm-6 mb-4"
-      >
-        <div class="d-flex align-center ga-2 mb-4">
-          <h2 class="md3-title-medium">{{ t("setting.transparentProxy") }}</h2>
-          <v-tooltip
-            :text="t('setting.messages.transparentProxy')"
-            max-width="360"
+      <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">
+        <v-list-subheader>{{ t("setting.sections.proxy") }}</v-list-subheader>
+        <SettingChoice
+          v-model="form.transparent"
+          :title="t('setting.transparentProxy')"
+          :hint="t('setting.messages.transparentProxy')"
+          :items="transparentModes"
+        />
+        <v-expand-transition>
+          <SettingChoice
+            v-if="transparentOn"
+            v-model="form.transparentType"
+            :title="t('setting.transparentType')"
+            :hint="t('setting.messages.transparentType')"
+            :items="transparentTypes"
+          />
+        </v-expand-transition>
+        <SettingRow v-if="!store.lite" :title="t('setting.ipForwardOn')">
+          <v-switch
+            v-model="form.ipforward"
+            :aria-label="t('setting.ipForwardOn')"
+            hide-details
+          />
+        </SettingRow>
+        <SettingRow :title="t('setting.portSharingOn')">
+          <v-switch
+            v-model="form.portSharing"
+            :aria-label="t('setting.portSharingOn')"
+            hide-details
+          />
+        </SettingRow>
+        <v-expand-transition>
+          <SettingRow
+            v-if="usesTproxy"
+            :title="t('setting.tproxyExcludedInterfaces')"
+            :hint="t('setting.messages.tproxyExcludedInterfaces')"
           >
-            <template #activator="{ props: tip }">
-              <v-icon
-                v-bind="tip"
-                :icon="mdiHelpCircleOutline"
-                size="18"
-                class="text-on-surface-variant"
-              />
-            </template>
-          </v-tooltip>
-        </div>
-        <v-row dense>
-          <v-col cols="12" md="6">
-            <v-select
-              v-model="form.transparent"
-              :items="transparentModes"
-              :label="t('setting.transparentProxy')"
-            />
-          </v-col>
-          <v-col v-if="transparentOn" cols="12" md="6">
-            <v-select
-              v-model="form.transparentType"
-              :items="transparentTypes"
-              item-props
-              :label="t('setting.transparentType')"
-              :hint="t('setting.messages.transparentType')"
-            />
-          </v-col>
-          <v-col v-if="!store.lite" cols="12" sm="6">
-            <v-switch
-              v-model="form.ipforward"
-              :label="t('setting.ipForwardOn')"
-              hide-details
-            />
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-switch
-              v-model="form.portSharing"
-              :label="t('setting.portSharingOn')"
-              hide-details
-            />
-          </v-col>
-          <v-col v-if="usesTproxy" cols="12" md="6">
             <v-text-field
               v-model="form.tproxyExcludedInterfaces"
-              :label="t('setting.tproxyExcludedInterfaces')"
+              class="settings__interfaces"
+              :aria-label="t('setting.tproxyExcludedInterfaces')"
               :placeholder="t('setting.tproxyExcludedInterfacesPlaceholder')"
-              :hint="t('setting.messages.tproxyExcludedInterfaces')"
+              hide-details="auto"
               dir="ltr"
             />
-          </v-col>
-          <v-col
+          </SettingRow>
+        </v-expand-transition>
+        <v-expand-transition>
+          <SettingRow
             v-if="transparentOn && form.transparentType === 'tproxy'"
-            cols="12"
-            md="6"
-            class="d-flex align-center"
-          >
-            <v-btn
-              variant="tonal"
-              :prepend-icon="mdiLanPending"
-              @click="openWhiteIps"
+            :title="t('operations.tproxyWhiteIpGroups')"
+            :hint="t('tproxyWhiteIpGroups.messages.0')"
+            action
+            @click="openWhiteIps"
+          />
+        </v-expand-transition>
+        <v-expand-transition>
+          <div v-if="usesTun">
+            <SettingRow
+              :title="t('setting.tunAutoRoute')"
+              :hint="t('setting.messages.tunAutoRoute')"
             >
-              {{ t("operations.tproxyWhiteIpGroups") }}
-            </v-btn>
-          </v-col>
-          <template v-if="usesTun">
-            <v-col cols="12" sm="6">
               <v-switch
                 v-model="form.tunAutoRoute"
-                :label="t('setting.tunAutoRoute')"
-                :hint="t('setting.messages.tunAutoRoute')"
-                persistent-hint
+                :aria-label="t('setting.tunAutoRoute')"
+                hide-details
               />
-            </v-col>
-            <v-col cols="12" sm="6" class="d-flex flex-wrap align-center ga-2">
-              <v-btn
+            </SettingRow>
+            <v-expand-transition>
+              <SettingRow
                 v-if="!form.tunAutoRoute"
-                variant="tonal"
-                :prepend-icon="mdiFileDocumentEditOutline"
+                :title="t('operations.configureTunRouteScript')"
+                :subtitle="form.tunRouteShellPath"
+                action
                 @click="openTunScript"
-              >
-                {{ t("operations.configureTunRouteScript") }}
-              </v-btn>
-              <v-btn
-                variant="tonal"
-                :prepend-icon="mdiCogOutline"
-                @click="openTunProcesses"
-              >
-                {{ t("setting.tunExcludeProcesses") }}
-                <v-badge
-                  v-if="form.tunExcludeProcesses"
-                  :content="
-                    form.tunExcludeProcesses.split(',').filter((p) => p).length
-                  "
-                  inline
-                  color="primary"
-                  class="ms-2"
-                />
-              </v-btn>
-            </v-col>
-          </template>
-        </v-row>
-      </v-sheet>
+              />
+            </v-expand-transition>
+            <SettingRow
+              :title="t('setting.tunExcludeProcesses')"
+              :hint="t('setting.messages.tunExcludeProcesses')"
+              action
+              @click="openTunProcesses"
+            >
+              <v-badge
+                v-if="form.tunExcludeProcesses"
+                :content="
+                  form.tunExcludeProcesses.split(',').filter((p) => p).length
+                "
+                inline
+                color="primary"
+                class="me-2"
+              />
+            </SettingRow>
+          </div>
+        </v-expand-transition>
+      </v-list>
 
-      <!-- traffic splitting -->
-      <v-sheet
-        color="surface-container-low"
-        rounded="xl"
-        class="pa-5 pa-sm-6 mb-4"
-      >
-        <div class="d-flex align-center ga-2 mb-4">
-          <h2 class="md3-title-medium">{{ t("setting.pacMode") }}</h2>
-          <v-tooltip :text="t('setting.messages.pacMode')" max-width="360">
-            <template #activator="{ props: tip }">
-              <v-icon
-                v-bind="tip"
-                :icon="mdiHelpCircleOutline"
-                size="18"
-                class="text-on-surface-variant"
-              />
-            </template>
-          </v-tooltip>
-        </div>
-        <v-row dense>
-          <v-col cols="12" md="6">
-            <v-select
-              v-model="form.pacMode"
-              :items="pacModes"
-              :label="t('setting.pacMode')"
-            />
-          </v-col>
-          <v-col
+      <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">
+        <v-list-subheader>{{ t("setting.sections.traffic") }}</v-list-subheader>
+        <SettingChoice
+          v-model="form.pacMode"
+          :title="t('setting.pacMode')"
+          :hint="t('setting.messages.pacMode')"
+          :items="pacModes"
+        />
+        <v-expand-transition>
+          <SettingRow
             v-if="form.pacMode === 'routingA'"
-            cols="12"
-            md="6"
-            class="d-flex align-center"
-          >
-            <v-btn
-              variant="tonal"
-              :prepend-icon="mdiFileDocumentEditOutline"
-              @click="openRoutingA"
-            >
-              RoutingA · {{ t("operations.configure") }}
-            </v-btn>
-          </v-col>
-          <v-col cols="12">
-            <v-list-item class="px-0" :title="'GFWList'" lines="two">
-              <template #subtitle>
-                <span>{{ t("common.latest") }}:</span>
-                <a
-                  href="https://github.com/v2rayA/dist-v2ray-rules-dat/releases"
-                  target="_blank"
-                  rel="noreferrer"
-                  class="ms-1"
-                  >{{ remoteGFWListVersion || t("common.checkRunning") }}</a
-                >
-                <span class="ms-3">{{ t("common.local") }}:</span>
-                <span class="ms-1" :class="{ 'text-error': localVersionStale }">
-                  {{ localGFWListVersion || t("common.none") }}
-                </span>
-                <v-tooltip
-                  v-if="localVersionStale"
-                  :text="t('setting.messages.gfwlist')"
-                  max-width="320"
-                >
-                  <template #activator="{ props: tip }">
-                    <v-icon
-                      v-bind="tip"
-                      :icon="mdiHelpCircleOutline"
-                      size="16"
-                      class="ms-1"
-                    />
-                  </template>
-                </v-tooltip>
-              </template>
-              <template #append>
-                <v-btn
-                  variant="tonal"
-                  :prepend-icon="mdiRefresh"
-                  @click="openGfwList"
-                >
-                  {{ t("operations.update") }}
-                </v-btn>
-              </template>
-            </v-list-item>
-          </v-col>
-          <template v-if="gfwlistInUse">
-            <v-col cols="12" md="6">
-              <v-select
-                v-model="form.pacAutoUpdateMode"
-                :items="gfwUpdateModes"
-                :label="t('setting.autoUpdateGfwlist')"
-              />
-            </v-col>
-            <v-col
-              v-if="form.pacAutoUpdateMode === 'auto_update_at_intervals'"
-              cols="12"
-              md="6"
-            >
-              <v-text-field
-                v-model="form.pacAutoUpdateIntervalHour"
-                type="number"
-                min="1"
-                :rules="[positive]"
-                :label="t('setting.options.updateGfwlistAtIntervals')"
-              />
-            </v-col>
-          </template>
-          <v-col cols="12" md="6">
-            <v-select
-              v-model="form.subscriptionAutoUpdateMode"
-              :items="subUpdateModes"
-              :label="t('setting.autoUpdateSub')"
+            title="RoutingA"
+            :subtitle="t('operations.configure')"
+            action
+            @click="openRoutingA"
+          />
+        </v-expand-transition>
+        <SettingRow
+          :title="t('gfwList.title')"
+          :hint="localVersionStale ? t('setting.messages.gfwlist') : undefined"
+          :subtitle="`${t('common.latest')}: ${remoteGFWListVersion || t('common.checkRunning')} · ${t('common.local')}: ${localGFWListVersion || t('common.none')}`"
+          action
+          @click="openGfwList"
+        />
+        <v-expand-transition>
+          <div v-if="gfwlistInUse">
+            <SettingChoice
+              v-model="form.pacAutoUpdateMode"
+              :title="t('setting.autoUpdateGfwlist')"
+              :items="gfwUpdateModes"
             />
-          </v-col>
-          <v-col
+            <v-expand-transition>
+              <SettingRow
+                v-if="form.pacAutoUpdateMode === 'auto_update_at_intervals'"
+                :title="t('setting.options.updateGfwlistAtIntervals')"
+              >
+                <v-text-field
+                  v-model="form.pacAutoUpdateIntervalHour"
+                  class="settings__number"
+                  type="number"
+                  min="1"
+                  :rules="[positive]"
+                  :aria-label="t('setting.options.updateGfwlistAtIntervals')"
+                  hide-details="auto"
+                />
+              </SettingRow>
+            </v-expand-transition>
+          </div>
+        </v-expand-transition>
+        <SettingChoice
+          v-model="form.subscriptionAutoUpdateMode"
+          :title="t('setting.autoUpdateSub')"
+          :items="subUpdateModes"
+        />
+        <v-expand-transition>
+          <SettingRow
             v-if="
               form.subscriptionAutoUpdateMode === 'auto_update_at_intervals'
             "
-            cols="12"
-            md="6"
+            :title="t('setting.options.updateSubAtIntervals')"
           >
             <v-text-field
               v-model="form.subscriptionAutoUpdateIntervalHour"
+              class="settings__number"
               type="number"
               min="1"
               :rules="[positive]"
-              :label="t('setting.options.updateSubAtIntervals')"
+              :aria-label="t('setting.options.updateSubAtIntervals')"
+              hide-details="auto"
             />
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-select
-              v-model="form.proxyModeWhenSubscribe"
-              :items="updateProxyModes"
-              :label="t('setting.preferModeWhenUpdate')"
-            />
-          </v-col>
-        </v-row>
-      </v-sheet>
+          </SettingRow>
+        </v-expand-transition>
+        <SettingChoice
+          v-model="form.proxyModeWhenSubscribe"
+          :title="t('setting.preferModeWhenUpdate')"
+          :items="updateProxyModes"
+        />
+      </v-list>
 
-      <!-- the core -->
-      <v-sheet
-        color="surface-container-low"
-        rounded="xl"
-        class="pa-5 pa-sm-6 mb-4"
-      >
-        <h2 class="md3-title-medium mb-4">{{ t("setting.nodeBackend") }}</h2>
-        <v-row dense>
-          <v-col cols="12" md="6">
-            <v-select
-              v-model="form.logLevel"
-              :items="logLevels"
-              :label="t('setting.logLevel')"
+      <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">
+        <v-list-subheader>{{ t("setting.sections.core") }}</v-list-subheader>
+        <SettingChoice
+          v-model="form.logLevel"
+          :title="t('setting.logLevel')"
+          :items="logLevels"
+        />
+        <SettingChoice
+          v-model="form.tcpFastOpen"
+          :title="t('setting.tcpFastOpen')"
+          :hint="t('setting.messages.tcpFastOpen')"
+          :items="onOffDefault"
+        />
+        <SettingChoice
+          v-model="form.inboundSniffing"
+          :title="t('setting.inboundSniffing')"
+          :hint="t('setting.messages.inboundSniffing')"
+          :items="sniffing"
+        />
+        <v-expand-transition>
+          <div v-if="form.inboundSniffing !== 'disable'">
+            <SettingRow title="RouteOnly">
+              <v-switch
+                v-model="form.routeOnly"
+                aria-label="RouteOnly"
+                hide-details
+              />
+            </SettingRow>
+            <SettingRow
+              :title="t('operations.domainsExcluded')"
+              :hint="t('domainsExcluded.messages.0')"
+              action
+              @click="openDomains"
             />
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-select
-              v-model="form.tcpFastOpen"
-              :items="onOffDefault"
-              :label="t('setting.tcpFastOpen')"
-              :hint="t('setting.messages.tcpFastOpen')"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-select
-              v-model="form.inboundSniffing"
-              :items="sniffing"
-              :label="t('setting.inboundSniffing')"
-              :hint="t('setting.messages.inboundSniffing')"
-            />
-          </v-col>
-          <v-col
-            v-if="form.inboundSniffing !== 'disable'"
-            cols="12"
-            md="6"
-            class="d-flex flex-wrap align-center ga-4"
+          </div>
+        </v-expand-transition>
+        <SettingRow :title="t('setting.mux')" :hint="t('setting.messages.mux')">
+          <v-switch
+            :model-value="form.muxOn === 'yes'"
+            :aria-label="t('setting.mux')"
+            hide-details
+            @update:model-value="(v) => (form.muxOn = v ? 'yes' : 'no')"
+          />
+        </SettingRow>
+        <v-expand-transition>
+          <SettingRow
+            v-if="form.muxOn === 'yes'"
+            :title="t('setting.concurrency')"
           >
-            <v-switch v-model="form.routeOnly" label="RouteOnly" hide-details />
-            <v-btn variant="tonal" @click="openDomains">{{
-              t("operations.domainsExcluded")
-            }}</v-btn>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-switch
-              :model-value="form.muxOn === 'yes'"
-              :label="t('setting.mux')"
-              :hint="t('setting.messages.mux')"
-              persistent-hint
-              @update:model-value="(v) => (form.muxOn = v ? 'yes' : 'no')"
-            />
-          </v-col>
-          <v-col v-if="form.muxOn === 'yes'" cols="12" md="6">
             <v-text-field
               v-model="form.mux"
+              class="settings__number"
               type="number"
               min="1"
               max="1024"
               :rules="[positive]"
-              :label="t('setting.concurrency')"
+              :aria-label="t('setting.concurrency')"
+              hide-details="auto"
             />
-          </v-col>
-        </v-row>
-      </v-sheet>
+          </SettingRow>
+        </v-expand-transition>
+      </v-list>
 
-      <!-- the rest, in dialogs -->
-      <v-sheet color="surface-container-low" rounded="xl" class="pa-2 mb-4">
-        <v-list bg-color="transparent" lines="one">
-          <v-list-item
-            :title="t('customAddressPort.title')"
-            :prepend-icon="mdiLanPending"
-            :append-icon="mdiOpenInNew"
-            rounded="lg"
-            @click="openPorts"
-          />
-          <v-list-item
-            :title="t('customInbound.title')"
-            :prepend-icon="mdiLanPending"
-            :append-icon="mdiOpenInNew"
-            rounded="lg"
-            @click="openInbounds"
-          />
-          <v-list-item
-            :title="t('dns.title')"
-            :prepend-icon="mdiDnsOutline"
-            :append-icon="mdiOpenInNew"
-            rounded="lg"
-            @click="openDns"
-          />
-        </v-list>
-      </v-sheet>
-
-      <div class="d-flex justify-end">
-        <v-btn color="primary" size="large" :loading="saving" type="submit">
+      <v-list bg-color="surface-container-low" rounded="xl">
+        <v-list-subheader>{{ t("setting.sections.more") }}</v-list-subheader>
+        <SettingRow
+          :title="t('customAddressPort.title')"
+          :subtitle="t('customAddressPort.serviceAddress')"
+          action
+          @click="openPorts"
+        />
+        <SettingRow
+          :title="t('customInbound.title')"
+          :hint="t('customInbound.hint')"
+          action
+          @click="openInbounds"
+        />
+        <SettingRow
+          :title="t('dns.title')"
+          :subtitle="t('dns.colServer')"
+          action
+          @click="openDns"
+        />
+        <SettingRow
+          :title="t('common.about')"
+          :subtitle="t('about.intro')"
+          action
+          @click="openAbout"
+        />
+      </v-list>
+    </template>
+    <v-sheet
+      color="surface-container"
+      class="settings__save pa-4"
+      :class="{ 'settings__save--compact': compact }"
+    >
+      <div class="settings__save-content d-flex justify-end">
+        <v-btn
+          color="primary"
+          variant="flat"
+          :loading="saving"
+          :disabled="!ready"
+          type="submit"
+        >
           {{ t("operations.saveApply") }}
         </v-btn>
       </div>
-    </template>
+    </v-sheet>
   </v-form>
 </template>
+
+<style scoped>
+.settings {
+  max-width: 840px;
+  margin-inline: auto;
+  padding-bottom: 88px;
+}
+.settings__number {
+  width: 96px;
+}
+.settings__interfaces {
+  width: 200px;
+}
+.settings__save {
+  position: fixed;
+  left: var(--v-layout-left, 0px);
+  right: var(--v-layout-right, 0px);
+  bottom: var(--v-layout-bottom, 0px);
+  z-index: 2;
+}
+.settings__save--compact {
+  bottom: max(80px, var(--v-layout-bottom, 0px));
+}
+.settings__save-content {
+  max-width: 840px;
+  margin-inline: auto;
+}
+@media (max-width: 599px) {
+  .settings__interfaces {
+    width: 112px;
+  }
+}
+</style>

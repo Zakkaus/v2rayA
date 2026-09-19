@@ -163,6 +163,12 @@ export default {
     checkFailed: "Falha ao verificar a conexão: {message}",
   },
   setting: {
+    sections: {
+      proxy: "Proxy",
+      traffic: "Divisão de tráfego",
+      core: "Núcleo",
+      more: "Mais",
+    },
     transparentProxy: "Proxy transparente/Proxy do sistema",
     transparentType: "Implementação do proxy transparente/proxy do sistema",
     logLevel: "Nível de registro",
