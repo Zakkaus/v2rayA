@@ -383,7 +383,7 @@ function switchNode() {
         />
         <v-list v-else-if="members.length" bg-color="transparent" class="pa-0">
           <v-list-item
-            v-for="member in ranked.slice(0, 6)"
+            v-for="member in ranked.slice(0, 4)"
             :key="member.key"
             class="px-0 py-2"
           >
@@ -420,10 +420,10 @@ function switchNode() {
         </v-list>
         <p v-else class="md3-body-medium">{{ t("dashboard.emptyGroup") }}</p>
         <v-btn
-          v-if="members.length > 6"
+          v-if="members.length > 4"
           variant="text"
           @click="store.view = 'proxies'"
-          >{{ t("dashboard.moreMembers", { n: members.length - 6 }) }}</v-btn
+          >{{ t("dashboard.moreMembers", { n: members.length - 4 }) }}</v-btn
         >
       </v-card>
 
@@ -659,7 +659,8 @@ function switchNode() {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
-  align-items: stretch;
+  /* each tile is as tall as its content; a long list does not stretch its row */
+  align-items: start;
 }
 .dashboard-grid > * {
   min-width: 0;
