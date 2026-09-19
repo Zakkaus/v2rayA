@@ -138,7 +138,7 @@ function pick(value: string) {
           {{ store.version?.variant || "" }}
           {{ store.version?.coreVersion || "" }}
         </p>
-        <div class="d-flex flex-wrap align-center ga-2">
+        <div class="dashboard-actions d-flex flex-wrap align-center ga-2">
           <v-btn
             color="primary"
             variant="flat"
@@ -273,7 +273,7 @@ function pick(value: string) {
               >{{ t("dashboard.balanced", { n: members.length }) }}</v-chip
             >
           </div>
-          <div class="d-flex justify-end">
+          <div class="dashboard-actions d-flex justify-end">
             <v-btn variant="text" @click="editGroup">{{
               t("dashboard.editGroup")
             }}</v-btn>
@@ -383,7 +383,7 @@ function pick(value: string) {
             :label="item.title"
           />
         </v-radio-group>
-        <div class="d-flex flex-wrap ga-2 mt-3">
+        <div class="dashboard-actions d-flex flex-wrap ga-2">
           <v-btn variant="text" @click="editRoutingA">RoutingA</v-btn>
           <v-btn variant="text" @click="editPorts">{{
             t("customAddressPort.title")
@@ -451,12 +451,11 @@ function pick(value: string) {
           </v-list-item>
         </v-list>
         <p v-else class="md3-body-medium">{{ t("dashboard.emptyGroup") }}</p>
-        <v-btn
-          v-if="members.length > 4"
-          variant="text"
-          @click="store.view = 'proxies'"
-          >{{ t("dashboard.moreMembers", { n: members.length - 4 }) }}</v-btn
-        >
+        <div v-if="members.length > 4" class="dashboard-actions d-flex">
+          <v-btn variant="text" @click="store.view = 'proxies'">{{
+            t("dashboard.moreMembers", { n: members.length - 4 })
+          }}</v-btn>
+        </div>
       </v-card>
 
       <v-card
@@ -570,12 +569,11 @@ function pick(value: string) {
             t("operations.import")
           }}</v-btn>
         </div>
-        <v-btn
-          v-if="subscriptions.length > 2"
-          variant="text"
-          @click="store.view = 'proxies'"
-          >{{ t("dashboard.moreSubscriptions") }}</v-btn
-        >
+        <div v-if="subscriptions.length > 2" class="dashboard-actions d-flex">
+          <v-btn variant="text" @click="store.view = 'proxies'">{{
+            t("dashboard.moreSubscriptions")
+          }}</v-btn>
+        </div>
       </v-card>
     </div>
   </div>
@@ -593,6 +591,16 @@ function pick(value: string) {
 }
 .dashboard-grid > * {
   min-width: 0;
+}
+/* every tile is a column whose action row sits on the bottom edge, so
+   the rows of one grid row line up whatever the tiles hold */
+.dashboard-grid > .v-card {
+  display: flex;
+  flex-direction: column;
+}
+.dashboard-actions {
+  margin-top: auto;
+  padding-top: 12px;
 }
 .dashboard-grid--wide {
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
