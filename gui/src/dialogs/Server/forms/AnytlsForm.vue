@@ -50,7 +50,7 @@ const { t } = useI18n();
       <v-text-field
         v-model="model.sni"
         label="SNI(Peer)"
-        :placeholder="`SNI / Peer (${t('common.optional')})`"
+        placeholder="SNI / Peer"
         :readonly="readonly"
         dir="ltr"
       />
@@ -75,8 +75,7 @@ const { t } = useI18n();
       <v-switch
         v-model="model.allowInsecure"
         :label="t('configureServer.allowInsecure')"
-        :hint="model.allowInsecure ? t('operations.yes') : t('operations.no')"
-        persistent-hint
+        hide-details
         :readonly="readonly"
       />
     </v-col>
