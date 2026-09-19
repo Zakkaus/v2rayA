@@ -72,7 +72,7 @@ export default {
     autoFastest: "Auto (lowest latency)",
     manageNodes: "Manage nodes",
     emptyGroup: "This group has no nodes",
-    allProxySettings: "All proxy settings",
+    allProxySettings: "More proxy options",
     updateAll: "Update all",
     updatedAt: "Updated {time}",
     noSubscriptions: "No subscriptions",
@@ -208,6 +208,8 @@ export default {
     },
     transparentProxy: "Transparent Proxy/System Proxy",
     transparentType: "Transparent Proxy/System Proxy Implementation",
+    transparentOffHint:
+      "Turn the transparent proxy on to choose how it is implemented.",
     logLevel: "Log Level",
     pacMode: "Traffic Splitting Mode of Rule Port",
     mux: "Multiplex",

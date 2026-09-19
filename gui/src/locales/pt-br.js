@@ -72,7 +72,7 @@ export default {
     autoFastest: "Automático (menor latência)",
     manageNodes: "Gerenciar nós",
     emptyGroup: "Este grupo não tem nós",
-    allProxySettings: "Todas as configurações de proxy",
+    allProxySettings: "Mais opções de proxy",
     updateAll: "Atualizar todas",
     updatedAt: "Atualizado {time}",
     noSubscriptions: "Nenhuma assinatura",
@@ -209,6 +209,8 @@ export default {
     },
     transparentProxy: "Proxy transparente/Proxy do sistema",
     transparentType: "Implementação do proxy transparente/proxy do sistema",
+    transparentOffHint:
+      "Ative o proxy transparente para escolher a implementação.",
     logLevel: "Nível de registro",
     pacMode: "Modo de divisão de tráfego da porta de regras",
     mux: "Multiplexação",

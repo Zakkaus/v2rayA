@@ -1,9 +1,9 @@
 <script setup lang="ts">
-// The proxy settings as a list: the transparent proxy mode, its
-// implementation and what each implementation needs (excluded
+// The transparent proxy's implementation and what each needs (excluded
 // interfaces, the direct whitelist, the TUN route scripts and excluded
-// processes), IP forwarding and LAN sharing. Lives on the dashboard,
-// saving every change at once (PUT /setting with the whole form).
+// processes), as a list under the dashboard's tiles, which hold the mode,
+// LAN sharing and IP forwarding themselves. Every change saves at once
+// (PUT /setting with the whole form).
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { errorText } from "@/api/errors";
@@ -15,7 +15,6 @@ import TunRouteScriptDialog, {
 } from "@/dialogs/settings/TunRouteScript.vue";
 import { useAppStore } from "@/stores/app";
 import { useSettings } from "./model";
-import { transparentModes as transparentModeItems } from "./options";
 import SettingChoice from "./SettingChoice.vue";
 import SettingRow from "./SettingRow.vue";
 
@@ -33,7 +32,6 @@ const tunSupported = computed(() => store.version?.tunSupported ?? false);
 
 onMounted(() => settings.load().catch((err) => notify.warning(errorText(err))));
 
-const transparentModes = computed(() => transparentModeItems(t));
 const transparentTypes = computed(() => {
   const items: {
     value: string;
@@ -129,16 +127,12 @@ const openWhiteIps = () => open(TproxyWhiteIpsDialog, {}, { width: 520 });
     :loading="saving"
   >
     <v-list bg-color="transparent" :disabled="!ready || saving">
-      <v-list-subheader class="md3-title-medium">{{
-        t("setting.sections.proxy")
-      }}</v-list-subheader>
-      <SettingChoice
-        :model-value="form.transparent"
-        :title="t('setting.transparentProxy')"
-        :hint="t('setting.messages.transparentProxy')"
-        :items="transparentModes"
-        @update:model-value="(v) => set('transparent', v)"
-      />
+      <p
+        v-if="!transparentOn"
+        class="md3-body-medium text-on-surface-variant px-4 py-2 ma-0"
+      >
+        {{ t("setting.transparentOffHint") }}
+      </p>
       <v-expand-transition>
         <SettingChoice
           v-if="transparentOn"
@@ -149,22 +143,6 @@ const openWhiteIps = () => open(TproxyWhiteIpsDialog, {}, { width: 520 });
           @update:model-value="(v) => set('transparentType', v)"
         />
       </v-expand-transition>
-      <SettingRow v-if="!store.lite" :title="t('setting.ipForwardOn')">
-        <v-switch
-          :model-value="form.ipforward"
-          :aria-label="t('setting.ipForwardOn')"
-          hide-details
-          @update:model-value="(v) => set('ipforward', !!v)"
-        />
-      </SettingRow>
-      <SettingRow :title="t('setting.portSharingOn')">
-        <v-switch
-          :model-value="form.portSharing"
-          :aria-label="t('setting.portSharingOn')"
-          hide-details
-          @update:model-value="(v) => set('portSharing', !!v)"
-        />
-      </SettingRow>
       <v-expand-transition>
         <SettingRow
           v-if="usesTproxy"

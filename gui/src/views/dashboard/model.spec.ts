@@ -327,7 +327,7 @@ describe("dashboard", () => {
       tunAutoRoute: true,
       subscriptionAutoUpdateIntervalHour: 0,
     });
-    await button("All proxy settings").trigger("click");
+    await button("More proxy options").trigger("click");
     await flushPromises();
     expect(
       wrapper
@@ -338,7 +338,7 @@ describe("dashboard", () => {
       setting: { ...saved, portSharing: false },
       localGFWListVersion: "",
     });
-    await button("All proxy settings").trigger("click");
+    await button("More proxy options").trigger("click");
     await flushPromises();
     expect(
       (

@@ -71,7 +71,7 @@ export default {
     autoFastest: "Авто (минимальная задержка)",
     manageNodes: "Управление узлами",
     emptyGroup: "В этой группе нет узлов",
-    allProxySettings: "Все настройки прокси",
+    allProxySettings: "Другие параметры прокси",
     updateAll: "Обновить все",
     updatedAt: "Обновлено {time}",
     noSubscriptions: "Нет подписок",
@@ -207,6 +207,8 @@ export default {
     },
     transparentProxy: "Прозрачный прокси/системный прокси",
     transparentType: "Реализация прозрачного прокси/системного прокси",
+    transparentOffHint:
+      "Включите прозрачный прокси, чтобы выбрать способ реализации.",
     logLevel: "Уровень журнала",
     pacMode: "Режим разделения трафика для порта правил",
     mux: "Мультиплексирование",

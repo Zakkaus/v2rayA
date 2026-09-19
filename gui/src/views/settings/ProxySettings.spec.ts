@@ -93,17 +93,20 @@ async function toggle(label: string, value: boolean) {
 describe("proxy settings", () => {
   test("saves every change at once with the whole form", async () => {
     await mountList();
-    await toggle("Port Sharing", true);
+    await choose("Transparent Proxy/System Proxy Implementation", "redirect");
     expect(putSetting).toHaveBeenCalledExactlyOnceWith(
-      { ...loaded, portSharing: true },
+      { ...loaded, transparentType: "redirect" },
       { signal: expect.any(AbortSignal) },
     );
-    await choose("Transparent Proxy/System Proxy", "Off");
-    expect(putSetting).toHaveBeenCalledTimes(2);
-    expect(vi.mocked(putSetting).mock.calls[1][0]).toMatchObject({
-      transparent: "close",
-      portSharing: true,
+  });
+
+  test("says what to do while the transparent proxy is off", async () => {
+    vi.mocked(getSetting).mockResolvedValue({
+      setting: { ...loaded, transparent: "close" },
+      localGFWListVersion: "",
     });
+    await mountList();
+    expect(wrapper.text()).toContain("Turn the transparent proxy on");
     expect(
       wrapper.find('input[aria-label="Excluded Interface Prefixes"]').exists(),
     ).toBe(false);
@@ -126,14 +129,15 @@ describe("proxy settings", () => {
   test("reloads the settings when a save fails", async () => {
     await mountList();
     vi.mocked(putSetting).mockRejectedValueOnce(new Error("nope"));
-    await toggle("Port Sharing", true);
+    await choose("Transparent Proxy/System Proxy Implementation", "redirect");
     await flushPromises();
     expect(getSetting).toHaveBeenCalledTimes(2);
     expect(
-      (
-        wrapper.get('input[aria-label="Port Sharing"]')
-          .element as HTMLInputElement
-      ).checked,
-    ).toBe(false);
+      wrapper
+        .get(
+          'button[aria-label^="Transparent Proxy/System Proxy Implementation:"]',
+        )
+        .text(),
+    ).toContain("tproxy");
   });
 });
