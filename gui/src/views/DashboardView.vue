@@ -131,72 +131,7 @@ function switchNode() {
         >
           {{ t(store.running === "running" ? "v2ray.stop" : "v2ray.start") }}
         </v-btn>
-        <v-divider class="my-4" />
-        <dl class="dashboard-facts md3-body-medium">
-          <div>
-            <dt class="md3-label-medium text-on-surface-variant">
-              {{ t("dashboard.version") }}
-            </dt>
-            <dd class="d-flex align-center flex-wrap ga-2">
-              <span dir="ltr">{{ store.version?.version || "—" }}</span>
-              <v-chip
-                v-if="store.version?.foundNew"
-                variant="tonal"
-                size="small"
-                href="https://github.com/v2rayA/v2rayA/releases"
-                target="_blank"
-                rel="noopener noreferrer"
-                >{{
-                  t("dashboard.newVersion", {
-                    version: store.version.remoteVersion.replace(/^v/, ""),
-                  })
-                }}</v-chip
-              >
-            </dd>
-          </div>
-          <div>
-            <dt class="md3-label-medium text-on-surface-variant">
-              {{ t("dashboard.core") }}
-            </dt>
-            <dd class="d-flex align-center flex-wrap ga-2">
-              <span dir="ltr">{{ store.version?.variant || "—" }}</span>
-              <v-tooltip
-                v-if="store.version && !store.version.coreVersionValid"
-                :text="store.version.coreVersionErr"
-                max-width="360"
-                open-on-click
-              >
-                <template #activator="{ props }">
-                  <v-chip
-                    v-bind="props"
-                    color="error"
-                    variant="tonal"
-                    size="small"
-                    tabindex="0"
-                    >{{ t("dashboard.coreError") }}</v-chip
-                  >
-                </template>
-              </v-tooltip>
-            </dd>
-          </div>
-          <div>
-            <dt class="md3-label-medium text-on-surface-variant">
-              {{ t("dashboard.ports") }}
-            </dt>
-            <dd dir="ltr" class="dashboard-figures">
-              <div>SOCKS: {{ ports?.socks5 ?? "—" }}</div>
-              <div>HTTP: {{ ports?.http ?? "—" }}</div>
-              <div>
-                {{ t("dashboard.httpWithRules") }}:
-                {{ ports?.httpWithPac ?? "—" }}
-              </div>
-            </dd>
-          </div>
-        </dl>
         <div class="d-flex flex-wrap ga-2 mt-4">
-          <v-btn variant="text" @click="editPorts">{{
-            t("customAddressPort.title")
-          }}</v-btn>
           <v-btn variant="text" @click="store.view = 'logs'">{{
             t("common.log")
           }}</v-btn>
@@ -419,6 +354,18 @@ function switchNode() {
             :label="item.title"
           />
         </v-radio-group>
+        <p
+          class="md3-body-small text-on-surface-variant dashboard-figures mt-3 mb-0"
+          dir="ltr"
+        >
+          SOCKS {{ ports?.socks5 ?? "—" }} · HTTP {{ ports?.http ?? "—" }} ·
+          {{ t("dashboard.httpWithRules") }} {{ ports?.httpWithPac ?? "—" }}
+        </p>
+        <div class="d-flex flex-wrap ga-2 mt-3">
+          <v-btn variant="text" @click="editPorts">{{
+            t("customAddressPort.title")
+          }}</v-btn>
+        </div>
       </v-card>
 
       <v-card
@@ -669,17 +616,6 @@ function switchNode() {
 
 .dashboard-chart {
   height: 120px;
-}
-.dashboard-facts {
-  display: grid;
-  gap: 12px;
-  margin: 0;
-}
-.dashboard-facts dt {
-  margin-bottom: 2px;
-}
-.dashboard-facts dd {
-  margin: 0;
 }
 .dashboard-figures {
   font-variant-numeric: tabular-nums;
