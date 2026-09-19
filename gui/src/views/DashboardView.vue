@@ -17,7 +17,6 @@ import {
   mdiRss,
   mdiInformationOutline,
 } from "@mdi/js";
-import { backendAddress } from "@/api/client";
 import { useDialog } from "@/composables";
 import OutboundMenu from "@/components/OutboundMenu.vue";
 import TrafficChart from "@/components/TrafficChart.vue";
@@ -78,7 +77,6 @@ const ranked = computed(() =>
 const slowest = computed(() =>
   Math.max(1, ...members.value.map((member) => member.delay ?? 0)),
 );
-const address = backendAddress() || location.origin;
 
 function switchNode() {
   const outbound = store.outboundName;
@@ -109,13 +107,7 @@ function switchNode() {
           <v-icon :icon="mdiPower" size="20" color="on-surface-variant" />
           <h2 class="md3-title-small">{{ t("dashboard.status") }}</h2>
         </div>
-        <p class="md3-title-large mb-2" role="status">{{ stateLabel }}</p>
-        <p
-          class="md3-body-small text-on-surface-variant dashboard-wrap mb-4"
-          dir="ltr"
-        >
-          {{ address }} · {{ store.version?.version || "—" }}
-        </p>
+        <p class="md3-title-large mb-4" role="status">{{ stateLabel }}</p>
         <v-btn
           color="primary"
           variant="flat"
