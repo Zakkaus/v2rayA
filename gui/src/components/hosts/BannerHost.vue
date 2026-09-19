@@ -17,11 +17,13 @@ const icons = {
   warning: mdiAlertOutline,
   error: mdiAlertCircleOutline,
 };
-// a warning is something going wrong too: the scheme keeps one colour for that
-const colors = {
-  info: "secondary-container",
-  warning: "error-container",
-  error: "error-container",
+// Material's banner sits on a surface container; the kind shows in the
+// icon's colour, so the banner follows the theme instead of painting the
+// page red or green
+const iconColors = {
+  info: "primary",
+  warning: "error",
+  error: "error",
 };
 </script>
 
@@ -30,7 +32,8 @@ const colors = {
     v-for="b in bannerState.list"
     :key="b.key"
     :icon="icons[b.kind]"
-    :bg-color="colors[b.kind]"
+    :icon-color="iconColors[b.kind]"
+    bg-color="surface-container-high"
     :text="b.text"
     lines="two"
     rounded="lg"

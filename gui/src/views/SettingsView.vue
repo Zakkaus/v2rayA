@@ -411,8 +411,6 @@ async function save() {
 
 <style scoped>
 .settings {
-  max-width: 840px;
-  margin-inline: auto;
   padding-bottom: 88px;
 }
 .settings__number {
@@ -432,8 +430,9 @@ async function save() {
   bottom: max(80px, var(--v-layout-bottom, 0px));
 }
 .settings__save-content {
-  max-width: 840px;
+  max-width: 1040px;
   margin-inline: auto;
+  padding-inline: 8px;
 }
 @media (max-width: 599px) {
   .settings__interfaces {
