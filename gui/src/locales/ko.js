@@ -1,4 +1,12 @@
 export default {
+  proxies: {
+    cards: "카드",
+    list: "목록",
+    members: "구성원: {n}",
+    testLatency: "지연 시간 테스트",
+    connectFastest: "가장 빠른 노드 연결",
+    chooseManually: "직접 선택",
+  },
   common: {
     dashboard: "대시보드",
     proxies: "프록시",

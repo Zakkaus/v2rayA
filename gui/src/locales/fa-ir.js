@@ -1,4 +1,12 @@
 export default {
+  proxies: {
+    cards: "کارت‌ها",
+    list: "فهرست",
+    members: "اعضا: {n}",
+    testLatency: "آزمایش تأخیر",
+    connectFastest: "اتصال به سریع‌ترین",
+    chooseManually: "انتخاب دستی",
+  },
   common: {
     dashboard: "داشبورد",
     proxies: "پروکسی‌ها",

@@ -1,4 +1,12 @@
 export default {
+  proxies: {
+    cards: "卡片",
+    list: "列表",
+    members: "成员：{n}",
+    testLatency: "测试延迟",
+    connectFastest: "连接最快节点",
+    chooseManually: "手动选择",
+  },
   common: {
     dashboard: "仪表板",
     proxies: "代理",
