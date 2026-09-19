@@ -349,7 +349,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
       <template v-if="compact" #prepend>
         <img :src="logo" alt="v2rayA" class="bar__logo ms-2" />
       </template>
-      <v-app-bar-title class="md3-title-large">
+      <v-app-bar-title class="md3-title-large" :class="{ bar__brand: compact }">
         {{ compact ? "v2rayA" : pageTitle }}
       </v-app-bar-title>
       <v-btn
@@ -458,6 +458,11 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
 .bar__logo {
   width: 32px;
   height: 32px;
+}
+/* the wordmark next to the logo: medium weight, like the drawer's brand */
+.bar__brand {
+  font-weight: 500;
+  letter-spacing: 0;
 }
 /* Material's margins: 16 dp on compact, 24 dp from medium; readable width */
 .page {

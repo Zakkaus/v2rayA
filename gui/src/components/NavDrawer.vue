@@ -20,7 +20,7 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
   <v-navigation-drawer permanent :width="256" color="surface" class="drawer">
     <div class="drawer__brand">
       <img :src="logo" alt="" class="drawer__logo" />
-      <span class="md3-title-large">v2rayA</span>
+      <span class="md3-title-large drawer__wordmark">v2rayA</span>
     </div>
     <v-list nav density="default" class="px-3 pt-2 pb-0">
       <v-list-item
@@ -56,6 +56,9 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
   align-items: center;
   gap: 12px;
   padding: 28px 28px 20px;
+}
+.drawer__wordmark {
+  font-weight: 500;
 }
 /* the version is a footnote aligned with the brand: outline text, no container; it opens About */
 .drawer__version {
