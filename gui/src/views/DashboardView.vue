@@ -417,11 +417,12 @@ function pick(value: string) {
         />
         <v-list v-else-if="members.length" bg-color="transparent" class="pa-0">
           <v-list-item
-            v-for="member in ranked.slice(0, 4)"
+            v-for="member in ranked.slice(0, 8)"
             :key="member.key"
-            class="px-0 py-2"
+            class="px-0 py-1"
+            min-height="0"
           >
-            <div class="d-flex align-center ga-2 mb-2">
+            <div class="d-flex align-center ga-2 mb-1">
               <span
                 v-if="member.key === nodeInUse?.key"
                 class="dashboard-active-dot"
@@ -451,9 +452,9 @@ function pick(value: string) {
           </v-list-item>
         </v-list>
         <p v-else class="md3-body-medium">{{ t("dashboard.emptyGroup") }}</p>
-        <div v-if="members.length > 4" class="dashboard-actions d-flex">
+        <div v-if="members.length > 8" class="dashboard-actions d-flex">
           <v-btn variant="text" @click="store.view = 'proxies'">{{
-            t("dashboard.moreMembers", { n: members.length - 4 })
+            t("dashboard.moreMembers", { n: members.length - 8 })
           }}</v-btn>
         </div>
       </v-card>
