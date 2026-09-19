@@ -12,8 +12,8 @@ import {
   SchemeTonalSpot,
 } from "@material/material-color-utilities";
 
-/** The default seed: the brand amber (the owner's Material Theme Builder export, 2026-09-19). */
-export const brandSeed = "#edad48";
+/** The default seed: Google yellow. */
+export const brandSeed = "#fbbc04";
 
 export const presetSeeds: { name: string; seed: string }[] = [
   { name: "brand", seed: brandSeed },
