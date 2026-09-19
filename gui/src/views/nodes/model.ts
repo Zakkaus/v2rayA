@@ -1,7 +1,4 @@
-// The node page's state and operations, without the view: the touch
-// (servers, subscriptions, what is connected), the tab, the selection,
-// and every request the page makes. NodesView renders it; the spec
-// drives it.
+// Shared node state and backend operations for the dashboard and proxies page.
 import { computed, ref, watch } from "vue";
 import dayjs from "dayjs";
 import {

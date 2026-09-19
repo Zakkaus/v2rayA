@@ -9,10 +9,20 @@ export default {
     newNode: "Novo nó",
     cards: "Cartões",
     list: "Lista",
-    members: "Membros: {n}",
     testLatency: "Testar latência",
-    connectFastest: "Conectar ao mais rápido",
     chooseManually: "Escolher manualmente",
+    sources: { all: "Todos", local: "Locais" },
+    membersOnly: "Somente membros",
+    mode: { auto: "Automático (mais rápido)", manual: "Manual" },
+    inUse: "Em uso",
+    useThis: "Usar este nó",
+    unselect: "Desmarcar",
+    addToGroup: "Adicionar ao grupo",
+    removeFromGroup: "Remover do grupo",
+    selectAll: "Selecionar todos",
+    autoUpdate: "Atualização automática",
+    deleteSubscriptionNodes:
+      "Os nós de uma assinatura não podem ser excluídos individualmente.",
   },
   dashboard: {
     showMore: "Mais {n}",
@@ -25,6 +35,7 @@ export default {
     core: "Núcleo",
   },
   common: {
+    optional: "Opcional",
     dashboard: "Painel",
     proxies: "Proxies",
     subscriptions: "Assinaturas",
@@ -45,7 +56,6 @@ export default {
     fail: "Falhou",
     empty: "Nenhum nó adicionado",
     none: "nenhum",
-    loadBalance: "Balanceamento de carga",
     log: "Registros",
     proxyGroups: "Grupos de proxy",
   },
@@ -59,14 +69,9 @@ export default {
     custom: "Personalizada",
   },
   welcome: {
-    title: "Boas-vindas",
     docker: "O serviço v2rayA está em execução no Docker. Versão: {version}",
     default: "O serviço v2rayA está em execução. Versão: {version}",
     newVersion: "Nova versão disponível: {version}",
-    messages: [
-      "Ainda não há servidores.",
-      "Importe um link de servidor ou endereço de assinatura, ou crie um servidor manualmente.",
-    ],
   },
   v2ray: {
     start: "Iniciar",
@@ -75,21 +80,13 @@ export default {
     stopFailed: "Falha ao parar o núcleo: {message}",
   },
   server: {
-    name: "Nome do servidor",
-    address: "Endereço do servidor",
     protocol: "Protocolo",
-    latency: "Latência",
-    lastSeenTime: "Última vez visto",
-    lastTryTime: "Última tentativa",
-    server: "Servidor",
-    refreshFailed: "Falha ao atualizar a lista de nós: {message}",
     saved: "Servidor salvo",
     saveFailed: "Falha ao salvar o servidor: {message}",
   },
   subscription: {
-    host: "Host",
+    settingsTitle: "Atualização de assinaturas",
     remarks: "Observações",
-    timeLastUpdate: "Data e hora da última atualização",
     numberServers: "Número de servidores",
     subscription: "Assinatura",
     autoSelect:
@@ -98,9 +95,10 @@ export default {
     updated: "Assinatura atualizada",
     saved: "Assinatura salva",
     saveFailed: "Falha ao salvar a assinatura: {message}",
-    updateFailed: "Falha ao atualizar a assinatura: {message}",
   },
   operations: {
+    yes: "Sim",
+    no: "Não",
     name: "Operações",
     tproxyWhiteIpGroups: "Grupos de IPs na lista branca direta",
     update: "Atualizar",
@@ -112,9 +110,6 @@ export default {
     delete: "Excluir",
     create: "Criar",
     import: "Importar",
-    connect: "Conectar",
-    disconnect: "Desconectar",
-    addTo: "Adicionar a",
     login: "Entrar",
     logout: "Sair",
     configure: "Configurar",
@@ -124,8 +119,6 @@ export default {
     save: "Salvar",
     copyLink: "COPIAR LINK",
     export: "Exportar",
-    copySelected: "Copiar nós selecionados",
-    downloadTxt: "Baixar arquivo TXT",
     helpManual: "Ajuda e manual",
     switchSite: "Mudar para o site alternativo",
     addOutbound: "Adicionar um grupo de proxy",
@@ -133,12 +126,9 @@ export default {
     close: "Fechar",
     domainsExcluded: "Domínios excluídos",
     configureTunRouteScript: "Configurar script de rota",
-    ping: "PING",
     copySelectedDone: "Nós selecionados copiados",
-    downloadTxtDone: "Arquivo TXT baixado",
     exportEmpty:
       "Não foi possível gerar um link de compartilhamento para os nós selecionados",
-    exportFailed: "Falha ao exportar: {message}",
   },
   register: {
     title: "Crie primeiro uma conta de administrador",
@@ -156,8 +146,6 @@ export default {
     failed: "Falha ao entrar: {message}",
   },
   connection: {
-    disconnectFailed: "Falha ao desconectar: {message}",
-    connectFailed: "Falha ao conectar: {message}",
     checkFailed: "Falha ao verificar a conexão: {message}",
   },
   setting: {
@@ -384,8 +372,6 @@ export default {
     failed: "Falha ao excluir: {message}",
   },
   latency: {
-    message:
-      "Os testes de latência podem levar vários minutos. Aguarde com paciência.",
     testing: "testando…",
     failed: "Falha no teste de latência: {message}",
   },
@@ -459,7 +445,6 @@ export default {
     noMatch: "Nenhum nó correspondente",
     saved: "Grupo de proxy {group} salvo",
     saveFailed: "Falha ao salvar o grupo de proxy {group}: {message}",
-    updateFailed: "Falha ao atualizar o grupo {group}: {message}",
   },
   sharing: {
     copied: "Link copiado",

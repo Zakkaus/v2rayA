@@ -66,8 +66,6 @@ import AboutView from "@/views/AboutView.vue";
 import DashboardView from "@/views/DashboardView.vue";
 import LogsView from "@/views/LogsView.vue";
 import ProxiesView from "@/views/ProxiesView.vue";
-import SubscriptionsView from "@/views/SubscriptionsView.vue";
-import NodesView from "@/views/NodesView.vue";
 import SettingsView from "@/views/SettingsView.vue";
 
 const store = useAppStore();
@@ -87,7 +85,7 @@ const pageTitle = computed(() =>
 
 // ---- the node page ----------------------------------------------------------------
 
-const nodesRef = ref<{ sync(): Promise<void> } | null>(null);
+const pageRef = ref<{ sync?(): Promise<void> } | null>(null);
 // a new session gets a new node page
 const sessionSerial = ref(0);
 
@@ -224,7 +222,7 @@ async function startSession() {
   const socket = createMessageSocket({
     onMessage,
     // messages are not replayed: every open re-syncs the state
-    onOpen: () => void nodesRef.value?.sync(),
+    onOpen: () => void pageRef.value?.sync?.(),
   });
   onSessionTeardown(() => socket.stop());
   socket.start();
@@ -270,7 +268,7 @@ async function toggleRunning() {
         store.setRunning("running");
         store.connectedServer = res.touch.connectedServer ?? [];
       }
-      void nodesRef.value?.sync();
+      void pageRef.value?.sync?.();
     } catch (err) {
       notify.warning(t("v2ray.startFailed", { message: errorText(err) }));
     } finally {
@@ -281,7 +279,7 @@ async function toggleRunning() {
       const res = await deleteV2ray();
       store.setRunning("stopped");
       store.connectedServer = res.touch.connectedServer ?? [];
-      void nodesRef.value?.sync();
+      void pageRef.value?.sync?.();
     } catch (err) {
       notify.warning(t("v2ray.stopFailed", { message: errorText(err) }));
     }
@@ -356,7 +354,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
       >
         {{ statusText }}
       </v-btn>
-      <OutboundMenu v-if="!compact" class="me-3" @changed="nodesRef?.sync()" />
+      <OutboundMenu v-if="!compact" class="me-3" @changed="pageRef?.sync?.()" />
       <template #append>
         <ShellMenus variant="icons" />
       </template>
@@ -368,12 +366,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
       <div
         class="page"
         :class="{
-          'page--wide': [
-            'dashboard',
-            'proxies',
-            'subscriptions',
-            'nodes',
-          ].includes(store.view),
+          'page--wide': ['dashboard', 'proxies', 'nodes'].includes(store.view),
         }"
       >
         <div v-if="expanded" class="page__header">
@@ -383,18 +376,31 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
           </div>
         </div>
         <BannerHost />
-        <NodesView
-          v-if="store.loggedIn"
-          v-show="store.view === 'nodes'"
-          ref="nodesRef"
+        <DashboardView
+          v-if="store.view === 'dashboard'"
+          ref="pageRef"
           :key="sessionSerial"
         />
-        <DashboardView v-if="store.view === 'dashboard'" />
-        <ProxiesView v-else-if="store.view === 'proxies'" />
-        <SubscriptionsView v-else-if="store.view === 'subscriptions'" />
-        <SettingsView v-else-if="store.view === 'settings'" />
-        <LogsView v-else-if="store.view === 'logs'" />
-        <AboutView v-else-if="store.view === 'about'" />
+        <ProxiesView
+          v-else-if="store.view === 'proxies'"
+          ref="pageRef"
+          :key="sessionSerial"
+        />
+        <SettingsView
+          v-else-if="store.view === 'settings'"
+          ref="pageRef"
+          :key="sessionSerial"
+        />
+        <LogsView
+          v-else-if="store.view === 'logs'"
+          ref="pageRef"
+          :key="sessionSerial"
+        />
+        <AboutView
+          v-else-if="store.view === 'about'"
+          ref="pageRef"
+          :key="sessionSerial"
+        />
       </div>
     </v-main>
 

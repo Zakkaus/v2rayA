@@ -1,229 +1,247 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { effectScope } from "vue";
-import type { EffectScope } from "vue";
-import { createPinia, setActivePinia } from "pinia";
-import { flushPromises } from "@vue/test-utils";
+import { defineComponent, h, nextTick } from "vue";
 import type { VueWrapper } from "@vue/test-utils";
 import type * as Api from "@/api";
+import type { OutboundStatus, TouchResponse, Which } from "@/api/types";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import { mountWithApp } from "@/test/mount";
-import { useAppStore } from "@/stores/app";
-import type { TouchResponse, TouchServer } from "@/api/types";
-import ProxiesView from "../ProxiesView.vue";
-import NodesView from "../NodesView.vue";
+import { sameWhich } from "../nodes/model";
 import { groupMembers, useProxies } from "./model";
+import { fixture } from "./fixture";
 
 const api = vi.hoisted(() => ({
   getTouch: vi.fn(),
   getPingLatency: vi.fn(),
-  postConnection: vi.fn(),
+  getHttpLatency: vi.fn(),
   putOutboundConnections: vi.fn(),
+  putOutboundSelection: vi.fn(),
 }));
 vi.mock("@/api", async (original) => ({
   ...(await original<typeof Api>()),
   ...api,
 }));
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
-const server = (id: number, name: string, net = "vmess"): TouchServer => ({
-  id,
-  name,
-  net,
-  _type: "server",
-  address: `${name.toLowerCase()}.example:443`,
-  pingLatency: "",
-});
-function fixture(): TouchResponse {
-  return {
-    running: true,
-    networkPaused: false,
-    touch: {
-      servers: [server(1, "North"), server(2, "South", "trojan")],
-      subscriptions: [0, 1].map((id) => ({
-        id: id + 1,
-        _type: "subscription",
-        host: `feed-${id}.example`,
-        address: `https://feed-${id}.example`,
-        status: "2026-09-19T00:00:00Z",
-        info: "",
-        autoSelect: false,
-        servers: [
-          {
-            ...server(1, id === 0 ? "West" : "East", "vless"),
-            _type: "subscriptionServer",
-            sub: id,
-          },
-        ],
-      })),
-      connectedServer: [
-        { id: 1, _type: "server", outbound: "media" },
-        { id: 1, _type: "subscriptionServer", sub: 0, outbound: "media" },
-        { id: 2, _type: "server", outbound: "other" },
-        { id: 1, _type: "subscriptionServer", sub: 1 },
-        { id: 99, _type: "server", outbound: "media" },
-      ],
-    },
-  };
-}
 let response: TouchResponse;
-const scopes: EffectScope[] = [];
-const wrappers: VueWrapper[] = [];
-function model() {
-  const scope = effectScope();
-  scopes.push(scope);
-  return scope.run(() => useProxies())!;
-}
-function mountPage() {
-  const wrapper = mountWithApp(ProxiesView);
-  wrappers.push(wrapper);
-  useAppStore().outbounds = ["proxy", "media", "other", "empty"];
-  return wrapper;
-}
-
-beforeEach(() => {
+let wrapper: VueWrapper;
+let getModel = () => useProxies();
+beforeEach(async () => {
   localStorage.clear();
-  setActivePinia(createPinia());
-  response = fixture();
   vi.clearAllMocks();
+  response = fixture();
   api.getTouch.mockImplementation(async () => structuredClone(response));
   api.putOutboundConnections.mockImplementation(
     async ({ outbound, touches }) => {
       response.touch.connectedServer = [
         ...response.touch.connectedServer!.filter(
-          (which) => (which.outbound ?? "proxy") !== outbound,
+          (w) => (w.outbound ?? "proxy") !== outbound,
         ),
-        ...touches,
+        ...touches.map((w: Which) => ({ ...w, outbound })),
       ];
       return structuredClone(response);
     },
   );
-  api.postConnection.mockImplementation(async () => structuredClone(response));
+  api.putOutboundSelection.mockImplementation(async ({ outbound, which }) => {
+    response.touch.connectedServer = response.touch.connectedServer!.map((w) =>
+      (w.outbound ?? "proxy") === outbound
+        ? { ...w, selected: !!which && sameWhich(w, which) }
+        : w,
+    );
+    return structuredClone(response);
+  });
   api.getPingLatency.mockResolvedValue({
     whiches: [
-      { id: 1, _type: "server", pingLatency: "80ms" },
       { id: 1, _type: "subscriptionServer", sub: 0, pingLatency: "20ms" },
-      { id: 2, _type: "server", pingLatency: "1ms" },
     ],
   });
+  api.getHttpLatency.mockResolvedValue({
+    whiches: [
+      { id: 1, _type: "subscriptionServer", sub: 0, pingLatency: "40ms" },
+    ],
+  });
+  wrapper = mountWithApp(
+    defineComponent({
+      setup() {
+        const model = useProxies();
+        getModel = () => model;
+        return () => h("div");
+      },
+    }),
+  );
+  getModel().store.outboundName = "media";
+  await getModel().sync();
 });
-afterEach(() => {
-  wrappers.splice(0).forEach((wrapper) => wrapper.unmount());
-  scopes.splice(0).forEach((scope) => scope.stop());
-});
+afterEach(() => wrapper.unmount());
 
-describe("outbound group cards", () => {
+describe("proxy node management", () => {
   test("resolves members by outbound and subscription index, ignoring missing nodes", () => {
     const touch = response.touch;
+    touch.connectedServer!.push({ id: 99, _type: "server", outbound: "media" });
     expect(
-      groupMembers(touch, touch.connectedServer!, "media").map(
-        (row) => row.name,
-      ),
+      groupMembers(touch, touch.connectedServer!, "media").map((r) => r.name),
     ).toEqual(["North", "West"]);
     expect(
-      groupMembers(touch, touch.connectedServer!, "proxy").map(
-        (row) => row.name,
-      ),
+      groupMembers(touch, touch.connectedServer!, "proxy").map((r) => r.name),
     ).toEqual(["East"]);
     expect(groupMembers(touch, touch.connectedServer!, "empty")).toEqual([]);
   });
-
-  test("searches names, addresses and protocols without changing group membership", async () => {
-    const proxies = model();
-    proxies.store.outbounds = ["media"];
-    await proxies.sync();
+  test("combines source, name/address/protocol search and current group membership", () => {
+    const model = getModel();
     for (const [query, names] of [
       [" NoRtH ", ["North"]],
       ["west.example", ["West"]],
-      ["VLESS", ["West"]],
+      ["VLESS", ["West", "East"]],
       ["missing", []],
     ] as const) {
-      proxies.query.value = query;
-      expect(proxies.groups.value[0].visible.map((row) => row.name)).toEqual(
-        names,
-      );
-      expect(proxies.groups.value[0].members.map((row) => row.name)).toEqual([
-        "North",
-        "West",
-      ]);
+      model.query.value = query;
+      expect(model.listed.value.map((r) => r.name)).toEqual(names);
+      expect(model.members.value.map((r) => r.name)).toEqual(["North", "West"]);
     }
-    proxies.query.value = "trojan";
-    expect(proxies.sources.value[0].rows.map((row) => row.name)).toEqual([
-      "South",
-    ]);
-    expect(proxies.sources.value[1].rows).toEqual([]);
+    model.query.value = "vless";
+    model.source.value = response.touch.subscriptions[1].address;
+    expect(model.listed.value.map((r) => r.name)).toEqual(["East"]);
+    model.membersOnly.value = true;
+    expect(model.listed.value).toEqual([]);
+    model.source.value = "local";
+    model.query.value = "";
+    expect(model.listed.value.map((r) => r.name)).toEqual(["North"]);
   });
-
-  test("tests and connects the group's fastest member, not the search result or another outbound", async () => {
-    const proxies = model();
-    await proxies.sync();
-    proxies.query.value = "North";
-    await proxies.testGroup("media", "testing");
-    expect(api.getPingLatency).toHaveBeenCalledWith([
-      { id: 1, _type: "server", sub: null },
-      { id: 1, _type: "subscriptionServer", sub: 0 },
-    ]);
-    await proxies.connectGroup("media");
-    // connectFastest makes the group hold only its fastest member
-    expect(api.putOutboundConnections).toHaveBeenCalledWith({
-      outbound: "media",
-      touches: [{ _type: "subscriptionServer", id: 1, sub: 0 }],
-    });
-    await proxies.toggleGroup(proxies.nodes.touch.value.servers[0], "media");
-    expect(proxies.tested.value.has("media")).toBe(false);
-  });
-
-  test("mounts cards, removes a member by chip, filters sources and remembers list mode", async () => {
-    const wrapper = mountPage();
-    await flushPromises();
-    const media = wrapper.get('[data-group="media"]');
-    expect(media.findAll(".node-chip").map((chip) => chip.text())).toEqual([
+  test("toggles membership without replacing other members or another group", async () => {
+    const model = getModel();
+    await model.toggleGroup(model.rows.value[1]);
+    expect(model.members.value.map((r) => r.name)).toEqual([
       "North",
       "West",
+      "South",
     ]);
-    await media.get(".node-chip").trigger("click");
-    await flushPromises();
-    expect(media.findAll(".node-chip").map((chip) => chip.text())).toEqual([
-      "West",
-    ]);
-    expect(wrapper.get('[data-group="proxy"]').text()).toContain("East");
-    await wrapper.get("input").setValue("VLESS");
-    expect(media.findAll(".node-chip").map((chip) => chip.text())).toEqual([
-      "West",
-    ]);
-    await wrapper.get(".v-expansion-panel-title").trigger("click");
-    await flushPromises();
     expect(
-      wrapper.get(".v-expansion-panel-text").findAll(".node-chip"),
-    ).toEqual([]);
-    const listButton = wrapper
-      .findAll("button")
-      .find((button) => button.text() === "List")!;
-    await listButton.trigger("click");
-    await flushPromises();
-    expect(wrapper.findComponent(NodesView).exists()).toBe(true);
-    expect(localStorage.getItem("proxiesView")).toBe("list");
-    wrapper.unmount();
-    wrappers.splice(wrappers.indexOf(wrapper), 1);
-    const restored = mountPage();
-    await flushPromises();
-    expect(restored.findComponent(NodesView).exists()).toBe(true);
+      groupMembers(
+        model.nodes.touch.value,
+        model.store.connectedServer,
+        "other",
+      ).map((r) => r.name),
+    ).toEqual(["South"]);
+    await model.toggleGroup(model.rows.value[0]);
+    expect(model.members.value.map((r) => r.name)).toEqual(["West", "South"]);
   });
-
-  test("keeps a failed load distinct from an empty group and retries", async () => {
-    api.getTouch.mockRejectedValueOnce(new Error("backend unavailable"));
-    const wrapper = mountPage();
-    await flushPromises();
-    expect(wrapper.get('[role="alert"]').text()).toContain(
-      "backend unavailable",
+  test("selects and clears a member through the selection endpoint, retaining all memberships", async () => {
+    const model = getModel();
+    const before = structuredClone(response.touch.connectedServer);
+    await model.selectMember(model.rows.value[2]);
+    expect(api.putOutboundSelection).toHaveBeenLastCalledWith({
+      outbound: "media",
+      which: { _type: "subscriptionServer", id: 1, sub: 0 },
+    });
+    expect(model.isSelected(model.rows.value[2])).toBe(true);
+    expect(model.selectedMember.value?.selected).toBe(true);
+    expect(model.mode.value).toBe("manual");
+    expect(model.inUse("media")?.name).toBe("West");
+    await model.setMode("auto");
+    expect(api.putOutboundSelection).toHaveBeenLastCalledWith({
+      outbound: "media",
+      which: null,
+    });
+    expect(model.selectedMember.value).toBeUndefined();
+    expect(model.mode.value).toBe("auto");
+    expect(
+      model.store.connectedServer.map(({ selected, ...w }) => {
+        expect(selected).not.toBe(true);
+        return w;
+      }),
+    ).toEqual(before);
+    expect(api.putOutboundConnections).not.toHaveBeenCalled();
+    await model.selectMember(model.rows.value[1]);
+    expect(api.putOutboundSelection).toHaveBeenCalledTimes(2);
+  });
+  test("manual mode waits for a member choice; observatory ignores dead and nonmember probes", async () => {
+    const model = getModel();
+    const status = (
+      which: Which,
+      alive: boolean,
+      delay: number,
+    ): OutboundStatus => ({
+      which,
+      alive,
+      delay,
+      outbound_tag: "media",
+      last_seen_time: 0,
+      last_try_time: 0,
+    });
+    model.store.observatory.media = [
+      status({ id: 2, _type: "server" }, true, 1),
+      status({ id: 1, _type: "server" }, false, 2),
+      status({ id: 1, _type: "subscriptionServer", sub: 0 }, true, 50),
+    ];
+    expect(model.inUse("media")?.name).toBe("West");
+    model.store.observatory.media[1] = status(
+      { id: 1, _type: "server" },
+      true,
+      20,
     );
-    expect(wrapper.find('[data-group="media"]').exists()).toBe(false);
-    await wrapper.get('[role="alert"] button').trigger("click");
-    await flushPromises();
-    expect(wrapper.get('[data-group="media"]').text()).toContain("West");
-    expect(wrapper.find('[role="alert"]').exists()).toBe(false);
+    expect(model.inUse("media")?.name).toBe("North");
+    await model.setMode("manual");
+    expect(model.mode.value).toBe("manual");
+    expect(api.putOutboundSelection).not.toHaveBeenCalled();
+    model.store.outboundName = "other";
+    await nextTick();
+    expect(model.mode.value).toBe("auto");
+    expect(model.inUse("other")).toBeNull();
+  });
+  test("batch add and remove each issue one full member update and preserve unselected members", async () => {
+    const model = getModel();
+    model.source.value = "local";
+    model.selectAll(true);
+    await model.batchMembership(true);
+    expect(api.putOutboundConnections).toHaveBeenCalledTimes(1);
+    expect(model.members.value.map((r) => r.name)).toEqual([
+      "North",
+      "West",
+      "South",
+    ]);
+    await model.batchMembership(false);
+    expect(api.putOutboundConnections).toHaveBeenCalledTimes(2);
+    expect(model.members.value.map((r) => r.name)).toEqual(["West"]);
+    expect(
+      groupMembers(
+        model.nodes.touch.value,
+        model.store.connectedServer,
+        "other",
+      ).map((r) => r.name),
+    ).toEqual(["South"]);
+  });
+  test("tests only listed rows over TCP and HTTP, exposing pending and returned latency", async () => {
+    const model = getModel();
+    model.source.value = response.touch.subscriptions[0].address;
+    model.query.value = "West";
+    const pending = model.testListed();
+    expect(model.testing.value).toBe(true);
+    expect(Number.parseFloat(model.listed.value[0].pingLatency)).toBeNaN();
+    await pending;
+    expect(api.getPingLatency).toHaveBeenCalledWith([
+      { id: 1, _type: "subscriptionServer", sub: 0 },
+    ]);
+    expect(model.listed.value[0].pingLatency).toBe("20ms");
+    expect(model.testing.value).toBe(false);
+    await model.testListed(true);
+    expect(api.getHttpLatency).toHaveBeenCalledWith([
+      { id: 1, _type: "subscriptionServer", sub: 0 },
+    ]);
+    expect(model.listed.value[0].pingLatency).toBe("40ms");
+  });
+  test("drops hidden batch selection so a later delete cannot affect filtered-out rows", async () => {
+    const model = getModel();
+    model.selectAll(true);
+    model.source.value = "local";
+    await nextTick();
+    expect(model.selected.value.map((r) => r.name)).toEqual(["North", "South"]);
+    expect(model.canDelete.value).toBe(true);
+    model.query.value = "South";
+    await nextTick();
+    model.query.value = "";
+    expect(model.selected.value.map((r) => r.name)).toEqual(["South"]);
+    expect(model.allSelected.value).toBe(false);
   });
 });

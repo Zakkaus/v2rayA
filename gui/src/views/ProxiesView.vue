@@ -1,392 +1,401 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
 import {
-  mdiChevronDown,
+  mdiCogOutline,
   mdiMagnify,
   mdiPlus,
+  mdiRss,
+  mdiServerNetworkOutline,
   mdiSpeedometer,
   mdiTrayArrowDown,
   mdiViewGridOutline,
   mdiViewListOutline,
 } from "@mdi/js";
-import { errorText } from "@/api/errors";
-import { useDialog, useNotify, useOutboundGroups } from "@/composables";
-import ImportDialog from "@/dialogs/Import.vue";
-import ServerDialog from "@/dialogs/Server/index.vue";
-import NodesView from "./NodesView.vue";
-import NodeChips from "./proxies/NodeChips.vue";
+import OutboundMenu from "@/components/OutboundMenu.vue";
+import { rowKey } from "./nodes/model";
 import { useProxies } from "./proxies/model";
-import type { Row } from "./nodes/model";
+import NodeCard from "./proxies/NodeCard.vue";
+import NodeListItem from "./proxies/NodeListItem.vue";
+import SubscriptionCard from "./proxies/SubscriptionCard.vue";
 
 defineOptions({ name: "ProxiesView" });
 const { t } = useI18n();
-const notify = useNotify();
 const { width } = useDisplay();
 const expanded = computed(() => width.value >= 840);
-const proxies = useProxies();
+const model = useProxies();
 const {
-  store,
-  nodes,
   query,
-  view,
-  groups,
+  source,
   sources,
-  manualRows,
-  manualGroup,
-  pending,
-  tested,
+  membersOnly,
+  view,
   loading,
   loadError,
-} = proxies;
-const list = ref<InstanceType<typeof NodesView> | null>(null);
-const { open } = useDialog();
-const outboundGroups = useOutboundGroups();
-
-async function newGroup() {
-  if (await outboundGroups.add()) await sync();
-}
-async function newNode() {
-  const saved = await open<boolean>(
-    ServerDialog,
-    { which: null },
-    { width: 560 },
-  ).result;
-  if (saved) await sync();
-}
-async function importNodes() {
-  const imported = await open<boolean>(ImportDialog, {}, { width: 480 }).result;
-  if (imported) await sync();
-}
-
-async function run(
-  action: () => Promise<unknown>,
-  failKey: string,
-  params = {},
-) {
-  try {
-    await action();
-  } catch (err) {
-    notify.warning(t(failKey, { ...params, message: errorText(err) }));
-  }
-}
-const sync = () =>
-  run(async () => {
-    if (view.value === "list") await list.value?.sync();
-    else await proxies.sync();
-  }, "server.refreshFailed");
-const toggle = (row: Row, group: string) =>
-  run(() => proxies.toggleGroup(row, group), "proxyGroup.updateFailed", {
-    group,
-  });
-const connect = (group: string) =>
-  run(() => proxies.connectGroup(group), "connection.connectFailed");
+  busy,
+  testing,
+  rows,
+  subscriptions,
+  members,
+  mode,
+  listed,
+  selected,
+  selectedKeys,
+  allSelected,
+  canDelete,
+  preferred,
+  sync,
+} = model;
+const disabled = computed(() => busy.value || loading.value);
 defineExpose({ sync });
-onMounted(() => {
-  if (view.value === "cards") void sync();
-});
-watch(view, (value) => {
-  if (value === "cards") void sync();
-});
+onMounted(sync);
 </script>
 
 <template>
-  <div class="proxies">
-    <div class="proxies__bar">
-      <v-btn-toggle
-        v-model="view"
-        mandatory
-        divided
-        variant="outlined"
-        rounded="xl"
-        density="comfortable"
-        selected-class="bg-secondary-container text-on-secondary-container"
-        :aria-label="t('operations.view')"
-      >
-        <v-btn
-          value="cards"
-          :prepend-icon="mdiViewGridOutline"
-          class="text-none"
-        >
-          {{ t("proxies.cards") }}
-        </v-btn>
-        <v-btn
-          value="list"
-          :prepend-icon="mdiViewListOutline"
-          class="text-none"
-        >
-          {{ t("proxies.list") }}
-        </v-btn>
-      </v-btn-toggle>
-      <v-spacer />
-      <v-btn variant="text" :prepend-icon="mdiPlus" @click="newGroup">
-        {{ t("proxies.newGroup") }}
-      </v-btn>
-      <v-btn variant="outlined" :prepend-icon="mdiPlus" @click="newNode">
-        {{ t("proxies.newNode") }}
-      </v-btn>
-      <v-btn
-        color="primary"
-        variant="flat"
-        :prepend-icon="mdiTrayArrowDown"
-        @click="importNodes"
-      >
-        {{ t("operations.import") }}
-      </v-btn>
-    </div>
-    <v-text-field
-      v-if="view === 'cards'"
-      v-model="query"
-      :placeholder="t('proxyGroup.searchNodes')"
-      :prepend-inner-icon="mdiMagnify"
-      variant="solo-filled"
-      bg-color="surface-container-high"
-      rounded="pill"
-      density="comfortable"
-      flat
-      hide-details
-      clearable
-      class="proxies__search mb-5"
-      @click:clear="query = ''"
-    />
-
-    <NodesView v-if="view === 'list'" ref="list" />
-    <template v-else>
-      <v-alert v-if="loadError" type="error" variant="tonal" class="mb-4">
-        {{ t("server.refreshFailed", { message: errorText(loadError) }) }}
-        <template #append>
-          <v-btn variant="text" @click="sync">{{
-            t("operations.update")
-          }}</v-btn>
-        </template>
-      </v-alert>
-      <v-skeleton-loader
-        v-else-if="loading"
-        type="card, card"
-        class="bg-transparent"
+  <div class="proxies" :class="{ 'proxies--expanded': expanded }">
+    <div class="proxies__toolbar">
+      <v-text-field
+        v-model="query"
+        :label="t('proxyGroup.searchNodes')"
+        :prepend-inner-icon="mdiMagnify"
+        variant="solo-filled"
+        bg-color="surface-container-high"
+        rounded="pill"
+        flat
+        hide-details
+        clearable
+        class="proxies__search"
+        @click:clear="query = ''"
       />
-      <template v-else>
-        <div
-          class="proxies__groups"
-          :class="{ 'proxies__groups--wide': expanded }"
-        >
-          <v-card
-            v-for="group in groups"
-            :key="group.name"
-            color="surface-container-high"
-            rounded="xl"
-            class="pa-5"
-            :data-group="group.name"
-          >
-            <div class="d-flex align-center ga-3 mb-4">
-              <h2 class="md3-title-large proxies__name">
-                {{ group.name.toUpperCase() }}
-              </h2>
-              <v-chip size="small" variant="tonal">
-                {{ t("proxies.members", { n: group.members.length }) }}
-              </v-chip>
-              <v-spacer />
-              <v-btn
-                v-if="!tested.has(group.name)"
-                variant="tonal"
-                :prepend-icon="mdiSpeedometer"
-                :disabled="pending !== null || !group.members.length"
-                :loading="pending === group.name"
-                @click="
-                  run(
-                    () => proxies.testGroup(group.name, t('latency.testing')),
-                    'latency.failed',
-                  )
-                "
-              >
-                {{ t("proxies.testLatency") }}
-              </v-btn>
-              <v-btn-group
-                v-else
-                color="primary"
-                variant="flat"
-                rounded="xl"
-                divided
-              >
-                <v-btn
-                  :disabled="pending !== null"
-                  @click="connect(group.name)"
-                >
-                  {{ t("proxies.connectFastest") }}
-                </v-btn>
-                <v-menu>
-                  <template #activator="{ props }">
-                    <v-btn
-                      v-bind="props"
-                      :disabled="pending !== null"
-                      :icon="mdiChevronDown"
-                      :aria-label="t('common.menu')"
-                    />
-                  </template>
-                  <v-list density="compact">
-                    <v-list-item
-                      :title="t('proxies.testLatency')"
-                      @click="
-                        run(
-                          () =>
-                            proxies.testGroup(group.name, t('latency.testing')),
-                          'latency.failed',
-                        )
-                      "
-                    />
-                    <v-list-item
-                      :title="t('proxies.chooseManually')"
-                      @click="manualGroup = group.name"
-                    />
-                  </v-list>
-                </v-menu>
-              </v-btn-group>
-            </div>
-            <NodeChips
-              :rows="group.visible"
-              :is-selected="(row) => nodes.inGroup(row, group.name)"
-              :disabled="pending !== null"
-              @toggle="toggle($event, group.name)"
-            />
-            <p
-              v-if="!group.visible.length"
-              class="md3-body-medium text-on-surface-variant ma-0"
-            >
-              {{
-                t(
-                  group.members.length
-                    ? "proxyGroup.noMatch"
-                    : "proxyGroup.emptyGroup",
-                )
-              }}
-            </p>
-          </v-card>
-        </div>
-
-        <section class="mt-8">
-          <div class="d-flex flex-wrap align-center ga-3 mb-3">
-            <h2 class="md3-title-medium">{{ t("common.nodes") }}</h2>
-            <span class="md3-body-medium text-on-surface-variant">
-              {{ t("operations.addTo") }}
-            </span>
-            <v-chip-group
-              :model-value="store.outboundName"
-              mandatory
-              :disabled="pending !== null"
-              @update:model-value="(v: string) => (store.outboundName = v)"
-            >
-              <v-chip
-                v-for="g in store.outbounds"
-                :key="g"
-                :value="g"
-                variant="outlined"
-                filter
-              >
-                {{ g.toUpperCase() }}
-              </v-chip>
-            </v-chip-group>
-          </div>
-          <v-expansion-panels multiple variant="accordion" rounded="lg">
-            <v-expansion-panel
-              v-for="source in sources"
-              :key="source.key"
-              :value="source.key"
-              bg-color="surface-container-low"
-            >
-              <v-expansion-panel-title class="md3-title-small">
-                <span class="proxies__name">{{
-                  source.name || t("server.server")
-                }}</span>
-                <v-chip size="x-small" variant="tonal" class="ms-3">{{
-                  source.rows.length
-                }}</v-chip>
-              </v-expansion-panel-title>
-              <v-expansion-panel-text>
-                <NodeChips
-                  :rows="source.rows"
-                  :is-selected="(row) => nodes.inGroup(row, store.outboundName)"
-                  :disabled="pending !== null"
-                  @toggle="toggle($event, store.outboundName)"
-                />
-                <p
-                  v-if="!source.rows.length"
-                  class="md3-body-medium text-on-surface-variant ma-0"
-                >
-                  {{ t(query ? "proxyGroup.noMatch" : "common.empty") }}
-                </p>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </section>
-      </template>
-    </template>
-
-    <v-dialog
-      :model-value="manualGroup !== null"
-      max-width="640"
-      scrollable
-      @update:model-value="!$event && (manualGroup = null)"
-    >
-      <v-card v-if="manualGroup !== null">
-        <v-card-title class="md3-headline-small px-6 pt-6 pb-2 proxies__name">{{
-          manualGroup
-        }}</v-card-title>
-        <v-card-text class="px-6">
-          <v-text-field
-            v-model="query"
-            :label="t('proxyGroup.searchNodes')"
-            :prepend-inner-icon="mdiMagnify"
-            rounded="pill"
-            variant="solo-filled"
-            bg-color="surface-container-high"
-            flat
-            hide-details
-            class="mb-4"
-          />
-          <NodeChips
-            :rows="manualRows"
-            :is-selected="(row) => nodes.inGroup(row, manualGroup!)"
-            :disabled="pending !== null"
-            @toggle="toggle($event, manualGroup!)"
-          />
-          <v-empty-state
-            v-if="!manualRows.length"
-            :title="t('proxyGroup.noMatch')"
-          />
-        </v-card-text>
-        <v-card-actions class="px-6 pb-4">
+      <v-spacer />
+      <v-btn
+        variant="text"
+        :prepend-icon="mdiPlus"
+        :disabled="disabled"
+        @click="model.newGroup"
+        >{{ t("proxies.newGroup") }}</v-btn
+      >
+      <v-btn
+        variant="outlined"
+        :prepend-icon="mdiPlus"
+        :disabled="disabled"
+        @click="model.newNode"
+        >{{ t("proxies.newNode") }}</v-btn
+      >
+      <v-btn
+        v-if="rows.length || loading || loadError"
+        variant="flat"
+        color="primary"
+        :prepend-icon="mdiTrayArrowDown"
+        :disabled="disabled"
+        @click="model.importNodes"
+        >{{ t("operations.import") }}</v-btn
+      >
+    </div>
+    <v-alert v-if="loadError" type="error" variant="tonal" class="mb-4">
+      {{ loadError }}
+      <template #append
+        ><v-btn variant="text" @click="sync">{{
+          t("operations.update")
+        }}</v-btn></template
+      >
+    </v-alert>
+    <v-skeleton-loader
+      v-if="loading && !rows.length"
+      type="card, card"
+      class="bg-transparent"
+    />
+    <template v-else-if="!loadError || rows.length">
+      <section class="mb-6">
+        <div class="d-flex align-center ga-2 mb-4">
+          <h2 class="md3-title-medium">{{ t("common.subscriptions") }}</h2>
           <v-spacer />
-          <v-btn variant="text" @click="manualGroup = null">{{
-            t("operations.close")
-          }}</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+          <v-btn
+            variant="text"
+            :prepend-icon="mdiCogOutline"
+            :disabled="disabled"
+            @click="model.subscriptionSettings"
+            >{{ t("proxies.autoUpdate") }}</v-btn
+          >
+        </div>
+        <div v-if="subscriptions.length" class="proxies__subscriptions">
+          <SubscriptionCard
+            v-for="subscription in subscriptions"
+            :key="subscription.address"
+            :subscription="subscription"
+            :disabled="disabled"
+            @action="model.subscriptionAction(subscription, $event)"
+          />
+        </div>
+        <v-card v-else variant="outlined" rounded="xl">
+          <v-empty-state :icon="mdiRss" :text="t('import.subscriptionMessage')">
+            <template #actions
+              ><v-btn
+                variant="tonal"
+                :disabled="disabled"
+                @click="model.importNodes"
+                >{{ t("operations.import") }}</v-btn
+              ></template
+            >
+          </v-empty-state>
+        </v-card>
+      </section>
+      <section>
+        <h2 class="md3-title-medium mb-4">
+          {{ t("common.nodes") }} · {{ rows.length }}
+        </h2>
+        <div class="proxies__filters mb-4">
+          <v-chip-group v-model="source" mandatory class="proxies__sources">
+            <v-chip
+              v-for="item in sources"
+              :key="item.value"
+              :value="item.value"
+              variant="outlined"
+              filter
+              >{{ item.title }}</v-chip
+            >
+          </v-chip-group>
+          <v-chip
+            :model-value="true"
+            :aria-pressed="membersOnly"
+            :variant="membersOnly ? 'tonal' : 'outlined'"
+            @click="membersOnly = !membersOnly"
+            >{{ t("proxies.membersOnly") }}</v-chip
+          >
+          <v-spacer />
+          <OutboundMenu variant="chip" @changed="sync" />
+          <v-btn
+            variant="tonal"
+            :prepend-icon="mdiSpeedometer"
+            :loading="testing"
+            :disabled="disabled || !listed.length"
+            @click="model.testListed()"
+            >{{ t("proxies.testLatency") }}</v-btn
+          >
+          <v-btn-toggle
+            v-model="view"
+            mandatory
+            divided
+            variant="outlined"
+            rounded="xl"
+            selected-class="bg-secondary-container text-on-secondary-container"
+            :aria-label="t('operations.view')"
+          >
+            <v-btn value="cards" :prepend-icon="mdiViewGridOutline">{{
+              t("proxies.cards")
+            }}</v-btn>
+            <v-btn value="list" :prepend-icon="mdiViewListOutline">{{
+              t("proxies.list")
+            }}</v-btn>
+          </v-btn-toggle>
+        </div>
+        <div
+          v-if="members.length >= 2"
+          class="d-flex flex-wrap align-center ga-2 mb-4"
+        >
+          <v-btn-toggle
+            :model-value="mode"
+            mandatory
+            divided
+            variant="outlined"
+            rounded="xl"
+            :disabled="disabled"
+            selected-class="bg-secondary-container text-on-secondary-container"
+            @update:model-value="model.setMode"
+          >
+            <v-btn value="auto">{{ t("proxies.mode.auto") }}</v-btn>
+            <v-btn value="manual">{{ t("proxies.mode.manual") }}</v-btn>
+          </v-btn-toggle>
+          <span
+            v-if="mode === 'manual' && !model.selectedMember.value"
+            class="md3-body-small text-on-surface-variant"
+            >{{ t("proxies.chooseManually") }} ·
+            {{ t("proxies.useThis") }}</span
+          >
+          <span
+            v-if="mode === 'auto' && preferred"
+            class="md3-body-medium"
+            dir="auto"
+            >{{ preferred.name }}</span
+          >
+        </div>
+        <v-empty-state
+          v-if="!rows.length"
+          :icon="mdiServerNetworkOutline"
+          :title="t('common.empty')"
+          :text="t('import.subscriptionMessage')"
+        >
+          <template #actions
+            ><v-btn
+              variant="flat"
+              color="primary"
+              :disabled="disabled"
+              @click="model.importNodes"
+              >{{ t("operations.import") }}</v-btn
+            ></template
+          >
+        </v-empty-state>
+        <v-empty-state
+          v-else-if="!listed.length"
+          :title="t('proxyGroup.noMatch')"
+        />
+        <div v-else-if="view === 'cards'" class="proxies__cards">
+          <NodeCard
+            v-for="row in listed"
+            :key="rowKey(row)"
+            :row="row"
+            :source="model.sourceName(row)"
+            :member="model.isMember(row)"
+            :selected="model.isSelected(row)"
+            :in-use="!!preferred && rowKey(preferred) === rowKey(row)"
+            :disabled="disabled"
+            :testing="testing"
+            @toggle="model.toggleGroup(row)"
+            @action="model.nodeAction(row, $event)"
+          />
+        </div>
+        <template v-else>
+          <div class="proxies__batch mb-2">
+            <v-checkbox-btn
+              :model-value="allSelected"
+              :indeterminate="selected.length > 0 && !allSelected"
+              :aria-label="t('proxies.selectAll')"
+              :disabled="disabled"
+              @update:model-value="model.selectAll(!!$event)"
+            />
+            <span class="md3-label-large">{{
+              t("common.selectedCount", { n: selected.length })
+            }}</span>
+            <template v-if="selected.length">
+              <v-btn
+                variant="text"
+                :disabled="disabled || testing"
+                @click="model.testRows(selected)"
+                >{{ t("proxies.testLatency") }}</v-btn
+              >
+              <v-btn
+                variant="text"
+                :disabled="disabled"
+                @click="model.batchMembership(true)"
+                >{{ t("proxies.addToGroup") }}</v-btn
+              >
+              <v-btn
+                variant="text"
+                :disabled="disabled"
+                @click="model.batchMembership(false)"
+                >{{ t("proxies.removeFromGroup") }}</v-btn
+              >
+              <v-tooltip
+                :disabled="canDelete"
+                :text="t('proxies.deleteSubscriptionNodes')"
+              >
+                <template #activator="{ props }"
+                  ><span v-bind="props" :tabindex="canDelete ? undefined : 0"
+                    ><v-btn
+                      variant="text"
+                      :disabled="disabled || !canDelete"
+                      @click="model.removeRows(selected)"
+                      >{{ t("operations.delete") }}</v-btn
+                    ></span
+                  ></template
+                >
+              </v-tooltip>
+              <v-btn
+                variant="text"
+                :disabled="disabled"
+                @click="model.exportSelected"
+                >{{ t("operations.export") }}</v-btn
+              >
+            </template>
+          </div>
+          <v-list
+            bg-color="surface-container-low"
+            rounded="xl"
+            class="proxies__list"
+          >
+            <NodeListItem
+              v-for="row in listed"
+              :key="rowKey(row)"
+              :row="row"
+              :source="model.sourceName(row)"
+              :member="model.isMember(row)"
+              :selected="model.isSelected(row)"
+              :in-use="!!preferred && rowKey(preferred) === rowKey(row)"
+              :checked="selectedKeys.includes(rowKey(row))"
+              :disabled="disabled"
+              :testing="testing"
+              @toggle="model.toggleGroup(row)"
+              @check="model.selectRow(row, $event)"
+              @action="model.nodeAction(row, $event)"
+            />
+          </v-list>
+        </template>
+      </section>
+    </template>
   </div>
 </template>
 
 <style scoped>
-.proxies__bar {
+.proxies {
+  padding-bottom: 96px;
+}
+.proxies__toolbar,
+.proxies__filters {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 8px;
+}
+.proxies__toolbar {
+  margin-bottom: 24px;
 }
 .proxies__search {
+  flex: 1 1 280px;
   max-width: 480px;
 }
-.proxies__groups {
+.proxies__sources {
+  max-width: 100%;
+}
+.proxies__subscriptions,
+.proxies__cards {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+}
+.proxies__subscriptions {
   gap: 16px;
 }
-.proxies__groups--wide {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.proxies__cards {
+  gap: 12px;
 }
-.proxies__name {
-  overflow-wrap: anywhere;
-  white-space: normal;
+.proxies--expanded .proxies__subscriptions {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+.proxies--expanded .proxies__cards {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+.proxies__batch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  overflow-x: auto;
+  min-height: 48px;
+}
+.proxies__batch > * {
+  flex-shrink: 0;
+}
+.proxies__batch :deep(.v-selection-control) {
+  flex: 0 0 48px;
+}
+.proxies :deep(.v-btn) {
+  min-height: 48px;
+}
+.proxies :deep(.v-chip--link) {
+  min-height: 48px;
+}
+.proxies :deep(.node-menu),
+.proxies :deep(.subscription-card__menu) {
+  min-height: 40px;
 }
 </style>
