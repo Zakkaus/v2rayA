@@ -7,6 +7,7 @@ import {
   getPingLatency,
   getTouch,
   postV2ray,
+  putOutboundConnections,
   putOutboundSelection,
   putSubscription,
 } from "@/api";
@@ -25,6 +26,7 @@ import SharingDialog from "@/dialogs/Sharing.vue";
 import SubscriptionDialog from "@/dialogs/Subscription.vue";
 import PortsDialog from "@/dialogs/settings/Ports.vue";
 import RoutingADialog from "@/dialogs/settings/RoutingA.vue";
+import GroupMembersDialog from "./GroupMembers.vue";
 import { useAppStore } from "@/stores/app";
 import { locate, runningOf, sameWhich } from "@/views/nodes/model";
 import { useSettings, type SettingForm } from "@/views/settings/model";
@@ -207,6 +209,33 @@ export function useDashboard() {
     const imported = await openDialog<boolean>(ImportDialog, {}, { width: 480 })
       .result;
     if (imported) await getTouch().then(apply).catch(report);
+  }
+  /** editGroup lets the user pick the group's members from every node; Save replaces the list. */
+  async function editGroup() {
+    if (!touch.value) return;
+    const outbound = store.outboundName;
+    const touches = await openDialog<Which[]>(
+      GroupMembersDialog,
+      {
+        outbound,
+        touch: touch.value,
+        members: store.connectedServer.filter(
+          (w) => (w.outbound ?? "proxy") === outbound,
+        ),
+      },
+      { width: 560 },
+    ).result;
+    if (!touches) return;
+    const overlay = openLoading();
+    try {
+      apply(await putOutboundConnections({ outbound, touches }));
+      measured.value.clear();
+      void testMembers();
+    } catch (err) {
+      notify.warning(errorText(err));
+    } finally {
+      overlay.close();
+    }
   }
   /** editRoutingA opens the RoutingA editor. */
   function editRoutingA() {
@@ -410,6 +439,7 @@ export function useDashboard() {
     nodeInUse,
     editPorts,
     editRoutingA,
+    editGroup,
     importNodes,
     subscriptions,
     quick: settings.form,

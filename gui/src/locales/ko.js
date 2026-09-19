@@ -63,6 +63,7 @@ export default {
     pinned: "고정됨",
     balanced: "자동 · 멤버 {n}개",
     switchNode: "전환",
+    editGroup: "그룹 편집",
     autoFastest: "자동 (최저 지연 시간)",
     manageNodes: "노드 관리",
     emptyGroup: "이 그룹에 노드가 없습니다",

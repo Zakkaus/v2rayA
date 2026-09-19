@@ -7,6 +7,7 @@ import {
   putOutboundSelection,
 } from "@/api";
 import { errorText } from "@/api/errors";
+import { copyText } from "@/lib/clipboard";
 import type { Touch, TouchSubscription, Which } from "@/api/types";
 import {
   useConfirm,
@@ -294,7 +295,7 @@ export function useProxies() {
         notify.warning(t("operations.exportEmpty"));
         return;
       }
-      await navigator.clipboard.writeText(links.join("\n"));
+      await copyText(links.join("\n"));
       notify.success(t("operations.copySelectedDone"));
     });
   }

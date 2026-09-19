@@ -10,6 +10,7 @@ import {
   postV2ray,
   getPorts,
   putSetting,
+  putOutboundConnections,
   putOutboundSelection,
   getPingLatency,
   putSubscription,
@@ -19,6 +20,8 @@ import type { TouchResponse, TouchServer } from "@/api/types";
 import { loadingState } from "@/composables/useLoading";
 import { closeAllNotices, noticeState } from "@/composables/useNotify";
 import { closeAllDialogs } from "@/composables/useDialog";
+import DialogHost from "@/components/hosts/DialogHost.vue";
+import GroupMembersDialog from "./GroupMembers.vue";
 import { useAppStore } from "@/stores/app";
 import { mountWithApp } from "@/test/mount";
 import DashboardView from "../DashboardView.vue";
@@ -32,6 +35,7 @@ vi.mock("@/api", async (original) => ({
   getPorts: vi.fn(),
   putSetting: vi.fn(),
   putOutboundSelection: vi.fn(),
+  putOutboundConnections: vi.fn(),
   getPingLatency: vi.fn(),
   putSubscription: vi.fn(),
 }));
@@ -97,6 +101,7 @@ beforeEach(() => {
   vi.mocked(putSetting).mockResolvedValue(undefined);
   vi.mocked(putSubscription).mockResolvedValue(response());
   vi.mocked(putOutboundSelection).mockResolvedValue(response());
+  vi.mocked(putOutboundConnections).mockResolvedValue(response());
   // the tile pings the members once on arrival; a test that wants a
   // result arranges it after the mount
   vi.mocked(getPingLatency).mockResolvedValue({ whiches: [] });
@@ -205,18 +210,31 @@ describe("dashboard", () => {
     expect(control().attributes("disabled")).toBeDefined();
   });
 
-  test("offers node management for an empty group", async () => {
+  test("offers the group editor for an empty group and saves its members", async () => {
+    const dialogs = mountWithApp(DialogHost);
     vi.mocked(getTouch).mockResolvedValueOnce({
       ...response(),
-      touch: { servers: [], subscriptions: [], connectedServer: null },
+      touch: { ...response().touch, connectedServer: [] },
     });
     wrapper = mountWithApp(DashboardView);
     await flushPromises();
     expect(wrapper.get(".dashboard-connection").text()).toContain(
       "This group has no nodes",
     );
-    await button("Manage nodes").trigger("click");
-    expect(useAppStore().view).toBe("proxies");
+    await button("Edit group").trigger("click");
+    await flushPromises();
+    const dialog = dialogs.getComponent(GroupMembersDialog);
+    await dialog.findAll(".v-list-item")[0].trigger("click");
+    await dialog
+      .findAll("button")
+      .find((b) => b.text() === "Save")!
+      .trigger("click");
+    await flushPromises();
+    expect(putOutboundConnections).toHaveBeenCalledWith({
+      outbound: "proxy",
+      touches: [{ _type: "server", id: 1, sub: 0, outbound: "proxy" }],
+    });
+    dialogs.unmount();
   });
 
   test("prefers a pinned member, then the best alive probe, then a single member", async () => {

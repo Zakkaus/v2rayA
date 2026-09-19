@@ -47,6 +47,7 @@ const {
   quickDisabled,
   editPorts,
   editRoutingA,
+  editGroup,
   importNodes,
   subscriptions,
   selecting,
@@ -242,11 +243,16 @@ function pick(value: string) {
               <v-list-item v-bind="item" />
             </template>
           </v-select>
+          <div class="d-flex justify-end mt-2">
+            <v-btn variant="text" @click="editGroup">{{
+              t("dashboard.editGroup")
+            }}</v-btn>
+          </div>
         </template>
         <template v-else>
           <p class="md3-body-medium mb-4">{{ t("dashboard.emptyGroup") }}</p>
-          <v-btn variant="text" @click="store.view = 'proxies'">{{
-            t("dashboard.manageNodes")
+          <v-btn variant="text" @click="editGroup">{{
+            t("dashboard.editGroup")
           }}</v-btn>
         </template>
       </v-card>

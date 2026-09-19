@@ -64,6 +64,7 @@ export default {
     pinned: "Pinned",
     balanced: "Auto · {n} members",
     switchNode: "Switch",
+    editGroup: "Edit group",
     autoFastest: "Auto (lowest latency)",
     manageNodes: "Manage nodes",
     emptyGroup: "This group has no nodes",

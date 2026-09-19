@@ -63,6 +63,7 @@ export default {
     pinned: "ثابت",
     balanced: "خودکار · {n} عضو",
     switchNode: "تغییر",
+    editGroup: "ویرایش گروه",
     autoFastest: "خودکار (کمترین تأخیر)",
     manageNodes: "مدیریت گره‌ها",
     emptyGroup: "این گروه گره‌ای ندارد",

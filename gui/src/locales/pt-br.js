@@ -64,6 +64,7 @@ export default {
     pinned: "Fixado",
     balanced: "Automático · {n} membros",
     switchNode: "Trocar",
+    editGroup: "Editar grupo",
     autoFastest: "Automático (menor latência)",
     manageNodes: "Gerenciar nós",
     emptyGroup: "Este grupo não tem nós",

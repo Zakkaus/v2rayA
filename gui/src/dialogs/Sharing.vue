@@ -8,6 +8,7 @@ import QRCode from "qrcode";
 import { mdiContentCopy } from "@mdi/js";
 import type { TouchType } from "@/api/types";
 import { useNotify } from "@/composables/useNotify";
+import { copyText } from "@/lib/clipboard";
 
 defineOptions({ name: "SharingDialog" });
 const props = defineProps<{
@@ -38,7 +39,7 @@ onMounted(() => {
 
 async function copy() {
   try {
-    await navigator.clipboard.writeText(props.link);
+    await copyText(props.link);
     notify.success(t("sharing.copied"));
   } catch {
     notify.warning(t("sharing.copyFailed"));

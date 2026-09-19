@@ -63,6 +63,7 @@ export default {
     pinned: "Закреплён",
     balanced: "Авто · участников: {n}",
     switchNode: "Сменить",
+    editGroup: "Изменить группу",
     autoFastest: "Авто (минимальная задержка)",
     manageNodes: "Управление узлами",
     emptyGroup: "В этой группе нет узлов",
