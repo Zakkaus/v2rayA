@@ -68,7 +68,7 @@ export default {
     updateAll: "全部更新",
     updatedAt: "更新于 {time}",
     noSubscriptions: "没有订阅",
-    moreSubscriptions: "其他 {n} 个",
+    moreSubscriptions: "查看更多",
     testLatency: "测速",
     usage: "已用 {used} / {total}",
     expires: "到期 {date}",

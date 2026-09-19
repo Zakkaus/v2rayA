@@ -71,7 +71,7 @@ export default {
     updateAll: "Update all",
     updatedAt: "Updated {time}",
     noSubscriptions: "No subscriptions",
-    moreSubscriptions: "{n} more",
+    moreSubscriptions: "View all",
     testLatency: "Test latency",
     usage: "Used {used} / {total}",
     expires: "Expires {date}",

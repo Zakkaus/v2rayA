@@ -71,7 +71,7 @@ export default {
     updateAll: "Atualizar todas",
     updatedAt: "Atualizado {time}",
     noSubscriptions: "Nenhuma assinatura",
-    moreSubscriptions: "Mais {n}",
+    moreSubscriptions: "Ver todas",
     testLatency: "Testar latência",
     usage: "Usado {used} / {total}",
     expires: "Expira em {date}",

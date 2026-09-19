@@ -70,7 +70,7 @@ export default {
     updateAll: "모두 업데이트",
     updatedAt: "업데이트: {time}",
     noSubscriptions: "구독이 없습니다",
-    moreSubscriptions: "{n}개 더 보기",
+    moreSubscriptions: "모두 보기",
     testLatency: "지연 시간 측정",
     usage: "사용량 {used} / {total}",
     expires: "만료일 {date}",

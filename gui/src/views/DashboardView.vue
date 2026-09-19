@@ -453,7 +453,7 @@ function pick(value: string) {
           class="pa-0"
         >
           <v-list-item
-            v-for="subscription in subscriptions.slice(0, 4)"
+            v-for="subscription in subscriptions.slice(0, 2)"
             :key="subscription.id"
             class="px-0 py-2"
           >
@@ -519,12 +519,10 @@ function pick(value: string) {
           }}</v-btn>
         </div>
         <v-btn
-          v-if="subscriptions.length > 4"
+          v-if="subscriptions.length > 2"
           variant="text"
           @click="store.view = 'proxies'"
-          >{{
-            t("dashboard.moreSubscriptions", { n: subscriptions.length - 4 })
-          }}</v-btn
+          >{{ t("dashboard.moreSubscriptions") }}</v-btn
         >
       </v-card>
     </div>

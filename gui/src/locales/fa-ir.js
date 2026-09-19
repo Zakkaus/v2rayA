@@ -70,7 +70,7 @@ export default {
     updateAll: "به‌روزرسانی همه",
     updatedAt: "به‌روزرسانی {time}",
     noSubscriptions: "اشتراکی وجود ندارد",
-    moreSubscriptions: "{n} مورد دیگر",
+    moreSubscriptions: "مشاهده همه",
     testLatency: "آزمایش تأخیر",
     usage: "مصرف‌شده {used} / {total}",
     expires: "انقضا {date}",

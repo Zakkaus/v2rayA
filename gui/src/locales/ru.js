@@ -70,7 +70,7 @@ export default {
     updateAll: "Обновить все",
     updatedAt: "Обновлено {time}",
     noSubscriptions: "Нет подписок",
-    moreSubscriptions: "Ещё {n}",
+    moreSubscriptions: "Показать все",
     testLatency: "Проверить задержку",
     usage: "Использовано {used} / {total}",
     expires: "Истекает {date}",
