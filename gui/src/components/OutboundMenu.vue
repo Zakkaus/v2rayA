@@ -6,6 +6,7 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   mdiCheck,
+  mdiChevronDown,
   mdiDeleteOutline,
   mdiPlus,
   mdiSitemapOutline,
@@ -97,17 +98,17 @@ async function remove(outbound: string) {
           />
         </template>
       </v-tooltip>
-      <v-chip
+      <v-btn
         v-else
         v-bind="menu"
         :prepend-icon="mdiSitemapOutline"
-        color="tertiary"
+        :append-icon="mdiChevronDown"
+        color="primary"
         variant="tonal"
-        size="large"
-        class="md3-label-large"
+        class="text-none"
       >
         {{ store.outboundName.toUpperCase() }}
-      </v-chip>
+      </v-btn>
     </template>
     <v-list density="compact" min-width="240">
       <v-list-subheader>{{ t("common.proxyGroups") }}</v-list-subheader>

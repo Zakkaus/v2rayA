@@ -381,21 +381,17 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
         <img :src="logo" alt="v2rayA" class="bar__logo ms-2" />
       </template>
       <v-app-bar-title class="md3-title-large">{{ pageTitle }}</v-app-bar-title>
-      <v-chip
+      <v-btn
         :color="statusColor"
         variant="tonal"
-        size="large"
-        class="status-chip md3-label-large me-2"
-        role="button"
-        tabindex="0"
+        :prepend-icon="mdiPower"
+        class="me-2 text-none"
         @mouseenter="hovering = true"
         @mouseleave="hovering = false"
         @click="toggleRunning"
-        @keydown.enter.prevent="toggleRunning"
-        @keydown.space.prevent="toggleRunning"
       >
         {{ statusText }}
-      </v-chip>
+      </v-btn>
       <OutboundMenu v-if="!compact" class="me-3" @changed="nodesRef?.sync()" />
       <template #append>
         <ShellMenus variant="icons" />
@@ -431,11 +427,6 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
 .bar__logo {
   width: 32px;
   height: 32px;
-}
-.status-chip {
-  cursor: pointer;
-  min-width: 5em;
-  justify-content: center;
 }
 /* Material's margins: 16 dp on compact, 24 dp from medium; readable width */
 .page {
