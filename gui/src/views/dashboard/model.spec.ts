@@ -3,11 +3,24 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { flushPromises } from "@vue/test-utils";
 import type { VueWrapper } from "@vue/test-utils";
 import type * as api from "@/api";
-import { deleteV2ray, getSetting, getTouch, postV2ray } from "@/api";
+import {
+  deleteV2ray,
+  getSetting,
+  getTouch,
+  postV2ray,
+  getPorts,
+  putSetting,
+  putOutboundSelection,
+  getPingLatency,
+  putSubscription,
+} from "@/api";
 import { watchConnected } from "@/api/connect";
 import type { TouchResponse, TouchServer } from "@/api/types";
 import { loadingState } from "@/composables/useLoading";
 import { closeAllNotices, noticeState } from "@/composables/useNotify";
+import { closeAllDialogs, dialogState } from "@/composables/useDialog";
+import DialogHost from "@/components/hosts/DialogHost.vue";
+import NodeSelection from "./NodeSelection.vue";
 import { useAppStore } from "@/stores/app";
 import { mountWithApp } from "@/test/mount";
 import DashboardView from "../DashboardView.vue";
@@ -18,6 +31,11 @@ vi.mock("@/api", async (original) => ({
   getSetting: vi.fn(),
   postV2ray: vi.fn(),
   deleteV2ray: vi.fn(),
+  getPorts: vi.fn(),
+  putSetting: vi.fn(),
+  putOutboundSelection: vi.fn(),
+  getPingLatency: vi.fn(),
+  putSubscription: vi.fn(),
 }));
 vi.mock("@/api/connect", () => ({
   watchConnected: vi.fn((request: Promise<TouchResponse>) => request),
@@ -58,21 +76,33 @@ function response(running = false): TouchResponse {
 }
 
 let wrapper: VueWrapper;
+let dialogs: VueWrapper;
+const button = (text: string) =>
+  wrapper.findAll("button").find((item) => item.text() === text)!;
 const control = () =>
   wrapper
     .getComponent(".dashboard-status")
     .findAll("button")
     .find((b) => /Start|Stop/.test(b.text()))!;
-// the instance card's tiles: version, core, nodes, subscriptions
-const counts = () =>
-  wrapper
-    .findAll(".dashboard-facts .md3-title-large")
-    .slice(-2)
-    .map((el) => el.text());
 
 beforeEach(() => {
   vi.clearAllMocks();
   closeAllNotices();
+  closeAllDialogs();
+  vi.mocked(getPorts).mockResolvedValue({
+    socks5: 20170,
+    http: 20171,
+    httpWithPac: 20172,
+    socks5WithPac: 0,
+    vmess: 0,
+    api: { port: 0, services: [] },
+  });
+  vi.mocked(putSetting).mockResolvedValue(undefined);
+  vi.mocked(putSubscription).mockResolvedValue(response());
+  vi.mocked(putOutboundSelection).mockResolvedValue(response());
+  vi.mocked(getPingLatency).mockResolvedValue({
+    whiches: [{ _type: "server", id: 1, pingLatency: "17ms" }],
+  });
   vi.mocked(getTouch).mockResolvedValue(response());
   vi.mocked(getSetting).mockResolvedValue({
     setting: {
@@ -86,24 +116,18 @@ beforeEach(() => {
   vi.mocked(postV2ray).mockResolvedValue(response(true));
   vi.mocked(deleteV2ray).mockResolvedValue(response());
 });
-afterEach(() => wrapper?.unmount());
+afterEach(() => {
+  wrapper?.unmount();
+  dialogs?.unmount();
+  closeAllDialogs();
+});
 
 describe("dashboard", () => {
-  test("shows counts, connected group members and modes, then starts and stops the core", async () => {
+  test("shows the current group node, then starts and stops the core", async () => {
     wrapper = mountWithApp(DashboardView);
     await flushPromises();
     expect(wrapper.get('[role="status"]').text()).toBe("Ready");
-    expect(counts()).toEqual(["2", "1"]);
-    expect(wrapper.findAll(".dashboard-node").map((c) => c.text())).toEqual([
-      "Standalone24ms",
-    ]);
-    // the proxy settings list is on the dashboard, showing the mode
-    expect(
-      wrapper
-        .get('button[aria-label^="Transparent Proxy/System Proxy:"]')
-        .text(),
-    ).toContain("Off");
-
+    expect(wrapper.get(".dashboard-connection").text()).toContain("Standalone");
     await control().trigger("click");
     await flushPromises();
     expect(postV2ray).toHaveBeenCalledOnce();
@@ -116,9 +140,7 @@ describe("dashboard", () => {
 
     useAppStore().outboundName = "work";
     await flushPromises();
-    expect(wrapper.findAll(".dashboard-node").map((c) => c.text())).toEqual([
-      "Subscribed24ms",
-    ]);
+    expect(wrapper.get(".dashboard-connection").text()).toContain("Subscribed");
   });
 
   test("keeps the confirmed state while starting and prevents duplicate requests", async () => {
@@ -175,12 +197,11 @@ describe("dashboard", () => {
     expect(loadingState.open.size).toBe(0);
   });
 
-  test("does not invent counts when loading fails", async () => {
+  test("keeps start disabled and reports a failed load", async () => {
     vi.mocked(getTouch).mockRejectedValueOnce(new Error("Backend unreachable"));
     wrapper = mountWithApp(DashboardView);
     expect(control().attributes("disabled")).toBeDefined();
     await flushPromises();
-    expect(counts()).toEqual(["—", "—"]);
     expect(wrapper.get('[role="alert"]').text()).toContain(
       "Backend unreachable",
     );
@@ -188,15 +209,187 @@ describe("dashboard", () => {
     expect(control().attributes("disabled")).toBeDefined();
   });
 
-  test("shows a genuine empty inventory without connected node chips", async () => {
+  test("offers node management for an empty group", async () => {
     vi.mocked(getTouch).mockResolvedValueOnce({
       ...response(),
       touch: { servers: [], subscriptions: [], connectedServer: null },
     });
     wrapper = mountWithApp(DashboardView);
     await flushPromises();
-    expect(counts()).toEqual(["0", "0"]);
-    expect(wrapper.findAll(".dashboard-node")).toHaveLength(0);
-    expect(wrapper.text()).toContain("No nodes added");
+    expect(wrapper.get(".dashboard-connection").text()).toContain(
+      "This group has no nodes",
+    );
+    await button("Manage nodes").trigger("click");
+    expect(useAppStore().view).toBe("proxies");
+  });
+
+  test("prefers a pinned member, then the best alive probe, then a single member", async () => {
+    const data = response();
+    data.touch.servers.push(
+      { ...server("Fast"), id: 2 },
+      { ...server("Dead"), id: 3 },
+    );
+    data.touch.connectedServer = [
+      { _type: "server", id: 1, selected: true },
+      { _type: "server", id: 2 },
+      { _type: "server", id: 3 },
+    ];
+    vi.mocked(getTouch).mockResolvedValue(data);
+    wrapper = mountWithApp(DashboardView);
+    await flushPromises();
+    const store = useAppStore();
+    store.observatory.proxy = [1, 2, 3].map((id) => ({
+      which: { _type: "server", id },
+      alive: id !== 3,
+      delay: id === 1 ? 90 : id === 2 ? 20 : 1,
+      outbound_tag: "",
+      last_seen_time: 0,
+      last_try_time: 0,
+    }));
+    await flushPromises();
+    const connection = () => wrapper.get(".dashboard-connection").text();
+    expect(connection()).toContain("Standalone");
+    expect(connection()).toContain("90 ms");
+    store.connectedServer[0].selected = false;
+    await flushPromises();
+    expect(connection()).toContain("Fast");
+    expect(connection()).toContain("20 ms");
+    expect(
+      wrapper
+        .get(".dashboard-latency")
+        .findAll(".v-list-item")
+        .map((item) => item.text()),
+    ).toEqual(["Fast20 ms", "Standalone90 ms", "Dead1 ms"]);
+    store.observatory = {};
+    await flushPromises();
+    expect(connection()).not.toContain("Fast");
+    store.connectedServer = [{ _type: "server", id: 1 }];
+    await flushPromises();
+    expect(connection()).toContain("Standalone");
+    await wrapper.get('button[aria-label="Test latency"]').trigger("click");
+    await flushPromises();
+    expect(getPingLatency).toHaveBeenCalledWith([{ _type: "server", id: 1 }]);
+    expect(connection()).toContain("17ms");
+  });
+
+  test("chooses a member and returns to automatic routing through the dialog", async () => {
+    dialogs = mountWithApp(DialogHost);
+    wrapper = mountWithApp(DashboardView);
+    await flushPromises();
+    const pinned = response();
+    pinned.touch.connectedServer![0].selected = true;
+    vi.mocked(putOutboundSelection)
+      .mockResolvedValueOnce(pinned)
+      .mockResolvedValueOnce(response());
+    await button("Switch").trigger("click");
+    await flushPromises();
+    await dialogs
+      .getComponent(NodeSelection)
+      .findAll('input[type="radio"]')[1]
+      .setValue(true);
+    await flushPromises();
+    expect(putOutboundSelection).toHaveBeenNthCalledWith(1, {
+      outbound: "proxy",
+      which: { _type: "server", id: 1 },
+    });
+    expect(dialogState.stack).toHaveLength(0);
+    expect(wrapper.get(".dashboard-connection").text()).toContain("Pinned");
+    await button("Switch").trigger("click");
+    await flushPromises();
+    await dialogs
+      .getComponent(NodeSelection)
+      .findAll('input[type="radio"]')[0]
+      .setValue(true);
+    await flushPromises();
+    expect(putOutboundSelection).toHaveBeenNthCalledWith(2, {
+      outbound: "proxy",
+      which: null,
+    });
+    expect(dialogState.stack).toHaveLength(0);
+    expect(wrapper.get(".dashboard-connection").text()).not.toContain("Pinned");
+  });
+
+  test("autosaves the whole form and reloads quick controls after full settings close", async () => {
+    wrapper = mountWithApp(DashboardView);
+    await flushPromises();
+    await wrapper
+      .get('.dashboard-sharing input[type="checkbox"]')
+      .setValue(true);
+    await flushPromises();
+    const saved = vi.mocked(putSetting).mock.calls[0][0];
+    expect(saved).toMatchObject({
+      transparent: "close",
+      transparentType: "tproxy",
+      pacMode: "routingA",
+      logLevel: "info",
+      portSharing: true,
+      mux: 8,
+      tunAutoRoute: true,
+      subscriptionAutoUpdateIntervalHour: 0,
+    });
+    await button("All proxy settings").trigger("click");
+    await flushPromises();
+    expect(
+      wrapper
+        .get('.dashboard-sharing input[type="checkbox"]')
+        .attributes("disabled"),
+    ).toBeDefined();
+    vi.mocked(getSetting).mockResolvedValue({
+      setting: { ...saved, portSharing: false },
+      localGFWListVersion: "",
+    });
+    await button("All proxy settings").trigger("click");
+    await flushPromises();
+    expect(
+      (
+        wrapper.get('.dashboard-sharing input[type="checkbox"]')
+          .element as HTMLInputElement
+      ).checked,
+    ).toBe(false);
+    expect(wrapper.find("#dashboard-proxy-settings").exists()).toBe(false);
+  });
+
+  test("updates all subscriptions sequentially and continues after an update fails", async () => {
+    const data = response();
+    data.touch.subscriptions[0].info =
+      "Used 1 GiB / 10 GiB · Expires 2026-10-01";
+    data.touch.subscriptions.push({
+      ...data.touch.subscriptions[0],
+      id: 2,
+      host: "second.example",
+    });
+    vi.mocked(getTouch).mockResolvedValue(data);
+    let reject!: (err: Error) => void;
+    vi.mocked(putSubscription)
+      .mockReturnValueOnce(
+        new Promise((_resolve, fail) => {
+          reject = fail;
+        }),
+      )
+      .mockResolvedValueOnce(data);
+    wrapper = mountWithApp(DashboardView);
+    await flushPromises();
+    expect(wrapper.get(".dashboard-subscriptions").text()).toContain(
+      "Used 1 GiB / 10 GiB",
+    );
+    expect(
+      wrapper
+        .get(
+          ".dashboard-subscriptions [role='progressbar'][aria-label^='Used']",
+        )
+        .attributes("aria-valuenow"),
+    ).toBe("10");
+    await button("Update all").trigger("click");
+    expect(putSubscription).toHaveBeenCalledTimes(1);
+    reject(new Error("Subscription unavailable"));
+    await flushPromises();
+    expect(
+      vi.mocked(putSubscription).mock.calls.map(([which]) => which),
+    ).toEqual([
+      { _type: "subscription", id: 1 },
+      { _type: "subscription", id: 2 },
+    ]);
+    expect(noticeState.current?.text).toContain("Subscription unavailable");
+    expect(button("Update all").attributes("disabled")).toBeUndefined();
   });
 });
