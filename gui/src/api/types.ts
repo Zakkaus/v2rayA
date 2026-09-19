@@ -111,7 +111,7 @@ export interface CustomInbound {
   password: string;
 }
 
-/** The WebSocket frames on /api/message: the two the interface reads, and any other the backend may add. */
+/** WebSocket frames on /api/message. */
 export interface RunningStateMessage {
   type: "running_state";
   body: { running: boolean; networkPaused?: boolean };
@@ -128,5 +128,14 @@ export interface OutboundStatus {
 export interface ObservatoryMessage {
   type: "observatory";
   body: { outboundName: string; outboundStatus: OutboundStatus[] };
+}
+export interface TrafficMessage {
+  type: "traffic";
+  body: {
+    up: number;
+    down: number;
+    upTotal: number;
+    downTotal: number;
+  };
 }
 export type WsMessage = { type: string; body?: unknown };

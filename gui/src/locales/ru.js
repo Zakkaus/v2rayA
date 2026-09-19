@@ -1,4 +1,9 @@
 export default {
+  traffic: {
+    upload: "Отдача",
+    download: "Загрузка",
+    total: "Всего: {value}",
+  },
   common: {
     dashboard: "Панель",
     proxies: "Прокси",

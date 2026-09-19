@@ -1,4 +1,9 @@
 export default {
+  traffic: {
+    upload: "업로드",
+    download: "다운로드",
+    total: "합계: {value}",
+  },
   common: {
     dashboard: "대시보드",
     proxies: "프록시",

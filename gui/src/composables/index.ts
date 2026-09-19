@@ -14,3 +14,4 @@ export {
 export { useLoading, openLoading, closeAllLoadings } from "./useLoading";
 export { useConfirm, usePrompt } from "./useConfirm";
 export { useMessageSocket, createMessageSocket } from "./useWebSocket";
+export { useTraffic } from "./useTraffic";

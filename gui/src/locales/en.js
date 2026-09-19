@@ -1,4 +1,9 @@
 export default {
+  traffic: {
+    upload: "Upload",
+    download: "Download",
+    total: "Total: {value}",
+  },
   common: {
     dashboard: "Dashboard",
     proxies: "Proxies",
