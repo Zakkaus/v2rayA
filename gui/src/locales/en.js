@@ -483,6 +483,7 @@ export default {
     failed: "Failed to create sharing link: {message}",
   },
   log: {
+    search: "Search logs…",
     logsLabel: "Logs",
     refreshInterval: "Refresh Interval",
     seconds: "seconds",

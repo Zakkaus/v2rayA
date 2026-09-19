@@ -490,6 +490,7 @@ export default {
     failed: "Falha ao criar o link de compartilhamento: {message}",
   },
   log: {
+    search: "Pesquisar logs…",
     logsLabel: "Registros",
     refreshInterval: "Intervalo de atualização",
     seconds: "segundos",

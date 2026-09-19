@@ -5,7 +5,7 @@
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
-import { mdiTrayArrowDown } from "@mdi/js";
+import { mdiMagnify, mdiTrayArrowDown } from "@mdi/js";
 import hljs from "highlight.js/lib/core";
 import accesslog from "highlight.js/lib/languages/accesslog";
 import { useLogStream } from "@/composables/useLogStream";
@@ -29,6 +29,7 @@ const levels = [
 ] as const;
 const level = ref<string>("all");
 const source = ref("all");
+const query = ref("");
 const follow = ref(localStorage.getItem("log.follow") !== "false");
 const intervals = [2, 5, 10, 15];
 const scroller = ref<{
@@ -43,6 +44,8 @@ const shown = computed(() => {
   if (level.value !== "all") list = list.filter((l) => l.level === level.value);
   if (source.value !== "all")
     list = list.filter((l) => l.source === source.value);
+  const search = query.value.trim().toLowerCase();
+  if (search) list = list.filter((l) => l.text.toLowerCase().includes(search));
   return list;
 });
 const tail = computed(() =>
@@ -124,6 +127,20 @@ onMounted(() => {
         </v-chip-group>
       </div>
       <div class="d-flex flex-wrap align-center ga-3 mt-3">
+        <v-text-field
+          v-model="query"
+          :placeholder="t('log.search')"
+          :prepend-inner-icon="mdiMagnify"
+          variant="solo-filled"
+          bg-color="surface-container-high"
+          rounded="pill"
+          density="compact"
+          flat
+          hide-details
+          clearable
+          class="logs__search"
+          @click:clear="query = ''"
+        />
         <v-select
           v-model="source"
           :items="sourceItems"
@@ -218,6 +235,10 @@ onMounted(() => {
 .logs__select {
   max-width: 220px;
   min-width: 160px;
+}
+.logs__search {
+  flex: 1 1 240px;
+  max-width: 420px;
 }
 /* the pane fills what the toolbar leaves of the viewport */
 .logs__scroll {

@@ -479,6 +479,7 @@ export default {
     failed: "공유 링크 생성 실패: {message}",
   },
   log: {
+    search: "로그 검색…",
     logsLabel: "로그",
     refreshInterval: "새로 고침 간격",
     seconds: "초",

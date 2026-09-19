@@ -471,6 +471,7 @@ export default {
     failed: "无法创建分享链接：{message}",
   },
   log: {
+    search: "搜索日志…",
     logsLabel: "日志",
     refreshInterval: "刷新间隔",
     seconds: "秒",

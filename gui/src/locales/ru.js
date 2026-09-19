@@ -486,6 +486,7 @@ export default {
     failed: "Не удалось создать ссылку для общего доступа: {message}",
   },
   log: {
+    search: "Поиск в журнале…",
     logsLabel: "Журналы",
     refreshInterval: "Интервал обновления",
     seconds: "секунд",

@@ -481,6 +481,7 @@ export default {
     failed: "ایجاد پیوند اشتراک‌گذاری ناموفق بود: {message}",
   },
   log: {
+    search: "جستجو در گزارش…",
     logsLabel: "گزارش‌ها",
     refreshInterval: "فاصله به‌روزرسانی",
     seconds: "ثانیه",
