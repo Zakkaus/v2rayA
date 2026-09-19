@@ -4,7 +4,7 @@ export default {
     outboundSetting: "Настройка группы прокси",
     setting: "Настройки",
     about: "О программе",
-    loggedAs: "Выполнен вход как <b>{username}</b>",
+    loggedAs: "Выполнен вход как {username}",
     checkRunning: "Проверка",
     isRunning: "Работает",
     notRunning: "Готово",
@@ -24,6 +24,12 @@ export default {
     lightTheme: "Светлая тема",
     autoTheme: "Автоматическая тема",
     expand: "Показать состояние подключения",
+  },
+  theme: {
+    title: "Тема",
+    appearance: "Оформление",
+    color: "Цвет темы",
+    custom: "Свой",
   },
   welcome: {
     title: "Добро пожаловать",
@@ -379,17 +385,22 @@ export default {
     coreVersionMismatch:
       "Несовпадение версий ядра: версия v2raya_core должна в точности совпадать с версией v2rayA. {err}",
   },
-  about: `<p>v2rayA — веб-клиент с графическим интерфейсом для V2Ray.</p>
-          <p class="about-small">Порты по умолчанию:</p>
-          <p class="about-small">2017: порт сервиса v2rayA</p>
-          <p class="about-small">20170: протокол SOCKS</p>
-          <p class="about-small">20171: протокол HTTP</p>
-          <p class="about-small">20172: протокол HTTP с «Правилом разделения трафика»</p>
-          <p class="about-small">Другие порты:</p>
-          <p class="about-small">32345: tproxy, необходим для прозрачного прокси </p>
-          <p>Все данные хранятся локально, а не в облаке.</p>
-          <p>О проблемах, обнаруженных при использовании, можно сообщить в разделе <a href="https://github.com/v2rayA/v2rayA/discussions">discussions</a>.</p>
-          <p>Документация: <a href="https://v2raya.org">https://v2raya.org</a></p>`,
+  about: {
+    intro: "v2rayA — веб-клиент с графическим интерфейсом для V2Ray.",
+    defaultPorts: "Порты по умолчанию:",
+    otherPorts: "Другие порты:",
+    ports: {
+      service: "порт сервиса v2rayA",
+      socks: "протокол SOCKS",
+      http: "протокол HTTP",
+      httpRules: "протокол HTTP с «Правилом разделения трафика»",
+      tproxy: "tproxy, необходим для прозрачного прокси",
+    },
+    local: "Все данные хранятся локально, а не в облаке.",
+    report: "О проблемах, обнаруженных при использовании, можно сообщить в разделе {discussions}.",
+    discussions: "discussions",
+    docs: "Документация:",
+  },
   axios: {
     messages: {
       optimizeBackend: "Изменить адрес сервиса v2rayA?",

@@ -4,7 +4,6 @@ import "@/plugins/axios";
 import "@/plugins/backendPort";
 import "@/plugins/dayjs";
 import "@/plugins/virtual-scroll";
-import "normalize.css";
 import "pace-js";
 import "pace-js/themes/blue/pace-theme-corner-indicator.css";
 

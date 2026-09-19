@@ -3,6 +3,12 @@
 // the recorded requests match byte for byte; types narrow them where the
 // backend's Go types are known (types.ts) and stay open elsewhere.
 import { call, timeouts } from "./client";
+
+/** What a caller may attach to a request: the connect watcher aborts through `signal`, its poll shortens `timeout`. */
+export interface RequestOptions {
+  signal?: AbortSignal;
+  timeout?: number;
+}
 import type {
   CustomInbound,
   Ports,
@@ -15,7 +21,7 @@ import type {
 
 // ---- account and session ----------------------------------------------
 export const getAccount = () =>
-  call<unknown>({ url: "account", method: "get" });
+  call<{ hasAnyAccounts: boolean }>({ url: "account", method: "get" });
 export const postAccount = (body: { username: string; password: string }) =>
   call<{ token: string }>({ url: "account", method: "post", data: body });
 export const postLogin = (body: { username: string; password: string }) =>
@@ -24,21 +30,17 @@ export const getVersion = () =>
   call<VersionResponse>({ url: "version", method: "get" });
 
 // ---- nodes and subscriptions ---------------------------------------------
-export const getTouch = () =>
-  call<TouchResponse>({ url: "touch", method: "get" });
+export const getTouch = (o: RequestOptions = {}) =>
+  call<TouchResponse>({ url: "touch", method: "get", ...o });
 export const deleteTouch = (touches: Which[]) =>
   call<TouchResponse>({ url: "touch", method: "delete", data: { touches } });
-export const postImport = (body: {
-  url: string;
-  kind?: string;
-  which?: Which;
-}) =>
-  call<TouchResponse>({
-    url: "import",
-    method: "post",
-    data: body,
-    timeout: timeouts.import,
-  });
+// The editor sends `which: null` for a new node, as the old page did; the
+// key stays in the body. Saving one node has no time limit, a batch has.
+export const postImport = (
+  body: { url: string; kind?: string; which?: Which | null },
+  timeout: number = timeouts.import,
+) =>
+  call<TouchResponse>({ url: "import", method: "post", data: body, timeout });
 export const getSharingAddress = (touch: Which) =>
   call<{ sharingAddress: string }>({
     url: "sharingAddress",
@@ -65,8 +67,8 @@ export const getHttpLatency = (whiches: Which[]) =>
   });
 
 // ---- connections and the core ---------------------------------------------
-export const postConnection = (which: Which) =>
-  call<TouchResponse>({ url: "connection", method: "post", data: which });
+export const postConnection = (which: Which, o: RequestOptions = {}) =>
+  call<TouchResponse>({ url: "connection", method: "post", data: which, ...o });
 export const deleteConnection = (which: Which) =>
   call<TouchResponse>({ url: "connection", method: "delete", data: which });
 export const putOutboundConnections = (body: {
@@ -78,8 +80,8 @@ export const putOutboundConnections = (body: {
     method: "put",
     data: body,
   });
-export const postV2ray = () =>
-  call<TouchResponse>({ url: "v2ray", method: "post" });
+export const postV2ray = (o: RequestOptions = {}) =>
+  call<TouchResponse>({ url: "v2ray", method: "post", ...o });
 export const deleteV2ray = () =>
   call<TouchResponse>({ url: "v2ray", method: "delete" });
 
@@ -88,18 +90,22 @@ export const getOutbounds = () =>
   call<{ outbounds: string[] }>({ url: "outbounds", method: "get" });
 export const getOutbound = (outbound: string) =>
   call<unknown>({ url: "outbound", method: "get", params: { outbound } });
-export const postOutbound = (body: Record<string, unknown>) =>
-  call<unknown>({ url: "outbound", method: "post", data: body });
+export const postOutbound = (
+  body: Record<string, unknown>,
+  o: RequestOptions = {},
+) => call<unknown>({ url: "outbound", method: "post", data: body, ...o });
 export const putOutbound = (body: Record<string, unknown>) =>
   call<unknown>({ url: "outbound", method: "put", data: body });
-export const deleteOutbound = (body: Record<string, unknown>) =>
-  call<unknown>({ url: "outbound", method: "delete", data: body });
+export const deleteOutbound = (
+  body: Record<string, unknown>,
+  o: RequestOptions = {},
+) => call<unknown>({ url: "outbound", method: "delete", data: body, ...o });
 
 // ---- settings ------------------------------------------------------------------
 export const getSetting = () =>
   call<SettingResponse>({ url: "setting", method: "get" });
-export const putSetting = (setting: Setting) =>
-  call<unknown>({ url: "setting", method: "put", data: setting });
+export const putSetting = (setting: Setting, o: RequestOptions = {}) =>
+  call<unknown>({ url: "setting", method: "put", data: setting, ...o });
 export const getPorts = () => call<Ports>({ url: "ports", method: "get" });
 export const putPorts = (ports: Ports) =>
   call<unknown>({ url: "ports", method: "put", data: ports });

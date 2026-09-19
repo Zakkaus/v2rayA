@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import store from "@/store";
-import App from "@/App";
+import AppShell from "@/AppShell.vue";
 import i18n from "@/plugins/i18n";
 import Buefy from "@/plugins/buefy";
 import VirtualScroller from "@/plugins/virtual-scroll";
@@ -8,18 +8,18 @@ import { install as installAxios } from "@/plugins/axios";
 import { install as installDayjs } from "@/plugins/dayjs";
 import { createPinia } from "pinia";
 import { vuetify } from "@/theme";
+import { resetSession } from "@/session";
 
-// Programmatic instances that mount on <body> (modals, loadings, snackbars)
-// outlive the root tree, so restart() must close them before unmounting.
+// Buefy's programmatic instances (the old dialogs, snackbars and loadings
+// of the coexistence period) mount on <body> outside the shell's tree; the
+// session reset closes them through closeProgrammatic().
 const programmaticHandles = [];
 
 let app = null;
 
 export function buildApp() {
-  app = createApp(App);
+  app = createApp(AppShell);
   app.use(store);
-  // A fresh Pinia per session: restart() must not carry the previous
-  // token's state into the next root.
   app.use(createPinia());
   app.use(vuetify);
   app.use(i18n);
@@ -27,11 +27,9 @@ export function buildApp() {
   app.use(VirtualScroller);
   installAxios(app);
   installDayjs(app);
-  // Components call this.$remount() (same API as the Vue 2.7 prototype
-  // method). Exposing it here — instead of importing session.js from inside
-  // the component tree — avoids a circular import (session -> App -> component
-  // -> session) that would put modalCustomPorts in the temporal dead zone.
-  app.config.globalProperties.$remount = restart;
+  // The old dialogs call this.$remount() after a login or a backend
+  // address change. The root stays; the session is reset.
+  app.config.globalProperties.$remount = () => resetSession();
   return app;
 }
 
@@ -44,7 +42,7 @@ export function buefy() {
 
 export function registerProgrammatic(handle) {
   // A closed instance unmounts itself and leaves the document; drop those
-  // so the list only holds what restart() still has to close.
+  // so the list only holds what closeProgrammatic() still has to close.
   for (let i = programmaticHandles.length - 1; i >= 0; i--) {
     const el = programmaticHandles[i].$el;
     if (!el || !document.body.contains(el)) {
@@ -71,18 +69,19 @@ export function openLoading(ctx) {
   return handle;
 }
 
-export function restart() {
+// The new views open an old dialog through this during the coexistence
+// period; the handle is the same as openModal's.
+export function openLegacy(opts) {
+  const handle = buefy().modal.open(opts);
+  registerProgrammatic(handle);
+  return handle;
+}
+
+export function closeProgrammatic() {
   for (const handle of programmaticHandles) {
     if (handle && typeof handle.close === "function") {
       handle.close();
     }
   }
   programmaticHandles.length = 0;
-  if (app) {
-    // app.unmount() runs beforeUnmount on the tree, which closes the
-    // WebSocket, window listeners and matchMedia handler in App.vue/node.vue.
-    app.unmount();
-  }
-  app = buildApp();
-  app.mount("#app");
 }

@@ -4,7 +4,7 @@ export default {
     outboundSetting: "Proxy Group Setting",
     setting: "Setting",
     about: "About",
-    loggedAs: "Logged in as <b>{username}</b>",
+    loggedAs: "Logged in as {username}",
     checkRunning: "Checking",
     isRunning: "Running",
     notRunning: "Ready",
@@ -24,6 +24,12 @@ export default {
     lightTheme: "Light Theme",
     autoTheme: "Auto Theme",
     expand: "Show the connection status",
+  },
+  theme: {
+    title: "Theme",
+    appearance: "Appearance",
+    color: "Theme color",
+    custom: "Custom",
   },
   welcome: {
     title: "Welcome",
@@ -380,17 +386,22 @@ export default {
     coreVersionMismatch:
       "Core version mismatch: v2raya_core version must exactly match v2rayA version. {err}",
   },
-  about: `<p>v2rayA is a web GUI client of V2Ray.</p>
-          <p class="about-small">Default ports:</p>
-          <p class="about-small">2017: v2rayA service port</p>
-          <p class="about-small">20170: SOCKS protocol</p>
-          <p class="about-small">20171: HTTP protocol</p>
-          <p class="about-small">20172: HTTP protocol with "Rule of Splitting Traffic"</p>
-          <p class="about-small">Other ports：</p>
-          <p class="about-small">32345: tproxy, needed by transparent proxy </p>
-          <p>All data is stored in local instead of in the cloud. </p>
-          <p>Problems found during use can be reported in <a href="https://github.com/v2rayA/v2rayA/discussions">discussions</a>.</p>
-          <p>Documentation: <a href="https://v2raya.org">https://v2raya.org</a></p>`,
+  about: {
+    intro: "v2rayA is a web GUI client of V2Ray.",
+    defaultPorts: "Default ports:",
+    otherPorts: "Other ports:",
+    ports: {
+      service: "v2rayA service port",
+      socks: "SOCKS protocol",
+      http: "HTTP protocol",
+      httpRules: "HTTP protocol with \"Rule of Splitting Traffic\"",
+      tproxy: "tproxy, needed by transparent proxy",
+    },
+    local: "All data is stored in local instead of in the cloud.",
+    report: "Problems found during use can be reported in {discussions}.",
+    discussions: "discussions",
+    docs: "Documentation:",
+  },
   axios: {
     messages: {
       optimizeBackend: "Change the v2rayA service address?",

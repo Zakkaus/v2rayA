@@ -118,12 +118,15 @@ client.interceptors.request.use((config) => {
       "X-V2raya-Request-Id": nanoid(),
     };
   }
-  if (!config.signal) {
-    const controller = new AbortController();
-    inFlight.add(controller);
-    config.signal = controller.signal;
-    (config as SessionConfig).sessionController = controller;
-  }
+  // Every request gets the session's controller, so a reset aborts it; a
+  // caller's own signal (the connect watcher) is joined to it.
+  const controller = new AbortController();
+  inFlight.add(controller);
+  const own = config.signal as AbortSignal | undefined;
+  config.signal = own
+    ? AbortSignal.any([own, controller.signal])
+    : controller.signal;
+  (config as SessionConfig).sessionController = controller;
   (config as SessionConfig).session = sessionNumber;
   return config;
 });

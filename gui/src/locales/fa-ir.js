@@ -4,7 +4,7 @@ export default {
     outboundSetting: "تنظیمات گروه پروکسی",
     setting: "تنظیمات",
     about: "درباره",
-    loggedAs: "واردشده با حساب کاربری <b>{username}</b>",
+    loggedAs: "واردشده با حساب کاربری {username}",
     checkRunning: "در حال بررسی",
     isRunning: "در حال اجرا",
     notRunning: "آماده",
@@ -24,6 +24,12 @@ export default {
     lightTheme: "پوسته روشن",
     autoTheme: "پوسته خودکار",
     expand: "نمایش وضعیت اتصال",
+  },
+  theme: {
+    title: "پوسته",
+    appearance: "ظاهر",
+    color: "رنگ پوسته",
+    custom: "سفارشی",
   },
   welcome: {
     title: "خوش آمدید",
@@ -379,17 +385,22 @@ export default {
     coreVersionMismatch:
       "ناسازگاری نسخه هسته: نسخه v2raya_core باید دقیقاً با نسخه v2rayA یکسان باشد. {err}",
   },
-  about: `<p>v2rayA یک رابط وب برای V2Ray است.</p>
-          <p class="about-small">پورت‌های پیش‌فرض:</p>
-          <p class="about-small">2017: پورت سرویس v2rayA</p>
-          <p class="about-small">20170: پروتکل SOCKS</p>
-          <p class="about-small">20171: پروتکل HTTP</p>
-          <p class="about-small">20172: پروتکل HTTP با «قانون تفکیک ترافیک»</p>
-          <p class="about-small">پورت‌های دیگر:</p>
-          <p class="about-small">32345: tproxy، موردنیاز پروکسی شفاف</p>
-          <p>همه داده‌ها به‌صورت محلی و نه در فضای ابری ذخیره می‌شوند.</p>
-          <p>مشکلات مشاهده‌شده هنگام استفاده را می‌توانید در <a href="https://github.com/v2rayA/v2rayA/discussions">discussions</a> گزارش کنید.</p>
-          <p>مستندات: <a href="https://v2raya.org">https://v2raya.org</a></p>`,
+  about: {
+    intro: "v2rayA یک رابط وب برای V2Ray است.",
+    defaultPorts: "پورت‌های پیش‌فرض:",
+    otherPorts: "پورت‌های دیگر:",
+    ports: {
+      service: "پورت سرویس v2rayA",
+      socks: "پروتکل SOCKS",
+      http: "پروتکل HTTP",
+      httpRules: "پروتکل HTTP با «قانون تفکیک ترافیک»",
+      tproxy: "tproxy، موردنیاز پروکسی شفاف",
+    },
+    local: "همه داده‌ها به‌صورت محلی و نه در فضای ابری ذخیره می‌شوند.",
+    report: "مشکلات مشاهده‌شده هنگام استفاده را می‌توانید در {discussions} گزارش کنید.",
+    discussions: "discussions",
+    docs: "مستندات:",
+  },
   axios: {
     messages: {
       optimizeBackend: "نشانی سرویس v2rayA تغییر کند؟",

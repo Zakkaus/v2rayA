@@ -14,6 +14,7 @@
     "size-gate": "node scripts/size-gate.mjs"
   },
   "dependencies": {
+    "@material/material-color-utilities": "0.4.0",
     "@mdi/js": "^7.4.47",
     "@nuintun/qrcode": "^3.3.0",
     "axios": "^0.33.0",

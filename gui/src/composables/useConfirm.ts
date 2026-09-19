@@ -24,6 +24,7 @@ export interface PromptOptions extends Omit<ConfirmOptions, "destructive"> {
     label?: string;
     placeholder?: string;
     value?: string;
+    maxlength?: number;
     validate?: (v: string) => string | true;
   };
 }

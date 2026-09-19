@@ -8,7 +8,7 @@ import { nanoid } from "nanoid";
 import { registerProgrammatic, buefy } from "@/plugins/session";
 
 // Programmatic instances mount in their own app and outlive the root
-// tree; register the handles so session.restart() closes them.
+// tree; register the handles so the session reset closes them.
 function openSnackbar(params) {
   const handle = buefy().snackbar.open(params);
   registerProgrammatic(handle);
@@ -134,7 +134,7 @@ axios.interceptors.response.use(
       }
 
       if (localStorage["token"]) {
-        // Centralize auth recovery in App.vue's mounted() flow to avoid
+        // Auth recovery is the session starter's (a fresh account check), to avoid
         // programmatic modal stacking and overlay conflicts.
         localStorage.removeItem("token");
         window.location.reload();

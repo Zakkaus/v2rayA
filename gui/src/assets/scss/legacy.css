@@ -1,0 +1,9 @@
+/* Coexistence period: Vuetify's styles live in cascade layers, and an
+   unlayered stylesheet wins over any layer. The old stylesheets go into
+   a layer declared before Vuetify's, so Bulma's element rules (button,
+   input) no longer strip Vuetify's components. Deleted with them. */
+@layer legacy, vuetify-core, vuetify-components, vuetify-overrides,
+  vuetify-utilities, vuetify-final;
+@import "normalize.css" layer(legacy);
+@import "./buefy.scss" layer(legacy);
+@import "./legacy-app.scss" layer(legacy);

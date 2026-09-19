@@ -1,5 +1,24 @@
 import { defineStore } from "pinia";
-import type { Which, VersionResponse } from "@/api/types";
+import { Base64 } from "js-base64";
+import type { Which, VersionResponse, WsMessage } from "@/api/types";
+import { brandSeed, isSeed } from "@/theme/scheme";
+
+/** normalizeOutbounds keeps the backend's list as names: trimmed, unique, "proxy" first. */
+export function normalizeOutbounds(outbounds: unknown): string[] {
+  const seen = new Set<string>();
+  const names: string[] = [];
+  if (Array.isArray(outbounds)) {
+    for (const outbound of outbounds) {
+      if (typeof outbound !== "string") continue;
+      const name = outbound.trim();
+      if (!name || seen.has(name)) continue;
+      seen.add(name);
+      names.push(name);
+    }
+  }
+  if (!seen.has("proxy")) names.unshift("proxy");
+  return names;
+}
 
 /** The core's state as the backend reports it; text for it comes from the locale. */
 export type Running = "checking" | "running" | "stopped" | "paused";
@@ -17,10 +36,12 @@ export const useAppStore = defineStore("app", {
     connectedServer: [] as Which[],
     outboundName: "proxy",
     outbounds: ["proxy"] as string[],
-    observatory: null as Record<string, unknown> | null,
+    /** the last observatory frame for the current outbound */
+    observatory: null as WsMessage | null,
     version: null as VersionResponse | null,
     /** the last /version banner facts, seeded from localStorage before the request answers */
-    lite: localStorage.getItem("lite") === "true",
+    // "1"/"0" as the backend sends it; the old settings dialog parses it
+    lite: parseInt(localStorage.getItem("lite") ?? "0") > 0,
     docker: localStorage.getItem("docker") === "true",
     variant: localStorage.getItem("variant") ?? "",
     loadBalanceValid: localStorage.getItem("loadBalanceValid") !== "false",
@@ -32,10 +53,25 @@ export const useAppStore = defineStore("app", {
       ? localStorage.getItem("theme")
       : "auto") as ThemePreference,
     systemDark: window.matchMedia("(prefers-color-scheme: dark)").matches,
+    /** the seed colour the theme's palettes derive from */
+    themeSeed: (() => {
+      const seed = localStorage.getItem("themeSeed") ?? "";
+      return isSeed(seed) ? seed.toLowerCase() : brandSeed;
+    })(),
     language: localStorage.getItem("_lang") ?? "",
   }),
   getters: {
     loggedIn: (s) => s.token !== "",
+    /** the name inside the token; empty when there is no token or it does not parse */
+    username: (s) => {
+      if (!s.token) return "";
+      try {
+        const payload = JSON.parse(Base64.decode(s.token.split(".")[1]));
+        return typeof payload.uname === "string" ? payload.uname : "";
+      } catch {
+        return "";
+      }
+    },
     isDark: (s) =>
       s.themePreference === "auto"
         ? s.systemDark
@@ -55,9 +91,19 @@ export const useAppStore = defineStore("app", {
       this.running = running;
       this.networkPaused = networkPaused;
     },
+    setOutbounds(outbounds: unknown) {
+      this.outbounds = normalizeOutbounds(outbounds);
+      if (!this.outbounds.includes(this.outboundName))
+        this.outboundName = "proxy";
+    },
     setTheme(preference: ThemePreference) {
       this.themePreference = preference;
       localStorage.setItem("theme", preference);
+    },
+    setThemeSeed(seed: string) {
+      if (!isSeed(seed)) return;
+      this.themeSeed = seed.toLowerCase();
+      localStorage.setItem("themeSeed", this.themeSeed);
     },
     setLanguage(code: string) {
       this.language = code;
@@ -65,7 +111,7 @@ export const useAppStore = defineStore("app", {
     },
     applyVersion(v: VersionResponse) {
       this.version = v;
-      this.lite = v.lite;
+      this.lite = v.lite > 0;
       this.docker = !!v.docker;
       this.variant = v.variant;
       this.loadBalanceValid = v.loadBalanceValid;

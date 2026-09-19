@@ -59,7 +59,8 @@ export interface VersionResponse {
   remoteVersion: string;
   serviceValid: boolean;
   v5: boolean;
-  lite: boolean;
+  /** 0 or 1: the backend sends its lite flag as a number */
+  lite: number;
   loadBalanceValid: boolean;
   variant: string;
   os: string;
@@ -108,14 +109,13 @@ export interface CustomInbound {
   password: string;
 }
 
-/** The WebSocket frames on /api/message. */
-export type WsMessage =
-  | {
-      type: "running_state";
-      body: { running: boolean; networkPaused?: boolean };
-    }
-  | {
-      type: "observatory";
-      body: { outboundName: string } & Record<string, unknown>;
-    }
-  | { type: string; body?: unknown };
+/** The WebSocket frames on /api/message: the two the interface reads, and any other the backend may add. */
+export interface RunningStateMessage {
+  type: "running_state";
+  body: { running: boolean; networkPaused?: boolean };
+}
+export interface ObservatoryMessage {
+  type: "observatory";
+  body: { outboundName: string } & Record<string, unknown>;
+}
+export type WsMessage = { type: string; body?: unknown };

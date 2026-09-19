@@ -19,6 +19,7 @@ const props = withDefaults(
       label?: string;
       placeholder?: string;
       value?: string;
+      maxlength?: number;
       validate?: (v: string) => string | true;
     };
   }>(),
@@ -66,6 +67,7 @@ function cancel() {
         class="mt-4"
         :label="input.label"
         :placeholder="input.placeholder"
+        :maxlength="input.maxlength"
         :error-messages="error ? [error] : []"
         autofocus
         @keydown.enter.prevent="confirm"

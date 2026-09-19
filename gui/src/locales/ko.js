@@ -4,7 +4,7 @@ export default {
     outboundSetting: "프록시 그룹 설정",
     setting: "설정",
     about: "정보",
-    loggedAs: "로그인 계정: <b>{username}</b>",
+    loggedAs: "로그인 계정: {username}",
     checkRunning: "확인 중",
     isRunning: "실행 중",
     notRunning: "준비됨",
@@ -24,6 +24,12 @@ export default {
     lightTheme: "밝은 테마",
     autoTheme: "자동 테마",
     expand: "연결 상태 표시",
+  },
+  theme: {
+    title: "테마",
+    appearance: "모양",
+    color: "테마 색상",
+    custom: "사용자 지정",
   },
   welcome: {
     title: "환영합니다",
@@ -380,17 +386,22 @@ export default {
     coreVersionMismatch:
       "코어 버전 불일치: v2raya_core 버전은 v2rayA 버전과 정확히 일치해야 합니다. {err}",
   },
-  about: `<p>v2rayA는 V2Ray의 웹 GUI 클라이언트입니다.</p>
-          <p class="about-small">기본 포트:</p>
-          <p class="about-small">2017: v2rayA 서비스 포트</p>
-          <p class="about-small">20170: SOCKS 프로토콜</p>
-          <p class="about-small">20171: HTTP 프로토콜</p>
-          <p class="about-small">20172: "트래픽 분할 규칙"이 있는 HTTP 프로토콜</p>
-          <p class="about-small">기타 포트:</p>
-          <p class="about-small">32345: tproxy, 투명 프록시에 필요 </p>
-          <p>모든 데이터는 클라우드가 아닌 로컬에 저장됩니다. </p>
-          <p>사용 중 발견한 문제는 <a href="https://github.com/v2rayA/v2rayA/discussions">discussions</a>에 제보할 수 있습니다.</p>
-          <p>문서: <a href="https://v2raya.org">https://v2raya.org</a></p>`,
+  about: {
+    intro: "v2rayA는 V2Ray의 웹 GUI 클라이언트입니다.",
+    defaultPorts: "기본 포트:",
+    otherPorts: "기타 포트:",
+    ports: {
+      service: "v2rayA 서비스 포트",
+      socks: "SOCKS 프로토콜",
+      http: "HTTP 프로토콜",
+      httpRules: "\"트래픽 분할 규칙\"이 있는 HTTP 프로토콜",
+      tproxy: "tproxy, 투명 프록시에 필요",
+    },
+    local: "모든 데이터는 클라우드가 아닌 로컬에 저장됩니다.",
+    report: "사용 중 발견한 문제는 {discussions}에 제보할 수 있습니다.",
+    discussions: "discussions",
+    docs: "문서:",
+  },
   axios: {
     messages: {
       optimizeBackend: "v2rayA 서비스 주소를 변경하시겠습니까?",

@@ -4,7 +4,7 @@ export default {
     outboundSetting: "代理分组设置",
     setting: "设置",
     about: "关于",
-    loggedAs: "已登录为 <b>{username}</b>",
+    loggedAs: "已登录为 {username}",
     checkRunning: "检测中",
     isRunning: "正在运行",
     notRunning: "就绪",
@@ -24,6 +24,12 @@ export default {
     lightTheme: "浅色主题",
     autoTheme: "自动主题",
     expand: "显示连接状态",
+  },
+  theme: {
+    title: "主题",
+    appearance: "外观",
+    color: "主题色",
+    custom: "自定义",
   },
   welcome: {
     title: "欢迎使用",
@@ -377,16 +383,22 @@ export default {
     coreVersionMismatch:
       "核心版本不匹配：v2raya_core 的版本必须与 v2rayA 版本完全一致。{err}",
   },
-  about: `<p>v2rayA 是 V2Ray 的一个 Web 客户端。</p>
-          <p class="about-small">默认端口：</p>
-          <p class="about-small">2017: v2rayA后端端口</p>
-          <p class="about-small">20170: SOCKS协议</p>
-          <p class="about-small">20171: HTTP协议</p>
-          <p class="about-small">20172: 带分流规则的HTTP协议</p>
-          <p class="about-small">其他端口：</p>
-          <p class="about-small">32345: tproxy，透明代理所需 </p>
-          <p>在使用中如果发现任何问题，欢迎到<a href="https://github.com/v2rayA/v2rayA/discussions">讨论区</a>反馈。</p>
-          <p>文档：<a href="https://v2raya.org">https://v2raya.org</a>.</p>`,
+  about: {
+    intro: "v2rayA 是 V2Ray 的一个 Web 客户端。",
+    defaultPorts: "默认端口：",
+    otherPorts: "其他端口：",
+    ports: {
+      service: "v2rayA后端端口",
+      socks: "SOCKS协议",
+      http: "HTTP协议",
+      httpRules: "带分流规则的HTTP协议",
+      tproxy: "tproxy，透明代理所需",
+    },
+    local: "所有数据均存储在本地，不上传云端。",
+    report: "在使用中如果发现任何问题，欢迎到{discussions}反馈。",
+    discussions: "讨论区",
+    docs: "文档：",
+  },
   axios: {
     messages: {
       optimizeBackend: "是否修改 v2rayA 服务端地址？",

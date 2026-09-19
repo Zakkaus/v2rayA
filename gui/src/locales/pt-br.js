@@ -4,7 +4,7 @@ export default {
     outboundSetting: "Configuração do grupo de proxy",
     setting: "Configurações",
     about: "Sobre",
-    loggedAs: "Conectado como <b>{username}</b>",
+    loggedAs: "Conectado como {username}",
     checkRunning: "Verificando",
     isRunning: "Em execução",
     notRunning: "Pronto",
@@ -24,6 +24,12 @@ export default {
     lightTheme: "Tema claro",
     autoTheme: "Tema automático",
     expand: "Mostrar o estado da conexão",
+  },
+  theme: {
+    title: "Tema",
+    appearance: "Aparência",
+    color: "Cor do tema",
+    custom: "Personalizada",
   },
   welcome: {
     title: "Boas-vindas",
@@ -370,17 +376,22 @@ export default {
     v2rayInvalid: "geosite.dat, geoip.dat ou o v2ray-core podem não estar instalados corretamente",
     coreVersionMismatch: "Incompatibilidade de versão do núcleo: a versão do v2raya_core deve corresponder exatamente à versão do v2rayA. {err}",
   },
-  about: `<p>v2rayA é um cliente web do V2Ray.</p>
-          <p class="about-small">Portas padrão:</p>
-          <p class="about-small">2017: porta de serviço do v2rayA</p>
-          <p class="about-small">20170: protocolo SOCKS</p>
-          <p class="about-small">20171: protocolo HTTP</p>
-          <p class="about-small">20172: protocolo HTTP com a "Regra de divisão de tráfego"</p>
-          <p class="about-small">Outras portas:</p>
-          <p class="about-small">32345: tproxy, necessária para o proxy transparente</p>
-          <p>Todos os dados são armazenados localmente, não na nuvem.</p>
-          <p>Problemas encontrados durante o uso podem ser relatados em <a href="https://github.com/v2rayA/v2rayA/discussions">discussões</a>.</p>
-          <p>Documentação: <a href="https://v2raya.org">https://v2raya.org</a></p>`,
+  about: {
+    intro: "v2rayA é um cliente web do V2Ray.",
+    defaultPorts: "Portas padrão:",
+    otherPorts: "Outras portas:",
+    ports: {
+      service: "porta de serviço do v2rayA",
+      socks: "protocolo SOCKS",
+      http: "protocolo HTTP",
+      httpRules: "protocolo HTTP com a \"Regra de divisão de tráfego\"",
+      tproxy: "tproxy, necessária para o proxy transparente",
+    },
+    local: "Todos os dados são armazenados localmente, não na nuvem.",
+    report: "Problemas encontrados durante o uso podem ser relatados em {discussions}.",
+    discussions: "discussões",
+    docs: "Documentação:",
+  },
   axios: {
     messages: {
       optimizeBackend: "Alterar o endereço do serviço v2rayA?",

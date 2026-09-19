@@ -315,6 +315,11 @@
   resolved "https://registry.yarnpkg.com/@keyv/serialize/-/serialize-1.1.1.tgz#0c01dd3a3483882af7cf3878d4e71d505c81fc4a"
   integrity sha512-dXn3FZhPv0US+7dtJsIi2R+c7qWYiReoEh5zUntWCf4oSpMNib8FDhSoed6m3QyZdx5hK7iLFkYk3rNxwt8vTA==
 
+"@material/material-color-utilities@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@material/material-color-utilities/-/material-color-utilities-0.4.0.tgz#bf7151aadf482a2534ac03c8e746e17625c0ec51"
+  integrity sha512-dlq6VExJReb8dhjj3a/yTigr3ncNwoFmL5Iy2ENtbDX03EmNeOEdZ+vsaGrj7RTuO+mB7L58II4LCsl4NpM8uw==
+
 "@mdi/js@^7.4.47":
   version "7.4.47"
   resolved "https://registry.yarnpkg.com/@mdi/js/-/js-7.4.47.tgz#7d8a4edc9631bffeed80d1ec784f9beae559a76a"

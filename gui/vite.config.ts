@@ -27,5 +27,7 @@ export default defineConfig(({ mode }) => ({
   test: {
     environment: "node",
     include: ["src/**/*.spec.ts"],
+    // its ESM has extensionless imports Node cannot resolve; Vite can
+    server: { deps: { inline: ["@material/material-color-utilities"] } },
   },
 }));

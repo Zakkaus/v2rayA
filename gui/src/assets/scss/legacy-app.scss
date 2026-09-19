@@ -1,0 +1,137 @@
+// The old page's global styles that the old node list and the Buefy
+// dialogs still render with during the coexistence period (milestones
+// A–D). Deleted with them.
+@import "./reset.scss";
+@import "./dark-theme.scss";
+
+// Buefy's toast and snackbar layer starts at the viewport top; start it
+// below the app bar.
+.notices {
+  padding-top: 4.5rem !important;
+}
+// Buefy's modals and notices go above Vuetify's overlays (z-index 2000),
+// so a dialog opened from the login card is reachable.
+.modal.is-active {
+  z-index: 2400;
+}
+.notices {
+  z-index: 2500;
+}
+
+// One backdrop value for every dialog: the component library ships several
+// (0.86 opaque here, a lighter one in two components), which read as a
+// shadow around the light card.
+.modal .modal-background {
+  background-color: rgba(10, 10, 10, 0.55);
+}
+
+.modal .modal-card-head,
+.modal .modal-card-foot {
+  border-radius: 6px 6px 0 0;
+}
+
+.modal .modal-card-foot {
+  border-radius: 0 0 6px 6px;
+}
+
+// Shrink the card wrapper to the card so the card centres horizontally.
+.modal .animation-content {
+  position: relative;
+  width: auto;
+  margin: auto;
+}
+
+// Buefy 3 appends a hidden .touch-dragged-cell after the table wrapper, so
+// the wrapper is no longer the last child and Buefy's
+// `.table-wrapper:not(:last-child)` margin applies below every table. Drop
+// it when the hidden cell is all that follows.
+.b-table > .table-wrapper:nth-last-child(2) {
+  margin-bottom: 0;
+}
+
+// Buefy 3 pins the table's sort icon to the right edge of the header cell,
+// where it lands on top of a short label such as "ID"; 0.9 placed it right
+// after the label. Keep it after the label.
+.b-table .table th .th-wrap {
+  .sort-icon {
+    position: static;
+    margin-left: 0.25rem;
+    // the library's rules carry a translateY for their absolute placement
+    transform: none !important;
+
+    &.is-desc {
+      transform: rotate(180deg) !important;
+    }
+  }
+
+  // numeric headers lay out row-reverse; the icon still goes last visually
+  &.is-numeric .sort-icon {
+    order: -1;
+    margin-left: 0;
+    margin-right: 0.25rem;
+  }
+}
+
+// The close button in the card head is Bulma's .delete, a dark disc with
+// white bars; the dialogs have always shown a bare glyph in the head's
+// text colour, so draw it that way.
+.modal-card-head .delete {
+  --bulma-delete-dimensions: 2rem;
+  // taller than the title line; take the excess out of the head's padding
+  // so the head keeps the height it had without the button
+  margin-top: -0.5rem;
+  margin-bottom: -0.5rem;
+  background-color: transparent;
+  color: rgba(0, 0, 0, 0.75);
+
+  &::before,
+  &::after {
+    background-color: currentColor;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: rgba(0, 0, 0, 0.08);
+    color: rgba(0, 0, 0, 0.95);
+  }
+}
+
+// Phone dialogs: fill the screen so the card head sits at the top instead
+// of floating mid-viewport.
+@media screen and (max-width: 768px) {
+  .modal .modal-card {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+  }
+  .modal .modal-card-head {
+    border-radius: 0;
+  }
+  .modal .modal-card-foot {
+    border-radius: 0;
+  }
+}
+
+.dropdown-item:focus {
+  // remove ugly outline
+  outline: none !important;
+}
+.lazy {
+  p {
+    margin: 0.5em 0;
+  }
+}
+
+.icon-loader-circle {
+  font-size: 2.5rem;
+  color: rgba(0, 0, 0, 0.45);
+  animation: loading-rotate 2s infinite linear;
+}
+
+.after-line-dot5 {
+  p {
+    margin-bottom: 0.5em;
+  }
+}
+
