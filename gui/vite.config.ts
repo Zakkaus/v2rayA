@@ -1,13 +1,59 @@
 import { defineConfig } from "vitest/config";
 import vue from "@vitejs/plugin-vue";
 import vuetify from "vite-plugin-vuetify";
+import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 import lucideSubset from "./build/lucide-subset.mjs";
+import en from "./src/locales/en.js";
 
 export default defineConfig(({ mode }) => ({
   // vuetify(): per-component style and component imports; nothing of the
   // library ends up in the bundle that a template does not use.
-  plugins: [lucideSubset(), vue(), vuetify({ autoImport: true })],
+  plugins: [
+    lucideSubset(),
+    vue(),
+    vuetify({ autoImport: true }),
+    VitePWA({
+      registerType: "autoUpdate",
+      manifest: {
+        name: "v2rayA",
+        short_name: "v2rayA",
+        description: en.about.intro,
+        display: "standalone",
+        start_url: "./",
+        scope: "./",
+        theme_color: "#fffbff",
+        background_color: "#fffbff",
+        icons: [
+          {
+            src: "pwa-192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any maskable",
+          },
+          {
+            src: "pwa-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable",
+          },
+        ],
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2,ttf}"],
+        globIgnores: ["**/api/**"],
+        navigateFallback: "index.html",
+        navigateFallbackDenylist: [/\/api(?:\/|$)/],
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) =>
+              url.pathname.includes("/api/") || url.pathname.endsWith("/api"),
+            handler: "NetworkOnly",
+          },
+        ],
+      },
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
