@@ -245,7 +245,7 @@ const statusColor = computed(
   () =>
     ({
       running: "primary",
-      stopped: "surface-variant",
+      stopped: "secondary",
       paused: "tertiary",
       checking: "surface-variant",
     })[store.running],

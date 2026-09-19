@@ -13,7 +13,6 @@ import {
   mdiViewGridOutline,
   mdiViewListOutline,
 } from "@mdi/js";
-import OutboundMenu from "@/components/OutboundMenu.vue";
 import { rowKey } from "./nodes/model";
 import { useProxies } from "./proxies/model";
 import NodeCard from "./proxies/NodeCard.vue";
@@ -164,7 +163,6 @@ onMounted(sync);
             >{{ t("proxies.membersOnly") }}</v-chip
           >
           <v-spacer />
-          <OutboundMenu variant="chip" @changed="sync" />
           <v-btn
             variant="tonal"
             :prepend-icon="mdiSpeedometer"
