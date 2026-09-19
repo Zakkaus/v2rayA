@@ -11,6 +11,8 @@ export interface RequestOptions {
 }
 import type {
   CustomInbound,
+  DnsRule,
+  DnsRulesResponse,
   Ports,
   Setting,
   SettingResponse,
@@ -131,8 +133,8 @@ export const getRoutingA = () =>
 export const putRoutingA = (body: { routingA: string }) =>
   call<unknown>({ url: "routingA", method: "put", data: body });
 export const getDnsRules = () =>
-  call<unknown>({ url: "dnsRules", method: "get" });
-export const putDnsRules = (body: unknown) =>
+  call<DnsRulesResponse>({ url: "dnsRules", method: "get" });
+export const putDnsRules = (body: DnsRule[]) =>
   call<unknown>({ url: "dnsRules", method: "put", data: body });
 export const getDomainsExcluded = () =>
   call<{ domains: string }>({ url: "domainsExcluded", method: "get" });
