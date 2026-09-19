@@ -9,7 +9,7 @@ import {
   Hct,
   hexFromArgb,
   MaterialDynamicColors,
-  SchemeNeutral,
+  SchemeMonochrome,
   SchemeTonalSpot,
 } from "@material/material-color-utilities";
 
@@ -115,10 +115,10 @@ export type SchemeColors = Record<string, string> &
 export function schemeColors(seed: string, dark: boolean): SchemeColors {
   const hct = Hct.fromInt(argbFromHex(isSeed(seed) ? seed : brandSeed));
   // a grey, black or white seed has no hue to speak of: tonal spot would
-  // paint it pink from hue 0, so those get the neutral scheme instead
+  // paint it pink from hue 0, so those get the monochrome scheme instead
   const scheme =
     hct.chroma < 5
-      ? new SchemeNeutral(hct, dark, 0)
+      ? new SchemeMonochrome(hct, dark, 0)
       : new SchemeTonalSpot(hct, dark, 0);
   const colors: Record<string, string> = {};
   for (const [role, key] of Object.entries(roles)) {
