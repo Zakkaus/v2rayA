@@ -363,7 +363,11 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
       >
         {{ statusText }}
       </v-btn>
-      <OutboundMenu v-if="!compact" class="me-3" @changed="nodesRef?.sync()" />
+      <OutboundMenu
+        :variant="compact ? 'icon' : 'chip'"
+        class="me-2"
+        @changed="nodesRef?.sync()"
+      />
       <template #append>
         <ShellMenus variant="icons" />
       </template>
@@ -385,7 +389,23 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
       >
         <div v-if="expanded" class="page__header">
           <h1 class="md3-headline-medium page__title">{{ pageTitle }}</h1>
-          <div class="d-flex align-center">
+          <div class="d-flex align-center ga-2">
+            <v-btn
+              :color="statusColor"
+              variant="tonal"
+              :prepend-icon="mdiPower"
+              class="text-none"
+              @mouseenter="hovering = true"
+              @mouseleave="hovering = false"
+              @click="toggleRunning"
+            >
+              {{ statusText }}
+            </v-btn>
+            <OutboundMenu
+              variant="chip"
+              class="me-2"
+              @changed="nodesRef?.sync()"
+            />
             <ShellMenus variant="icons" />
           </div>
         </div>
