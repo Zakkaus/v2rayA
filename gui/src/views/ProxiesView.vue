@@ -142,7 +142,10 @@ onMounted(sync);
       <section>
         <div class="proxies__row mb-3">
           <h2 class="md3-title-medium ma-0">
-            {{ t("common.nodes") }} · {{ rows.length }}
+            {{ t("common.nodes") }}
+            <span class="md3-label-medium text-on-surface-variant ms-1">{{
+              rows.length
+            }}</span>
           </h2>
           <v-spacer />
           <v-btn
