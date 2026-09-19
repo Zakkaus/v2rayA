@@ -4,7 +4,6 @@
 // app bar at this width: the page titles itself and carries the theme,
 // language and account menus; the core's state lives on the dashboard.
 import { useI18n } from "vue-i18n";
-import { mdiInformationOutline } from "@mdi/js";
 import { destinations } from "./destinations";
 import { useDialog } from "@/composables";
 import AboutDialog from "@/views/settings/AboutDialog.vue";
@@ -36,19 +35,17 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
       />
     </v-list>
     <template #append>
-      <v-list nav density="default" class="px-3 pt-0 pb-3">
-        <v-list-item
-          :prepend-icon="mdiInformationOutline"
-          :title="`v2rayA ${store.version?.version ?? ''}`"
-          rounded="xl"
-          class="drawer__item drawer__version"
-          @click="openAbout"
-        >
-          <v-tooltip activator="parent" location="top">
-            {{ t("common.about") }}
-          </v-tooltip>
-        </v-list-item>
-      </v-list>
+      <v-btn
+        variant="plain"
+        size="small"
+        class="drawer__version text-none md3-label-medium"
+        @click="openAbout"
+      >
+        v2rayA {{ store.version?.version ?? "" }}
+        <v-tooltip activator="parent" location="top">
+          {{ t("common.about") }}
+        </v-tooltip>
+      </v-btn>
     </template>
   </v-navigation-drawer>
 </template>
@@ -60,9 +57,12 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
   gap: 12px;
   padding: 28px 28px 20px;
 }
-/* the version reads like a destination but quieter: outline text and icon */
+/* the version is a footnote, aligned with the brand: outline text, no container */
 .drawer__version {
+  margin: 8px 16px 20px;
+  padding-inline: 12px;
   color: rgb(var(--v-theme-outline));
+  opacity: 1;
 }
 .drawer__logo {
   width: 28px;
