@@ -75,7 +75,6 @@ export default {
     testLatency: "Проверить задержку",
     usage: "Использовано {used} / {total}",
     expires: "Истекает {date}",
-    httpWithRules: "HTTP с правилами",
   },
   common: {
     optional: "необязательно",

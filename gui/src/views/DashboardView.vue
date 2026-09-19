@@ -3,8 +3,6 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
 import {
-  mdiChevronDown,
-  mdiChevronUp,
   mdiPower,
   mdiSpeedometer,
   mdiServerNetwork,
@@ -23,7 +21,6 @@ import { formatBytes, formatRate } from "@/lib/format";
 import { useDashboard } from "./dashboard/model";
 import NodeSelection from "./dashboard/NodeSelection.vue";
 import type { SubscriptionAction } from "./proxies/model";
-import ProxySettings from "./settings/ProxySettings.vue";
 import { transparentModes, pacModes } from "./settings/options";
 
 defineOptions({ name: "DashboardView" });
@@ -51,8 +48,6 @@ const {
   quickLoading,
   quickSaving,
   quickDisabled,
-  showSettings,
-  ports,
   editPorts,
   importNodes,
   subscriptions,
@@ -62,7 +57,6 @@ const {
   subscriptionsBusy,
   toggleRunning,
   setQuick,
-  toggleSettings,
   selectNode,
   testMembers,
   updateAll,
@@ -292,27 +286,8 @@ function switchNode() {
             hide-details
             @update:model-value="(value) => setQuick('ipforward', !!value)"
           />
-          <v-btn
-            variant="text"
-            class="dashboard-text-button mt-2"
-            :append-icon="showSettings ? mdiChevronUp : mdiChevronDown"
-            :disabled="quickLoading || quickSaving"
-            :aria-expanded="showSettings"
-            aria-controls="dashboard-proxy-settings"
-            @click="toggleSettings"
-            >{{ t("dashboard.allProxySettings") }}</v-btn
-          >
         </template>
       </v-card>
-      <v-expand-transition>
-        <div
-          v-if="showSettings"
-          id="dashboard-proxy-settings"
-          class="dashboard-full"
-        >
-          <ProxySettings />
-        </div>
-      </v-expand-transition>
 
       <v-card
         color="surface-container-low"
@@ -346,13 +321,6 @@ function switchNode() {
             :label="item.title"
           />
         </v-radio-group>
-        <p
-          class="md3-body-small text-on-surface-variant dashboard-figures mt-3 mb-0"
-          dir="ltr"
-        >
-          SOCKS {{ ports?.socks5 ?? "—" }} · HTTP {{ ports?.http ?? "—" }} ·
-          {{ t("dashboard.httpWithRules") }} {{ ports?.httpWithPac ?? "—" }}
-        </p>
         <div class="d-flex flex-wrap ga-2 mt-3">
           <v-btn variant="text" @click="editPorts">{{
             t("customAddressPort.title")
@@ -602,7 +570,6 @@ function switchNode() {
 .dashboard-state-dot--paused {
   background: rgb(var(--v-theme-tertiary));
 }
-
 
 .dashboard-chart {
   height: 120px;

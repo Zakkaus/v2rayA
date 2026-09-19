@@ -76,7 +76,6 @@ export default {
     testLatency: "Test latency",
     usage: "Used {used} / {total}",
     expires: "Expires {date}",
-    httpWithRules: "HTTP with rules",
   },
   common: {
     optional: "optional",

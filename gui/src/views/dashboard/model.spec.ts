@@ -100,9 +100,9 @@ beforeEach(() => {
   vi.mocked(putSetting).mockResolvedValue(undefined);
   vi.mocked(putSubscription).mockResolvedValue(response());
   vi.mocked(putOutboundSelection).mockResolvedValue(response());
-  vi.mocked(getPingLatency).mockResolvedValue({
-    whiches: [{ _type: "server", id: 1, pingLatency: "17ms" }],
-  });
+  // the tile pings the members once on arrival; a test that wants a
+  // result arranges it after the mount
+  vi.mocked(getPingLatency).mockResolvedValue({ whiches: [] });
   vi.mocked(getTouch).mockResolvedValue(response());
   vi.mocked(getSetting).mockResolvedValue({
     setting: {
@@ -267,13 +267,18 @@ describe("dashboard", () => {
     await flushPromises();
     expect(connection()).toContain("Standalone");
     // the latency tile tests every member, the node in use included
+    vi.mocked(getPingLatency).mockResolvedValueOnce({
+      whiches: [{ _type: "server", id: 1, pingLatency: "17ms" }],
+    });
     await wrapper
       .get(".dashboard-latency")
       .findAll("button")
       .find((b) => b.text() === "Test latency")!
       .trigger("click");
     await flushPromises();
-    expect(getPingLatency).toHaveBeenCalledWith([{ _type: "server", id: 1 }]);
+    expect(getPingLatency).toHaveBeenLastCalledWith([
+      { _type: "server", id: 1 },
+    ]);
     expect(connection()).toContain("17ms");
   });
 
@@ -314,7 +319,7 @@ describe("dashboard", () => {
     expect(wrapper.get(".dashboard-connection").text()).not.toContain("Pinned");
   });
 
-  test("autosaves the whole form and reloads quick controls after full settings close", async () => {
+  test("autosaves the whole form from a quick control", async () => {
     wrapper = mountWithApp(DashboardView);
     await flushPromises();
     await wrapper
@@ -332,26 +337,7 @@ describe("dashboard", () => {
       tunAutoRoute: true,
       subscriptionAutoUpdateIntervalHour: 0,
     });
-    await button("More proxy options").trigger("click");
-    await flushPromises();
-    expect(
-      wrapper
-        .get('.dashboard-transparent input[type="checkbox"]')
-        .attributes("disabled"),
-    ).toBeDefined();
-    vi.mocked(getSetting).mockResolvedValue({
-      setting: { ...saved, portSharing: false },
-      localGFWListVersion: "",
-    });
-    await button("More proxy options").trigger("click");
-    await flushPromises();
-    expect(
-      (
-        wrapper.get('.dashboard-transparent input[type="checkbox"]')
-          .element as HTMLInputElement
-      ).checked,
-    ).toBe(false);
-    expect(wrapper.find("#dashboard-proxy-settings").exists()).toBe(false);
+    expect(putSetting).toHaveBeenCalledOnce();
   });
 
   test("updates all subscriptions sequentially and continues after an update fails", async () => {

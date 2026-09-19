@@ -73,7 +73,6 @@ export default {
     testLatency: "测速",
     usage: "已用 {used} / {total}",
     expires: "到期 {date}",
-    httpWithRules: "HTTP（分流）",
   },
   common: {
     optional: "可选",

@@ -75,7 +75,6 @@ export default {
     testLatency: "지연 시간 측정",
     usage: "사용량 {used} / {total}",
     expires: "만료일 {date}",
-    httpWithRules: "규칙 적용 HTTP",
   },
   common: {
     optional: "선택",

@@ -75,7 +75,6 @@ export default {
     testLatency: "آزمایش تأخیر",
     usage: "مصرف‌شده {used} / {total}",
     expires: "انقضا {date}",
-    httpWithRules: "HTTP با قوانین",
   },
   common: {
     optional: "اختیاری",

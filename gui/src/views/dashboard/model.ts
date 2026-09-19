@@ -5,7 +5,6 @@ import "@/plugins/dayjs";
 import {
   deleteV2ray,
   getPingLatency,
-  getPorts,
   getTouch,
   postV2ray,
   putOutboundSelection,
@@ -15,7 +14,6 @@ import { watchConnected } from "@/api/connect";
 import { errorText } from "@/api/errors";
 import type {
   TouchSubscription,
-  Ports,
   Touch,
   TouchResponse,
   TouchServer,
@@ -59,13 +57,11 @@ export function useDashboard() {
   const notify = useNotify();
   const settings = useSettings();
   const touch = shallowRef<Touch>();
-  const ports = shallowRef<Ports>();
   const loading = ref(true);
   const busy = ref(false);
   const error = ref("");
   const quickLoading = ref(true);
   const quickSaving = ref(false);
-  const showSettings = ref(false);
   const selecting = ref(false);
   const testing = ref<string>();
   const measured = ref(new Map<string, string>());
@@ -160,11 +156,7 @@ export function useDashboard() {
     () => !loading.value && !busy.value && store.running !== "checking",
   );
   const quickDisabled = computed(
-    () =>
-      quickLoading.value ||
-      !settings.ready.value ||
-      quickSaving.value ||
-      showSettings.value,
+    () => quickLoading.value || !settings.ready.value || quickSaving.value,
   );
   const subscriptionsBusy = computed(
     () => updatingAll.value || updating.value !== undefined,
@@ -197,30 +189,22 @@ export function useDashboard() {
   }
 
   const { open: openDialog } = useDialog();
-  const loadPorts = () =>
-    getPorts()
-      .then((value) => (ports.value = value))
-      .catch(report);
   /** importNodes opens the import dialog; a subscription or link added there shows at once. */
   async function importNodes() {
     const imported = await openDialog<boolean>(ImportDialog, {}, { width: 480 })
       .result;
     if (imported) await getTouch().then(apply).catch(report);
   }
-  /** editPorts opens the address dialog; the tile reloads the ports it shows after a save. */
-  async function editPorts() {
-    const saved = await openDialog<boolean>(PortsDialog, {}, { width: 520 })
-      .result;
-    if (saved) await loadPorts();
+  /** editPorts opens the address dialog. */
+  function editPorts() {
+    openDialog(PortsDialog, {}, { width: 520 });
   }
 
   onMounted(async () => {
-    await Promise.all([
-      getTouch().then(apply).catch(report),
-      loadQuick(),
-      loadPorts(),
-    ]);
+    await Promise.all([getTouch().then(apply).catch(report), loadQuick()]);
     loading.value = false;
+    // the members' latency once on arrival, so the tile reads at a glance
+    void testMembers();
   });
 
   async function setQuick<K extends keyof SettingForm>(
@@ -239,12 +223,6 @@ export function useDashboard() {
     } finally {
       quickSaving.value = false;
     }
-  }
-
-  async function toggleSettings() {
-    if (quickSaving.value || quickLoading.value) return;
-    showSettings.value = !showSettings.value;
-    if (!showSettings.value) await loadQuick();
   }
 
   async function selectNode(
@@ -413,7 +391,6 @@ export function useDashboard() {
     error,
     members,
     nodeInUse,
-    ports,
     editPorts,
     importNodes,
     subscriptions,
@@ -421,7 +398,6 @@ export function useDashboard() {
     quickLoading,
     quickSaving,
     quickDisabled,
-    showSettings,
     selecting,
     testing,
     updating,
@@ -431,7 +407,6 @@ export function useDashboard() {
     canToggle,
     toggleRunning,
     setQuick,
-    toggleSettings,
     selectNode,
     testNode,
     testMembers,

@@ -11,6 +11,12 @@ import DomainsExcludedDialog from "@/dialogs/settings/DomainsExcluded.vue";
 import GfwListDialog from "@/dialogs/settings/GfwList.vue";
 import PortsDialog from "@/dialogs/settings/Ports.vue";
 import RoutingADialog from "@/dialogs/settings/RoutingA.vue";
+import TproxyWhiteIpsDialog from "@/dialogs/settings/TproxyWhiteIps.vue";
+import TunProcessesDialog from "@/dialogs/settings/TunProcesses.vue";
+import TunRouteScriptDialog, {
+  type TunRouteScript,
+} from "@/dialogs/settings/TunRouteScript.vue";
+import { useAppStore } from "@/stores/app";
 import { useSettings } from "./settings/model";
 import AboutDialog from "./settings/AboutDialog.vue";
 import SettingChoice from "./settings/SettingChoice.vue";
@@ -22,6 +28,7 @@ const { width } = useDisplay();
 const compact = computed(() => width.value < 600);
 const notify = useNotify();
 const { open } = useDialog();
+const store = useAppStore();
 const settings = useSettings();
 const { form, ready, localGFWListVersion, remoteGFWListVersion } = settings;
 const saving = ref(false);
@@ -31,6 +38,78 @@ onMounted(() => {
   settings.load().catch((err) => notify.warning(errorText(err)));
   settings.loadRemoteVersion().catch(() => {});
 });
+
+// ---- the transparent proxy's implementation ---------------------------------------
+// The mode itself, LAN sharing and IP forwarding are the dashboard's tiles.
+
+const os = computed(() => store.version?.os ?? "");
+const isRoot = computed(() => store.version?.isRoot ?? false);
+const tunSupported = computed(() => store.version?.tunSupported ?? false);
+const transparentTypes = computed(() => {
+  const items: {
+    value: string;
+    title: string;
+    props?: { disabled: boolean };
+  }[] = [];
+  if (!store.lite && os.value === "linux")
+    items.push(
+      { value: "redirect", title: "redirect" },
+      { value: "tproxy", title: "tproxy" },
+    );
+  if (!store.lite)
+    items.push({
+      value: "tun",
+      title: tunSupported.value
+        ? "tun"
+        : `tun — ${t("setting.options.tunUnsupported")}`,
+      props: { disabled: !tunSupported.value },
+    });
+  if (!(isRoot.value && (os.value === "linux" || os.value === "darwin")))
+    items.push({
+      value: "system_proxy",
+      title: t("setting.options.systemProxy"),
+    });
+  return items;
+});
+const transparentOn = computed(() => form.transparent !== "close");
+const usesTproxy = computed(
+  () =>
+    transparentOn.value &&
+    ["tproxy", "redirect"].includes(form.transparentType),
+);
+const usesTun = computed(
+  () =>
+    transparentOn.value && form.transparentType === "tun" && tunSupported.value,
+);
+async function openTunProcesses() {
+  const value = await open<string>(
+    TunProcessesDialog,
+    { value: form.tunExcludeProcesses },
+    { width: 520 },
+  ).result;
+  if (value !== undefined) form.tunExcludeProcesses = value;
+}
+async function openTunScript() {
+  const value = await open<TunRouteScript>(
+    TunRouteScriptDialog,
+    {
+      os: os.value,
+      value: {
+        shellType: form.tunRouteShellType,
+        shellPath: form.tunRouteShellPath,
+        setupScript: form.tunSetupScript,
+        teardownScript: form.tunTeardownScript,
+      },
+    },
+    { width: 640 },
+  ).result;
+  if (!value) return;
+  form.tunRouteShellType = value.shellType;
+  form.tunRouteShellPath = value.shellPath;
+  form.tunSetupScript = value.setupScript;
+  form.tunTeardownScript = value.teardownScript;
+}
+const openWhiteIps = () => open(TproxyWhiteIpsDialog, {}, { width: 520 });
 
 // ---- the choices -------------------------------------------------------------
 
@@ -111,6 +190,89 @@ async function save() {
       class="bg-transparent"
     />
     <template v-else>
+      <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">
+        <v-list-subheader>{{ t("setting.sections.proxy") }}</v-list-subheader>
+        <p
+          v-if="!transparentOn"
+          class="md3-body-medium text-on-surface-variant px-4 py-2 ma-0"
+        >
+          {{ t("setting.transparentOffHint") }}
+        </p>
+        <v-expand-transition>
+          <SettingChoice
+            v-if="transparentOn"
+            v-model="form.transparentType"
+            :title="t('setting.transparentType')"
+            :items="transparentTypes"
+          />
+        </v-expand-transition>
+        <v-expand-transition>
+          <SettingRow
+            v-if="usesTproxy"
+            :title="t('setting.tproxyExcludedInterfaces')"
+            :hint="t('setting.messages.tproxyExcludedInterfaces')"
+          >
+            <v-text-field
+              v-model="form.tproxyExcludedInterfaces"
+              class="settings__interfaces"
+              :aria-label="t('setting.tproxyExcludedInterfaces')"
+              :placeholder="t('setting.tproxyExcludedInterfacesPlaceholder')"
+              hide-details="auto"
+              density="compact"
+              dir="ltr"
+            />
+          </SettingRow>
+        </v-expand-transition>
+        <v-expand-transition>
+          <SettingRow
+            v-if="transparentOn && form.transparentType === 'tproxy'"
+            :title="t('operations.tproxyWhiteIpGroups')"
+            :hint="t('tproxyWhiteIpGroups.messages.0')"
+            action
+            @click="openWhiteIps"
+          />
+        </v-expand-transition>
+        <v-expand-transition>
+          <div v-if="usesTun">
+            <SettingRow
+              :title="t('setting.tunAutoRoute')"
+              :hint="t('setting.messages.tunAutoRoute')"
+            >
+              <v-switch
+                v-model="form.tunAutoRoute"
+                :aria-label="t('setting.tunAutoRoute')"
+                hide-details
+              />
+            </SettingRow>
+            <v-expand-transition>
+              <SettingRow
+                v-if="!form.tunAutoRoute"
+                :title="t('operations.configureTunRouteScript')"
+                :subtitle="form.tunRouteShellPath"
+                action
+                @click="openTunScript"
+              />
+            </v-expand-transition>
+            <SettingRow
+              :title="t('setting.tunExcludeProcesses')"
+              :hint="t('setting.messages.tunExcludeProcesses')"
+              action
+              @click="openTunProcesses"
+            >
+              <v-badge
+                v-if="form.tunExcludeProcesses"
+                :content="
+                  form.tunExcludeProcesses.split(',').filter((p) => p).length
+                "
+                inline
+                color="primary"
+                class="me-2"
+              />
+            </SettingRow>
+          </div>
+        </v-expand-transition>
+      </v-list>
+
       <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">
         <v-list-subheader>{{ t("setting.sections.traffic") }}</v-list-subheader>
         <SettingRow

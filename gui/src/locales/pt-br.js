@@ -76,7 +76,6 @@ export default {
     testLatency: "Testar latência",
     usage: "Usado {used} / {total}",
     expires: "Expira em {date}",
-    httpWithRules: "HTTP com regras",
   },
   common: {
     optional: "opcional",
