@@ -207,7 +207,8 @@ onMounted(sync);
             <template #activator="{ props: menu }">
               <v-chip
                 v-bind="menu"
-                variant="outlined"
+                variant="text"
+                class="proxies__chip"
                 :append-icon="mdiChevronDown"
                 :disabled="disabled || members.length < 2"
                 :aria-label="t('proxies.groupMode')"
