@@ -2,7 +2,7 @@
 // <method><Path>. Bodies and queries are what the old components sent, so
 // the recorded requests match byte for byte; types narrow them where the
 // backend's Go types are known (types.ts) and stay open elsewhere.
-import { call, timeouts } from "./client";
+import { apiRoot, call, client, timeouts } from "./client";
 
 /** What a caller may attach to a request: the connect watcher aborts through `signal`, its poll shortens `timeout`. */
 export interface RequestOptions {
@@ -152,5 +152,12 @@ export const deleteGfwList = () =>
   call<unknown>({ url: "gfwList", method: "delete" });
 
 // ---- logs ------------------------------------------------------------------------
-export const getLogger = (params: { skip: number }) =>
-  call<string>({ url: "logger", method: "get", params });
+/** GET /logger answers plain text from the byte offset `skip`, not the envelope. */
+export const getLogger = async (params: { skip: number }): Promise<string> => {
+  const res = await client.get<string>(`${apiRoot()}/logger`, {
+    params,
+    responseType: "text",
+    transformResponse: (data) => data,
+  });
+  return typeof res.data === "string" ? res.data : "";
+};

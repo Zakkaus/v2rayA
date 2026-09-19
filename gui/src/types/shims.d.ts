@@ -57,3 +57,10 @@ declare module "@nuintun/qrcode" {
     scan(dataUrl: string): Promise<{ data: string }>;
   }
 }
+
+// highlight.js types its core but not the per-language modules
+declare module "highlight.js/lib/languages/accesslog" {
+  import type { LanguageFn } from "highlight.js";
+  const language: LanguageFn;
+  export default language;
+}
