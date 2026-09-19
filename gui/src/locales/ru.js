@@ -1,4 +1,10 @@
 export default {
+  dashboard: {
+    status: "Состояние ядра",
+    facts: "Экземпляр",
+    version: "Версия",
+    core: "Ядро",
+  },
   common: {
     dashboard: "Панель",
     proxies: "Прокси",

@@ -1,4 +1,10 @@
 export default {
+  dashboard: {
+    status: "Core status",
+    facts: "Instance",
+    version: "Version",
+    core: "Core",
+  },
   common: {
     dashboard: "Dashboard",
     proxies: "Proxies",

@@ -1,4 +1,10 @@
 export default {
+  dashboard: {
+    status: "وضعیت هسته",
+    facts: "اطلاعات نمونه",
+    version: "نسخه",
+    core: "هسته",
+  },
   common: {
     dashboard: "داشبورد",
     proxies: "پروکسی‌ها",

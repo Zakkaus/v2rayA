@@ -1,4 +1,10 @@
 export default {
+  dashboard: {
+    status: "核心状态",
+    facts: "实例信息",
+    version: "版本",
+    core: "核心",
+  },
   common: {
     dashboard: "仪表板",
     proxies: "代理",

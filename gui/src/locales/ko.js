@@ -1,4 +1,10 @@
 export default {
+  dashboard: {
+    status: "코어 상태",
+    facts: "인스턴스 정보",
+    version: "버전",
+    core: "코어",
+  },
   common: {
     dashboard: "대시보드",
     proxies: "프록시",

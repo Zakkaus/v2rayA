@@ -1,4 +1,10 @@
 export default {
+  dashboard: {
+    status: "Estado do núcleo",
+    facts: "Instância",
+    version: "Versão",
+    core: "Núcleo",
+  },
   common: {
     dashboard: "Painel",
     proxies: "Proxies",
