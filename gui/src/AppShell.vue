@@ -349,7 +349,9 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
       <template v-if="compact" #prepend>
         <img :src="logo" alt="v2rayA" class="bar__logo ms-2" />
       </template>
-      <v-app-bar-title class="md3-title-large">{{ pageTitle }}</v-app-bar-title>
+      <v-app-bar-title class="md3-title-large">
+        {{ compact ? "v2rayA" : pageTitle }}
+      </v-app-bar-title>
       <v-btn
         :color="statusColor"
         variant="tonal"
