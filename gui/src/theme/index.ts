@@ -72,6 +72,5 @@ export const vuetify = createVuetify({
     VChipGroup: {
       selectedClass: "bg-secondary-container text-on-secondary-container",
     },
-    VDataTable: { density: "comfortable" },
   },
 });
