@@ -5,15 +5,11 @@
 // language and account menus; the core's state lives on the dashboard.
 import { useI18n } from "vue-i18n";
 import { destinations } from "./destinations";
-import { useDialog } from "@/composables";
-import AboutDialog from "@/views/settings/AboutDialog.vue";
 import { useAppStore } from "@/stores/app";
 import logo from "@/assets/img/v2raya-icon.svg";
 
 const { t } = useI18n();
 const store = useAppStore();
-const { open } = useDialog();
-const openAbout = () => open(AboutDialog, {}, { width: 640 });
 </script>
 
 <template>
@@ -35,17 +31,9 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
       />
     </v-list>
     <template #append>
-      <v-btn
-        variant="plain"
-        size="small"
-        class="drawer__version text-none md3-label-medium"
-        @click="openAbout"
-      >
+      <p class="drawer__version md3-label-medium">
         v2rayA {{ store.version?.version ?? "" }}
-        <v-tooltip activator="parent" location="top">
-          {{ t("common.about") }}
-        </v-tooltip>
-      </v-btn>
+      </p>
     </template>
   </v-navigation-drawer>
 </template>
@@ -57,12 +45,11 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
   gap: 12px;
   padding: 28px 28px 20px;
 }
-/* the version is a footnote, aligned with the brand: outline text, no container */
+/* the version is a footnote aligned with the brand; About lives on the settings page */
 .drawer__version {
-  margin: 8px 16px 20px;
-  padding-inline: 12px;
+  margin: 0;
+  padding: 8px 28px 20px;
   color: rgb(var(--v-theme-outline));
-  opacity: 1;
 }
 .drawer__logo {
   width: 28px;

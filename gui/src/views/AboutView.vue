@@ -27,6 +27,10 @@ const repo = "https://github.com/v2rayA/v2rayA";
       <p v-if="store.version" class="md3-body-medium text-on-surface-variant">
         {{ t("welcome.default", { version: store.version.version }) }}
       </p>
+      <p class="md3-body-medium text-on-surface-variant mt-2">
+        {{ t("about.local") }}
+        {{ t("about.report", { discussions: t("about.discussions") }) }}
+      </p>
       <div class="d-flex flex-wrap ga-2 mt-6">
         <v-btn
           variant="tonal"
@@ -55,7 +59,7 @@ const repo = "https://github.com/v2rayA/v2rayA";
       </div>
     </v-sheet>
 
-    <div class="about__grid mt-4">
+    <div class="mt-4">
       <v-sheet color="surface-container-low" rounded="xl" class="pa-6">
         <h2 class="md3-title-medium mb-3">{{ t("about.defaultPorts") }}</h2>
         <dl class="about__ports md3-body-medium">
@@ -72,40 +76,11 @@ const repo = "https://github.com/v2rayA/v2rayA";
           </template>
         </dl>
       </v-sheet>
-      <v-sheet
-        color="surface-container-low"
-        rounded="xl"
-        class="pa-6 md3-body-medium"
-      >
-        <p>{{ t("about.local") }}</p>
-        <p class="mt-3">
-          <i18n-t keypath="about.report" tag="span" scope="global">
-            <template #discussions>
-              <a
-                :href="`${repo}/discussions`"
-                target="_blank"
-                rel="noreferrer"
-                >{{ t("about.discussions") }}</a
-              >
-            </template>
-          </i18n-t>
-        </p>
-      </v-sheet>
     </div>
   </div>
 </template>
 
 <style scoped>
-.about__grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 840px) {
-  .about__grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
 .about__ports {
   display: grid;
   grid-template-columns: max-content 1fr;
