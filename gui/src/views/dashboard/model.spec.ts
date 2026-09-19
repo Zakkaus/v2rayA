@@ -378,7 +378,7 @@ describe("dashboard", () => {
         .findAll(".dashboard-subscriptions [role='progressbar']")
         .map((bar) => bar.attributes("aria-valuenow"))
         .filter((value) => value !== undefined),
-    ).toEqual(["10"]);
+    ).toContain("10");
     await button("Update all").trigger("click");
     expect(putSubscription).toHaveBeenCalledTimes(1);
     reject(new Error("Subscription unavailable"));

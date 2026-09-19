@@ -21,9 +21,9 @@ const { t } = useI18n();
 <template>
   <v-card
     rounded="lg"
-    color="surface-container-low"
+    :variant="member ? 'tonal' : 'flat'"
+    :color="member ? 'primary' : 'surface-container-low'"
     class="node-card ps-4 pe-2 py-2"
-    :class="{ 'node-card--member': member }"
     role="button"
     :tabindex="disabled ? -1 : 0"
     :aria-pressed="member"
@@ -66,11 +66,6 @@ const { t } = useI18n();
 <style scoped>
 .node-card {
   cursor: pointer;
-  border: 2px solid transparent;
-}
-/* a member: Material's selected card, a primary outline and a check */
-.node-card--member {
-  border-color: rgb(var(--v-theme-primary));
 }
 .node-card:focus-visible {
   outline: 2px solid rgb(var(--v-theme-primary));

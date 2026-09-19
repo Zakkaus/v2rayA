@@ -136,15 +136,9 @@ describe("settings list", () => {
     await flushPromises();
     expect(putSetting).not.toHaveBeenCalled();
     expect(wrapper.text()).toContain("Required");
-    await choose(
-      "Traffic Splitting Mode of Rule Port",
-      "Proxy except CN Sites",
-    );
-    expect(
-      wrapper
-        .find('input[aria-label="Update GFWList Regularly (Unit: hour)"]')
-        .exists(),
-    ).toBe(false);
+    await wrapper
+      .get('input[aria-label="Update GFWList Regularly (Unit: hour)"]')
+      .setValue("12");
     await wrapper.get('button[type="submit"]').trigger("click");
     await flushPromises();
     expect(putSetting).toHaveBeenCalledOnce();

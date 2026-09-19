@@ -12,7 +12,6 @@ import GfwListDialog from "@/dialogs/settings/GfwList.vue";
 import PortsDialog from "@/dialogs/settings/Ports.vue";
 import RoutingADialog from "@/dialogs/settings/RoutingA.vue";
 import { useSettings } from "./settings/model";
-import { pacModes as pacModeItems } from "./settings/options";
 import AboutDialog from "./settings/AboutDialog.vue";
 import SettingChoice from "./settings/SettingChoice.vue";
 import SettingRow from "./settings/SettingRow.vue";
@@ -35,7 +34,6 @@ onMounted(() => {
 
 // ---- the choices -------------------------------------------------------------
 
-const pacModes = computed(() => pacModeItems(t));
 const onOffDefault = computed(() => [
   { value: "default", title: t("setting.options.default") },
   { value: "yes", title: t("setting.options.on") },
@@ -115,21 +113,12 @@ async function save() {
     <template v-else>
       <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">
         <v-list-subheader>{{ t("setting.sections.traffic") }}</v-list-subheader>
-        <SettingChoice
-          v-model="form.pacMode"
-          :title="t('setting.pacMode')"
-          :hint="t('setting.messages.pacMode')"
-          :items="pacModes"
+        <SettingRow
+          title="RoutingA"
+          :subtitle="t('operations.configure')"
+          action
+          @click="openRoutingA"
         />
-        <v-expand-transition>
-          <SettingRow
-            v-if="form.pacMode === 'routingA'"
-            title="RoutingA"
-            :subtitle="t('operations.configure')"
-            action
-            @click="openRoutingA"
-          />
-        </v-expand-transition>
         <SettingRow
           :title="t('gfwList.title')"
           :hint="localVersionStale ? t('setting.messages.gfwlist') : undefined"

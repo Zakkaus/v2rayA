@@ -8,13 +8,13 @@ import {
   mdiPower,
   mdiSpeedometer,
   mdiServerNetwork,
+  mdiDotsVertical,
   mdiPencilOutline,
   mdiPlus,
   mdiShieldOutline,
   mdiRoutes,
   mdiChartLine,
   mdiRss,
-  mdiInformationOutline,
 } from "@mdi/js";
 import { useDialog } from "@/composables";
 import OutboundMenu from "@/components/OutboundMenu.vue";
@@ -23,12 +23,19 @@ import { useTraffic } from "@/composables/useTraffic";
 import { formatBytes, formatRate } from "@/lib/format";
 import { useDashboard } from "./dashboard/model";
 import NodeSelection from "./dashboard/NodeSelection.vue";
-import SubscriptionCard from "./proxies/SubscriptionCard.vue";
+import type { SubscriptionAction } from "./proxies/model";
 import ProxySettings from "./settings/ProxySettings.vue";
 import { transparentModes, pacModes } from "./settings/options";
 
 defineOptions({ name: "DashboardView" });
 const { t } = useI18n();
+/** the subscription menu's labels, by action */
+const actionKeys: Record<string, string> = {
+  update: "update",
+  edit: "modify",
+  share: "share",
+  delete: "delete",
+};
 const { width } = useDisplay();
 const wide = computed(() => width.value >= 600);
 const { open } = useDialog();
@@ -62,6 +69,7 @@ const {
   testMembers,
   updateAll,
   subscriptionAction,
+  updating,
 } = useDashboard();
 const traffic = useTraffic();
 const transparentItems = computed(() => transparentModes(t));
@@ -124,6 +132,79 @@ function switchNode() {
         >
           {{ t(store.running === "running" ? "v2ray.stop" : "v2ray.start") }}
         </v-btn>
+        <v-divider class="my-4" />
+        <dl class="dashboard-facts md3-body-medium">
+          <div>
+            <dt class="md3-label-medium text-on-surface-variant">
+              {{ t("dashboard.version") }}
+            </dt>
+            <dd class="d-flex align-center flex-wrap ga-2">
+              <span dir="ltr">{{ store.version?.version || "—" }}</span>
+              <v-chip
+                v-if="store.version?.foundNew"
+                variant="tonal"
+                size="small"
+                href="https://github.com/v2rayA/v2rayA/releases"
+                target="_blank"
+                rel="noopener noreferrer"
+                >{{
+                  t("dashboard.newVersion", {
+                    version: store.version.remoteVersion.replace(/^v/, ""),
+                  })
+                }}</v-chip
+              >
+            </dd>
+          </div>
+          <div>
+            <dt class="md3-label-medium text-on-surface-variant">
+              {{ t("dashboard.core") }}
+            </dt>
+            <dd class="d-flex align-center flex-wrap ga-2">
+              <span dir="ltr">{{ store.version?.variant || "—" }}</span>
+              <v-tooltip
+                v-if="store.version && !store.version.coreVersionValid"
+                :text="store.version.coreVersionErr"
+                max-width="360"
+                open-on-click
+              >
+                <template #activator="{ props }">
+                  <v-chip
+                    v-bind="props"
+                    color="error"
+                    variant="tonal"
+                    size="small"
+                    tabindex="0"
+                    >{{ t("dashboard.coreError") }}</v-chip
+                  >
+                </template>
+              </v-tooltip>
+            </dd>
+          </div>
+          <div>
+            <dt class="md3-label-medium text-on-surface-variant">
+              {{ t("dashboard.ports") }}
+            </dt>
+            <dd dir="ltr" class="dashboard-figures">
+              <div>SOCKS: {{ ports?.socks5 ?? "—" }}</div>
+              <div>HTTP: {{ ports?.http ?? "—" }}</div>
+              <div>
+                {{ t("dashboard.httpWithRules") }}:
+                {{ ports?.httpWithPac ?? "—" }}
+              </div>
+            </dd>
+          </div>
+        </dl>
+        <div class="d-flex flex-wrap ga-2 mt-4">
+          <v-btn
+            variant="text"
+            :prepend-icon="mdiPencilOutline"
+            @click="editPorts"
+            >{{ t("customAddressPort.title") }}</v-btn
+          >
+          <v-btn variant="text" @click="store.view = 'logs'">{{
+            t("common.log")
+          }}</v-btn>
+        </div>
       </v-card>
 
       <v-card
@@ -424,93 +505,7 @@ function switchNode() {
       <v-card
         color="surface-container-low"
         rounded="xl"
-        class="dashboard-instance pa-4"
-      >
-        <div class="d-flex align-center ga-2 mb-3">
-          <v-icon
-            :icon="mdiInformationOutline"
-            size="20"
-            color="on-surface-variant"
-          />
-          <h2 class="md3-title-small">{{ t("dashboard.facts") }}</h2>
-        </div>
-        <dl class="dashboard-facts md3-body-medium">
-          <div>
-            <dt class="md3-label-medium text-on-surface-variant">
-              {{ t("dashboard.version") }}
-            </dt>
-            <dd class="d-flex align-center flex-wrap ga-2">
-              <span dir="ltr">{{ store.version?.version || "—" }}</span>
-              <v-chip
-                v-if="store.version?.foundNew"
-                variant="tonal"
-                size="small"
-                href="https://github.com/v2rayA/v2rayA/releases"
-                target="_blank"
-                rel="noopener noreferrer"
-                >{{
-                  t("dashboard.newVersion", {
-                    version: store.version.remoteVersion.replace(/^v/, ""),
-                  })
-                }}</v-chip
-              >
-            </dd>
-          </div>
-          <div>
-            <dt class="md3-label-medium text-on-surface-variant">
-              {{ t("dashboard.core") }}
-            </dt>
-            <dd class="d-flex align-center flex-wrap ga-2">
-              <span dir="ltr">{{ store.version?.variant || "—" }}</span>
-              <v-tooltip
-                v-if="store.version && !store.version.coreVersionValid"
-                :text="store.version.coreVersionErr"
-                max-width="360"
-                open-on-click
-              >
-                <template #activator="{ props }">
-                  <v-chip
-                    v-bind="props"
-                    color="error"
-                    variant="tonal"
-                    size="small"
-                    tabindex="0"
-                    >{{ t("dashboard.coreError") }}</v-chip
-                  >
-                </template>
-              </v-tooltip>
-            </dd>
-          </div>
-          <div>
-            <dt class="md3-label-medium text-on-surface-variant">
-              {{ t("dashboard.ports") }}
-            </dt>
-            <dd dir="ltr" class="dashboard-figures">
-              <div>SOCKS: {{ ports?.socks5 ?? "—" }}</div>
-              <div>HTTP: {{ ports?.http ?? "—" }}</div>
-              <div>
-                {{ t("dashboard.httpWithRules") }}:
-                {{ ports?.httpWithPac ?? "—" }}
-              </div>
-            </dd>
-          </div>
-        </dl>
-        <div class="d-flex flex-wrap ga-2 mt-4">
-          <v-btn
-            variant="text"
-            :prepend-icon="mdiPencilOutline"
-            @click="editPorts"
-            >{{ t("customAddressPort.title") }}</v-btn
-          >
-          <v-btn variant="text" @click="store.view = 'logs'">{{
-            t("common.log")
-          }}</v-btn>
-        </div>
-      </v-card>
-      <v-card
-        color="surface-container-low"
-        rounded="xl"
-        class="dashboard-subscriptions dashboard-full pa-4"
+        class="dashboard-subscriptions pa-4"
       >
         <div class="d-flex align-center flex-wrap ga-2 mb-3">
           <v-icon :icon="mdiRss" size="20" color="on-surface-variant" />
@@ -547,18 +542,69 @@ function switchNode() {
           type="list-item-two-line@2"
           class="bg-transparent"
         />
-        <div
+        <v-list
           v-else-if="subscriptions.length"
-          class="dashboard-subscription-cards"
+          bg-color="transparent"
+          class="pa-0"
         >
-          <SubscriptionCard
+          <v-list-item
             v-for="subscription in subscriptions.slice(0, 4)"
             :key="subscription.id"
-            :subscription="subscription"
-            :disabled="subscriptionsBusy"
-            @action="subscriptionAction(subscription, $event)"
-          />
-        </div>
+            class="px-0 py-2"
+          >
+            <p class="md3-title-small mb-1 dashboard-wrap" dir="auto">
+              {{ subscription.remarks || subscription.host }}
+            </p>
+            <p
+              class="md3-body-small text-on-surface-variant mb-2 dashboard-wrap"
+              dir="auto"
+            >
+              {{ subscription.summary }}
+            </p>
+            <v-progress-linear
+              v-if="subscription.usage"
+              :model-value="subscription.usage.percent"
+              :aria-label="subscription.summary"
+              height="4"
+              rounded
+              color="primary"
+              class="mb-2"
+            />
+            <p class="md3-body-small text-on-surface-variant ma-0">
+              {{ t("dashboard.updatedAt", { time: subscription.updatedAt }) }}
+            </p>
+            <template #append>
+              <v-menu>
+                <template #activator="{ props: menu }">
+                  <v-btn
+                    v-bind="menu"
+                    :icon="mdiDotsVertical"
+                    size="40"
+                    variant="text"
+                    :aria-label="`${t('common.menu')}: ${subscription.remarks || subscription.host}`"
+                    :loading="updating === subscription.id"
+                    :disabled="subscriptionsBusy"
+                  >
+                    <v-icon :icon="mdiDotsVertical" size="20" />
+                  </v-btn>
+                </template>
+                <v-list density="compact" min-width="200">
+                  <v-list-item
+                    v-for="action in ['update', 'edit', 'share', 'delete']"
+                    :key="action"
+                    :title="t(`operations.${actionKeys[action]}`)"
+                    @click="
+                      subscriptionAction(
+                        subscription,
+                        action as SubscriptionAction,
+                      )
+                    "
+                  />
+                </v-list>
+              </v-menu>
+            </template>
+          </v-list-item>
+        </v-list>
         <div v-else>
           <p class="md3-body-medium my-4">
             {{ t("dashboard.noSubscriptions") }}
@@ -631,12 +677,7 @@ function switchNode() {
 .dashboard-state-dot--stopped {
   background: rgb(var(--v-theme-error));
 }
-/* subscriptions as cards, side by side on a wide row */
-.dashboard-subscription-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-}
+
 .dashboard-chart {
   height: 120px;
 }
