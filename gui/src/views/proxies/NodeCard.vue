@@ -21,8 +21,9 @@ const { t } = useI18n();
 <template>
   <v-card
     rounded="lg"
-    :color="member ? 'secondary-container' : 'surface-container-low'"
+    color="surface-container-low"
     class="node-card ps-4 pe-2 py-2"
+    :class="{ 'node-card--member': member }"
     role="button"
     :tabindex="disabled ? -1 : 0"
     :aria-pressed="member"
@@ -32,7 +33,13 @@ const { t } = useI18n();
     @keydown.space.self.prevent="!disabled && emit('toggle')"
   >
     <div class="d-flex align-center ga-2">
-      <v-icon v-if="member" :icon="mdiCheck" size="20" class="flex-shrink-0" />
+      <v-icon
+        v-if="member"
+        :icon="mdiCheck"
+        size="20"
+        color="primary"
+        class="flex-shrink-0"
+      />
       <h3 class="node-card__name md3-title-small" dir="auto">{{ row.name }}</h3>
       <v-chip v-if="inUse" size="small" variant="tonal" class="flex-shrink-0">{{
         t("proxies.inUse")
@@ -59,6 +66,11 @@ const { t } = useI18n();
 <style scoped>
 .node-card {
   cursor: pointer;
+  border: 2px solid transparent;
+}
+/* a member: Material's selected card, a primary outline and a check */
+.node-card--member {
+  border-color: rgb(var(--v-theme-primary));
 }
 .node-card:focus-visible {
   outline: 2px solid rgb(var(--v-theme-primary));

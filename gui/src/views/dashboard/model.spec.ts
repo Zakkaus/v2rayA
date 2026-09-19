@@ -370,15 +370,15 @@ describe("dashboard", () => {
     wrapper = mountWithApp(DashboardView);
     await flushPromises();
     expect(wrapper.get(".dashboard-subscriptions").text()).toContain(
-      "Used 1 GiB / 10 GiB",
+      "1 GiB / 10 GiB",
     );
+    // the card's loading bar is indeterminate; the usage bar carries the value
     expect(
       wrapper
-        .get(
-          ".dashboard-subscriptions [role='progressbar'][aria-label^='Used']",
-        )
-        .attributes("aria-valuenow"),
-    ).toBe("10");
+        .findAll(".dashboard-subscriptions [role='progressbar']")
+        .map((bar) => bar.attributes("aria-valuenow"))
+        .filter((value) => value !== undefined),
+    ).toEqual(["10"]);
     await button("Update all").trigger("click");
     expect(putSubscription).toHaveBeenCalledTimes(1);
     reject(new Error("Subscription unavailable"));

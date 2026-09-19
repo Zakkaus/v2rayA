@@ -14,18 +14,23 @@ import {
 import { watchConnected } from "@/api/connect";
 import { errorText } from "@/api/errors";
 import type {
+  TouchSubscription,
   Ports,
   Touch,
   TouchResponse,
   TouchServer,
   Which,
 } from "@/api/types";
-import { openLoading, useDialog, useNotify } from "@/composables";
+import { openLoading, useConfirm, useDialog, useNotify } from "@/composables";
 import ImportDialog from "@/dialogs/Import.vue";
+import SharingDialog from "@/dialogs/Sharing.vue";
+import SubscriptionDialog from "@/dialogs/Subscription.vue";
 import PortsDialog from "@/dialogs/settings/Ports.vue";
 import { useAppStore } from "@/stores/app";
 import { locate, runningOf, sameWhich } from "@/views/nodes/model";
 import { useSettings, type SettingForm } from "@/views/settings/model";
+import type { SubscriptionAction } from "@/views/proxies/model";
+import { useSubscriptions } from "@/views/subscriptions/model";
 
 export interface DashboardMember {
   key: string;
@@ -304,6 +309,53 @@ export function useDashboard() {
     }
   }
 
+  const confirm = useConfirm();
+  const subscriptionsModel = useSubscriptions();
+  /** subscriptionAction handles the card's menu: update here, the rest through the shared model. */
+  async function subscriptionAction(
+    subscription: TouchSubscription,
+    action: SubscriptionAction,
+  ) {
+    if (action === "update") return updateSubscription(subscription.id);
+    try {
+      if (action === "share") {
+        const link = await subscriptionsModel.sharingLink(subscription);
+        openDialog(
+          SharingDialog,
+          {
+            title: t("sharing.subscriptionTitle"),
+            link,
+            name: subscription.remarks || subscription.host,
+            type: subscription._type,
+          },
+          { width: 420 },
+        );
+        return;
+      }
+      if (action === "edit") {
+        const saved = await openDialog<boolean>(
+          SubscriptionDialog,
+          { subscription },
+          { width: 480 },
+        ).result;
+        if (!saved) return;
+      }
+      if (action === "delete") {
+        const ok = await confirm({
+          title: t("delete.title"),
+          message: t("delete.message", { n: 1 }),
+          confirmText: t("operations.delete"),
+          destructive: true,
+        });
+        if (!ok) return;
+        await subscriptionsModel.remove(subscription);
+      }
+      apply(await getTouch());
+    } catch (err) {
+      notify.warning(errorText(err));
+    }
+  }
+
   async function updateSubscription(id: number) {
     if (subscriptionsBusy.value) return;
     await refreshSubscription(id);
@@ -385,5 +437,6 @@ export function useDashboard() {
     testMembers,
     updateAll,
     updateSubscription,
+    subscriptionAction,
   };
 }
