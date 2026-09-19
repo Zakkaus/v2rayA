@@ -130,6 +130,7 @@ function outboundColor(outbound: string) {
         :disabled="disabled"
         :class="{ 'routing-form__comment': entry.kind === 'comment' }"
         lines="two"
+        :link="entry.kind === 'rule'"
         @click="entry.kind === 'rule' && edit(index)"
       >
         <template v-if="entry.kind === 'rule'">

@@ -18,10 +18,12 @@ const store = useAppStore();
       <img :src="logo" alt="v2rayA" class="rail__logo" />
     </div>
     <nav class="rail__items" :aria-label="t('common.menu')">
-      <button
+      <v-btn
         v-for="d in destinations"
         :key="d.view"
-        type="button"
+        variant="text"
+        stacked
+        height="56"
         class="rail__item"
         :class="{ 'rail__item--active': store.view === d.view }"
         :aria-current="store.view === d.view ? 'page' : undefined"
@@ -33,8 +35,8 @@ const store = useAppStore();
             size="24"
           />
         </span>
-        <span class="md3-label-medium">{{ t(d.label) }}</span>
-      </button>
+        <span class="md3-label-medium rail__label">{{ t(d.label) }}</span>
+      </v-btn>
     </nav>
   </v-navigation-drawer>
 </template>
@@ -62,20 +64,22 @@ const store = useAppStore();
   flex-direction: column;
   gap: 12px;
 }
+/* Material's rail item: a 56×32 pill indicator over the label, inside
+   Vuetify's own button so the state layers and focus come from it */
 .rail__item {
   width: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  min-width: 0;
   padding: 0;
-  border: 0;
-  background: none;
   color: rgb(var(--v-theme-on-surface-variant));
-  cursor: pointer;
+}
+.rail__item :deep(.v-btn__content) {
+  gap: 4px;
 }
 .rail__item--active {
   color: rgb(var(--v-theme-on-surface));
+}
+.rail__item--active :deep(.v-btn__overlay) {
+  opacity: 0;
 }
 .rail__indicator {
   width: 56px;
@@ -86,16 +90,12 @@ const store = useAppStore();
   justify-content: center;
   transition: background-color 200ms cubic-bezier(0.2, 0, 0, 1);
 }
-.rail__item:hover .rail__indicator {
-  background: rgba(var(--v-theme-on-surface), 0.08);
-}
 .rail__item--active .rail__indicator {
   background: rgb(var(--v-theme-secondary-container));
   color: rgb(var(--v-theme-on-secondary-container));
 }
-.rail__item:focus-visible {
-  outline: 2px solid rgb(var(--v-theme-primary));
-  outline-offset: 2px;
-  border-radius: 8px;
+.rail__label {
+  text-transform: none;
+  letter-spacing: 0.5px;
 }
 </style>

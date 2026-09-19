@@ -353,7 +353,6 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
     <v-app-bar
       v-if="!expanded"
       :height="64"
-      flat
       color="surface"
       scroll-behavior="elevate"
     >
