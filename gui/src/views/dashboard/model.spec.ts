@@ -266,8 +266,9 @@ describe("dashboard", () => {
     store.connectedServer = [{ _type: "server", id: 1 }];
     await flushPromises();
     expect(connection()).toContain("Standalone");
+    // the latency tile tests every member, the node in use included
     await wrapper
-      .get(".dashboard-connection")
+      .get(".dashboard-latency")
       .findAll("button")
       .find((b) => b.text() === "Test latency")!
       .trigger("click");

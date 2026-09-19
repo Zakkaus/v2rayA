@@ -64,7 +64,6 @@ const {
   setQuick,
   toggleSettings,
   selectNode,
-  testNode,
   testMembers,
   updateAll,
   subscriptionAction,
@@ -235,13 +234,6 @@ function switchNode() {
             >
           </div>
           <div class="d-flex align-center justify-end ga-2">
-            <v-btn
-              variant="text"
-              :loading="!!testing"
-              :disabled="!nodeInUse || !!testing"
-              @click="testNode"
-              >{{ t("dashboard.testLatency") }}</v-btn
-            >
             <v-btn variant="text" :disabled="selecting" @click="switchNode">{{
               t("dashboard.switchNode")
             }}</v-btn>
@@ -610,9 +602,7 @@ function switchNode() {
 .dashboard-state-dot--paused {
   background: rgb(var(--v-theme-tertiary));
 }
-.dashboard-state-dot--stopped {
-  background: rgb(var(--v-theme-error));
-}
+
 
 .dashboard-chart {
   height: 120px;
