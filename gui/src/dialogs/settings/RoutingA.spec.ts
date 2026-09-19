@@ -12,161 +12,230 @@ import {
   dialogState,
 } from "@/composables/useDialog";
 import { closeAllNotices, noticeState } from "@/composables/useNotify";
+import DialogHost from "@/components/hosts/DialogHost.vue";
 import en from "@/locales/en";
 import RoutingA from "./RoutingA.vue";
+import RuleDialog from "./routingA/RuleDialog.vue";
+import { template } from "./routingA/template";
 
-const api = vi.hoisted(() => ({
-  getRoutingA: vi.fn(),
-  putRoutingA: vi.fn(),
-}));
+const api = vi.hoisted(() => ({ getRoutingA: vi.fn(), putRoutingA: vi.fn() }));
 vi.mock("@/api", () => api);
-
 const rules = "default: direct\n# inbound(http, 8080)\n";
-const button = (w: VueWrapper, label: string) =>
-  w.findAll("button").find((b) => b.text() === label)!;
+const button = (wrapper: Pick<VueWrapper, "findAll">, label: string) =>
+  wrapper.findAll("button").find((item) => item.text() === label)!;
+const textView = async (wrapper: VueWrapper) => {
+  await wrapper
+    .get(`button[aria-label="${en.routingA.form.text}"]`)
+    .trigger("click");
+  return wrapper.get("textarea");
+};
+const respond = async (answer: boolean) => {
+  closeDialog(dialogState.stack.at(-1)!.id, answer);
+  await flushPromises();
+};
 
 enableAutoUnmount(afterEach);
 beforeEach(() => {
+  localStorage.clear();
   api.getRoutingA.mockReset().mockResolvedValue({ routingA: rules });
   api.putRoutingA.mockReset().mockResolvedValue(null);
 });
 afterEach(() => {
   closeAllDialogs();
   closeAllNotices();
+  vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
-describe("the RoutingA dialog", () => {
-  test("loads the script and saves it unchanged without confirming comments", async () => {
-    const w = mountWithApp(RoutingA);
+describe("RoutingA dialog", () => {
+  test("loads, highlights and saves rules verbatim without confirming comments", async () => {
+    const wrapper = mountWithApp(RoutingA);
     await flushPromises();
-    expect(w.get("textarea").element.value).toBe(rules);
-    await button(w, en.operations.save).trigger("click");
+    const editor = await textView(wrapper);
+    expect(editor.element.value).toBe(rules);
+    expect(wrapper.get(".routing-editor .tok-keyword").text()).toBe("default:");
+    await button(wrapper, en.operations.save).trigger("click");
     await flushPromises();
-    expect(dialogState.stack).toHaveLength(0);
     expect(api.putRoutingA).toHaveBeenCalledExactlyOnceWith({
       routingA: rules,
     });
-    expect(w.emitted("close")).toEqual([[]]);
-    expect(noticeState.current).toBeNull();
-  });
-
-  test("saves edited text verbatim and shows the server warning for eight seconds", async () => {
-    const warning = "Inbound ports are not generated";
-    api.putRoutingA.mockResolvedValue({ warning });
-    const w = mountWithApp(RoutingA);
-    await flushPromises();
-    const edited = "  default: proxy\n\n";
-    await w.get("textarea").setValue(edited);
-    await button(w, en.operations.save).trigger("click");
-    await flushPromises();
-    expect(api.putRoutingA).toHaveBeenCalledExactlyOnceWith({
-      routingA: edited,
-    });
-    expect(noticeState.current).toMatchObject({
-      kind: "warning",
-      text: en.routingA.savedWithWarning.replace("{warning}", warning),
-      timeout: 8000,
-    });
-    expect(w.emitted("close")).toEqual([[]]);
-  });
-
-  test.each(["inbound(http, 8080)", "  inbound (socks, 1080)"])(
-    "requires confirmation for %s and allows cancelling before saving",
-    async (inbound) => {
-      api.getRoutingA.mockResolvedValue({ routingA: `${rules}${inbound}` });
-      const w = mountWithApp(RoutingA);
-      await flushPromises();
-      expect(w.get('[role="alert"]').text()).toContain(
-        en.routingA.inboundDeprecated,
-      );
-      await button(w, en.operations.save).trigger("click");
-      await flushPromises();
-      expect(api.putRoutingA).not.toHaveBeenCalled();
-      expect(dialogState.stack).toHaveLength(1);
-      expect(dialogState.stack[0].props.message).toBe(
-        en.routingA.inboundDeprecatedConfirm,
-      );
-      closeDialog(dialogState.stack[0].id, false);
-      await flushPromises();
-      expect(api.putRoutingA).not.toHaveBeenCalled();
-      expect(w.emitted("close")).toBeUndefined();
-      await button(w, en.operations.save).trigger("click");
-      await flushPromises();
-      closeDialog(dialogState.stack[0].id, true);
-      await flushPromises();
-      expect(api.putRoutingA).toHaveBeenCalledExactlyOnceWith({
-        routingA: `${rules}${inbound}`,
-      });
-      expect(w.emitted("close")).toEqual([[]]);
-    },
-  );
-
-  test("rechecks edited lines and preserves warning dismissal until the next edit", async () => {
-    const w = mountWithApp(RoutingA);
-    await flushPromises();
-    await w.get("textarea").setValue("\tinbound(http, 8080)");
-    expect(w.get('[role="alert"]').text()).toContain(
-      en.routingA.inboundDeprecated,
-    );
-    await w.get(".v-alert__close button").trigger("click");
-    expect(w.find('.v-alert[role="alert"]').exists()).toBe(false);
-    api.putRoutingA.mockRejectedValueOnce(new Error("Invalid rule"));
-    await button(w, en.operations.save).trigger("click");
-    await flushPromises();
     expect(dialogState.stack).toHaveLength(0);
-    expect(api.putRoutingA).toHaveBeenCalledExactlyOnceWith({
-      routingA: "\tinbound(http, 8080)",
+    expect(wrapper.emitted("close")).toEqual([[true]]);
+  });
+
+  test("marks bad lines after debounce but lets the backend judge on save", async () => {
+    const wrapper = mountWithApp(RoutingA);
+    await flushPromises();
+    const editor = await textView(wrapper);
+    vi.useFakeTimers();
+    await editor.setValue("default: proxy\nbad rule");
+    await vi.advanceTimersByTimeAsync(150);
+    expect(
+      wrapper.get(".routing-editor__number--error").attributes("title"),
+    ).toBe(en.routingA.errors.noArrow);
+    expect(wrapper.get(".routing-editor__number--error").text()).toContain("2");
+    await button(wrapper, en.operations.save).trigger("click");
+    await flushPromises();
+    expect(api.putRoutingA).toHaveBeenCalledWith({
+      routingA: "default: proxy\nbad rule",
     });
-    expect(w.emitted("close")).toBeUndefined();
-    await w.get("textarea").setValue("inbound (socks, 1080)");
-    expect(w.get('[role="alert"]').text()).toContain(
-      en.routingA.inboundDeprecated,
+  });
+
+  test("shows raw backend errors safely and clears them on the next edit", async () => {
+    const error = "invalid RoutingA rules: [error] table[1] <bad>";
+    api.putRoutingA.mockRejectedValueOnce(new Error(error));
+    const wrapper = mountWithApp(RoutingA);
+    await flushPromises();
+    await button(wrapper, en.operations.save).trigger("click");
+    await flushPromises();
+    expect(wrapper.get('[data-testid="routing-error"]').text()).toBe(error);
+    expect(wrapper.find("bad").exists()).toBe(false);
+    expect(wrapper.emitted("close")).toBeUndefined();
+    await (await textView(wrapper)).setValue("default: block");
+    expect(wrapper.find('[data-testid="routing-error"]').exists()).toBe(false);
+  });
+
+  test("confirms reset and unsaved close without changing text on cancellation", async () => {
+    const wrapper = mountWithApp(RoutingA);
+    await flushPromises();
+    const editor = await textView(wrapper);
+    await button(wrapper, en.routingA.resetDefault).trigger("click");
+    await respond(false);
+    expect(editor.element.value).toBe(rules);
+    await button(wrapper, en.routingA.resetDefault).trigger("click");
+    await respond(true);
+    expect(editor.element.value).toBe(template);
+    await button(wrapper, en.operations.cancel).trigger("click");
+    await respond(false);
+    expect(wrapper.emitted("close")).toBeUndefined();
+    await wrapper
+      .get(`button[aria-label="${en.operations.close}"]`)
+      .trigger("click");
+    await respond(true);
+    expect(wrapper.emitted("close")).toEqual([[]]);
+  });
+
+  test("inserts a reference example at the caret and remembers panel visibility", async () => {
+    localStorage.setItem("routingA.reference", "true");
+    const wrapper = mountWithApp(RoutingA);
+    await flushPromises();
+    const editor = await textView(wrapper);
+    editor.element.setSelectionRange(rules.length, rules.length);
+    await wrapper
+      .get(`button[aria-label="${en.routingA.insert}"]`)
+      .trigger("click");
+    expect(editor.element.value).toBe(
+      rules + "# HTTPS\nport(443) && network(tcp) -> proxy",
     );
-    await w.get("textarea").setValue("# inbound(http, 8080)\ndefault: direct");
-    expect(w.find('.v-alert[role="alert"]').exists()).toBe(false);
+    await editor.setValue("default: proxy");
+    editor.element.setSelectionRange(0, 0);
+    await wrapper
+      .get(`button[aria-label="${en.routingA.insert}"]`)
+      .trigger("click");
+    expect(editor.element.value).toBe(
+      "# HTTPS\nport(443) && network(tcp) -> proxy\ndefault: proxy",
+    );
+    await button(wrapper, en.routingA.reference.title).trigger("click");
+    expect(localStorage.getItem("routingA.reference")).toBe("false");
   });
 
-  test("keeps the editor open after a save error and permits a corrected save", async () => {
-    api.putRoutingA.mockRejectedValueOnce(new Error("Invalid rule"));
-    const w = mountWithApp(RoutingA);
+  test("supports indentation, tabs, current line and keyboard save", async () => {
+    const wrapper = mountWithApp(RoutingA);
     await flushPromises();
-    await button(w, en.operations.save).trigger("click");
+    const editor = await textView(wrapper);
+    await editor.setValue("  default: proxy");
+    editor.element.setSelectionRange(
+      editor.element.value.length,
+      editor.element.value.length,
+    );
+    await editor.trigger("keydown", { key: "Enter" });
+    expect(editor.element.value).toBe("  default: proxy\n  ");
+    await editor.trigger("keydown", { key: "Tab" });
+    expect(editor.element.value).toBe("  default: proxy\n    ");
+    expect(wrapper.get(".routing-editor__number--current").text()).toBe("2");
+    await editor.trigger("keydown", { key: "s", ctrlKey: true });
     await flushPromises();
-    expect(noticeState.current).toMatchObject({
-      kind: "warning",
-      text: en.routingA.saveFailed.replace("{message}", "Invalid rule"),
+    expect(api.putRoutingA).toHaveBeenCalledWith({
+      routingA: editor.element.value,
     });
-    expect(w.emitted("close")).toBeUndefined();
-    await w.get("textarea").setValue("");
-    await button(w, en.operations.save).trigger("click");
-    await flushPromises();
-    expect(api.putRoutingA).toHaveBeenLastCalledWith({ routingA: "" });
-    expect(w.emitted("close")).toEqual([[]]);
   });
 
-  test("closes on a load failure without writing an empty script", async () => {
+  test("still confirms deprecated inbounds after dismissing their warning", async () => {
+    api.getRoutingA.mockResolvedValue({ routingA: "inbound (socks, 1080)" });
+    api.putRoutingA.mockResolvedValue({ warning: "Deprecated inbound" });
+    const wrapper = mountWithApp(RoutingA);
+    await flushPromises();
+    await wrapper.get(".v-alert__close button").trigger("click");
+    await button(wrapper, en.operations.save).trigger("click");
+    expect(api.putRoutingA).not.toHaveBeenCalled();
+    await respond(false);
+    expect(api.putRoutingA).not.toHaveBeenCalled();
+    await button(wrapper, en.operations.save).trigger("click");
+    await respond(true);
+    expect(api.putRoutingA).toHaveBeenCalledOnce();
+    expect(noticeState.current?.kind).toBe("warning");
+  });
+
+  test("adds a rule through the form and exposes it in the text view", async () => {
+    const wrapper = mountWithApp(RoutingA);
+    const host = mountWithApp(DialogHost);
+    await flushPromises();
+    await button(wrapper, en.routingA.form.addRule).trigger("click");
+    await flushPromises();
+    const dialog = host.getComponent(RuleDialog);
+    await dialog
+      .get(".rule-condition__arguments input")
+      .setValue("full: example.com");
+    await button(dialog, en.operations.save).trigger("click");
+    await flushPromises();
+    expect((await textView(wrapper)).element.value).toContain(
+      "domain(full: example.com) -> proxy",
+    );
+    expect(localStorage.getItem("routingA.view")).toBe("text");
+  });
+
+  test("exports exact text and imports only after confirmation", async () => {
+    const create = vi
+      .spyOn(URL, "createObjectURL")
+      .mockReturnValue("blob:routing");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => {});
+    const wrapper = mountWithApp(RoutingA);
+    await flushPromises();
+    await button(wrapper, en.routingA.export).trigger("click");
+    const blob = create.mock.calls[0][0];
+    const anchor = click.mock.instances[0];
+    if (!(blob instanceof Blob) || !(anchor instanceof HTMLAnchorElement))
+      throw new Error("Expected a downloadable text blob");
+    expect(await blob.text()).toBe(rules);
+    expect(anchor.download).toBe("routingA.txt");
+    const input = wrapper.get('input[type="file"]');
+    const imported = "default: block\n# imported\n";
+    Object.defineProperty(input.element, "files", {
+      configurable: true,
+      value: [new File([imported], "rules.txt")],
+    });
+    await input.trigger("change");
+    await flushPromises();
+    await respond(false);
+    expect((await textView(wrapper)).element.value).toBe(rules);
+    await input.trigger("change");
+    await flushPromises();
+    await respond(true);
+    expect(wrapper.get("textarea").element.value).toBe(imported);
+  });
+
+  test("closes on load failure without writing an empty script", async () => {
     api.getRoutingA.mockRejectedValue(new Error("Offline"));
-    const w = mountWithApp(RoutingA);
-    expect(button(w, en.operations.save).attributes("disabled")).toBeDefined();
+    const wrapper = mountWithApp(RoutingA);
+    expect(
+      button(wrapper, en.operations.save).attributes("disabled"),
+    ).toBeDefined();
     await flushPromises();
-    expect(w.emitted("close")).toEqual([[]]);
+    expect(wrapper.emitted("close")).toEqual([[]]);
     expect(api.putRoutingA).not.toHaveBeenCalled();
-    expect(noticeState.current).toMatchObject({
-      kind: "warning",
-      text: "Offline",
-    });
-  });
-
-  test("links to the manual and cancels without saving", async () => {
-    const w = mountWithApp(RoutingA);
-    await flushPromises();
-    const help = w.get("a");
-    expect(help.attributes("href")).toBe(
-      "https://github.com/v2rayA/v2rayA/wiki/RoutingA",
-    );
-    expect(help.attributes("target")).toBe("_blank");
-    await button(w, en.operations.cancel).trigger("click");
-    expect(w.emitted("close")).toEqual([[]]);
-    expect(api.putRoutingA).not.toHaveBeenCalled();
+    expect(noticeState.current?.text).toBe("Offline");
   });
 });

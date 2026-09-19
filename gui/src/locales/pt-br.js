@@ -450,6 +450,89 @@ export default {
     },
   },
   routingA: {
+    export: "Exportar",
+    import: {
+      title: "Importar",
+      confirm:
+        "Substituir as regras atuais pelo conteúdo do arquivo importado?",
+    },
+    form: {
+      title: "Formulário",
+      text: "Texto",
+      default: "Saída padrão",
+      orderHint:
+        "As regras são avaliadas em ordem; a primeira correspondência prevalece.",
+      addRule: "Adicionar regra",
+      editRule: "Editar regra",
+      condition: "Condição",
+      arguments: "Argumentos",
+      addCondition: "Adicionar condição",
+      outbound: "Saída",
+      customOutbounds: "Saídas personalizadas",
+      addOutbound: "Adicionar saída",
+      editOutbound: "Editar saída",
+      name: "Nome",
+      protocol: "Protocolo",
+      address: "Endereço",
+      port: "Porta",
+      user: "Nome de usuário",
+      pass: "Senha",
+      required: "Este campo é obrigatório.",
+      invalidArguments:
+        "Separe os argumentos por vírgulas e balanceie aspas e parênteses.",
+      invalidName:
+        "Use um nome exclusivo sem espaços nem caracteres de sintaxe.",
+      deleteConfirm: "Excluir esta entrada?",
+      moveUp: "Mover para cima",
+      moveDown: "Mover para baixo",
+      actions: "Ações da entrada",
+      raw: "Sintaxe não reconhecida; preservada no editor de texto.",
+    },
+    editor: "Regras RoutingA",
+    loading: "Carregando regras",
+    resetDefault: "Restaurar padrão",
+    resetConfirm: "Substituir as regras atuais pelo modelo padrão?",
+    discard: "Descartar alterações não salvas?",
+    insert: "Inserir",
+    lineError: "Linha {line}: {message}",
+    errors: {
+      noArrow: "É necessário indicar uma condição seguida de -> e uma saída.",
+      brackets: "Parênteses ou colchetes não estão balanceados.",
+      noOutbound: "É necessário indicar uma saída após ->.",
+    },
+    reference: {
+      title: "Sintaxe",
+      format: {
+        title: "Formato das regras",
+        description:
+          "Use condição [&& condição] -> saída, uma regra por linha. A primeira correspondência prevalece; # inicia um comentário.",
+      },
+      domain: {
+        title: "Domínios",
+        description:
+          "full corresponde ao domínio exato, domain inclui subdomínios, e contains e regexp correspondem a texto e expressões regulares. Use geosite para uma lista de domínios; cada chamada aceita várias entradas.",
+      },
+      ip: {
+        title: "Endereços IP",
+        description:
+          "Corresponda a um endereço IP, intervalo CIDR ou lista geoip. Coloque endereços IPv6 entre aspas.",
+      },
+      ports: {
+        title: "Portas e protocolos",
+        description:
+          "Corresponda a portas ou intervalos, protocolo de transporte, protocolo de aplicação ou endereço de origem. Combine condições com &&.",
+      },
+      outbound: {
+        title: "Saídas",
+        description:
+          "As saídas integradas são proxy, direct e block; default define a saída quando nenhuma regra corresponde. Defina uma saída SOCKS ou HTTP nomeada com user e pass opcionais.",
+      },
+      examples: {
+        title: "Exemplos",
+        description:
+          "Insira o modelo padrão ou uma regra que bloqueia domínios da lista de publicidade.",
+      },
+    },
     messages: ["clique no botão 'Ajuda e manual' para obter ajuda"],
     inboundDeprecated:
       "Definir inbounds no RoutingA está obsoleto. A configuração JSON gerada NÃO incluirá essas portas de entrada. Use as configurações de entrada personalizada com regras do RoutingA.",
