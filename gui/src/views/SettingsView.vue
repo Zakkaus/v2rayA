@@ -18,7 +18,11 @@ import TunRouteScriptDialog, {
 } from "@/dialogs/settings/TunRouteScript.vue";
 import { useAppStore } from "@/stores/app";
 import { useSettings } from "./settings/model";
-import { transparentTypes as transparentTypeItems } from "./settings/options";
+import {
+  pacModes as pacModeItems,
+  transparentModes as transparentModeItems,
+  transparentTypes as transparentTypeItems,
+} from "./settings/options";
 import AboutDialog from "./settings/AboutDialog.vue";
 import SettingChoice from "./settings/SettingChoice.vue";
 import SettingRow from "./settings/SettingRow.vue";
@@ -46,6 +50,8 @@ onMounted(() => {
 const os = computed(() => store.version?.os ?? "");
 const isRoot = computed(() => store.version?.isRoot ?? false);
 const tunSupported = computed(() => store.version?.tunSupported ?? false);
+const transparentModes = computed(() => transparentModeItems(t));
+const pacModes = computed(() => pacModeItems(t));
 const transparentTypes = computed(() =>
   transparentTypeItems(t, {
     lite: store.lite,
@@ -175,12 +181,12 @@ async function save() {
     <template v-else>
       <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">
         <v-list-subheader>{{ t("setting.sections.proxy") }}</v-list-subheader>
-        <p
-          v-if="!transparentOn"
-          class="md3-body-medium text-on-surface-variant px-4 py-2 ma-0"
-        >
-          {{ t("setting.transparentOffHint") }}
-        </p>
+        <SettingChoice
+          v-model="form.transparent"
+          :title="t('setting.transparentProxy')"
+          :hint="t('setting.messages.transparentProxy')"
+          :items="transparentModes"
+        />
         <v-expand-transition>
           <SettingChoice
             v-if="transparentOn"
@@ -254,10 +260,30 @@ async function save() {
             </SettingRow>
           </div>
         </v-expand-transition>
+        <SettingRow v-if="!store.lite" :title="t('setting.ipForwardOn')">
+          <v-switch
+            v-model="form.ipforward"
+            :aria-label="t('setting.ipForwardOn')"
+            hide-details
+          />
+        </SettingRow>
+        <SettingRow :title="t('setting.portSharingOn')">
+          <v-switch
+            v-model="form.portSharing"
+            :aria-label="t('setting.portSharingOn')"
+            hide-details
+          />
+        </SettingRow>
       </v-list>
 
       <v-list class="mb-4" bg-color="surface-container-low" rounded="xl">
         <v-list-subheader>{{ t("setting.sections.traffic") }}</v-list-subheader>
+        <SettingChoice
+          v-model="form.pacMode"
+          :title="t('setting.pacMode')"
+          :hint="t('setting.messages.pacMode')"
+          :items="pacModes"
+        />
         <SettingRow
           title="RoutingA"
           :subtitle="t('operations.configure')"

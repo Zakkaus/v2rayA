@@ -102,16 +102,19 @@ describe("settings list", () => {
       .get('input[aria-label="Update GFWList Regularly (Unit: hour)"]')
       .setValue("48");
     await wrapper.get('input[aria-label="Concurrency"]').setValue("16");
-    // the proxy and subscription rows live elsewhere, but their values
-    // still travel with the request
-    expect(wrapper.find('input[aria-label="Port Sharing"]').exists()).toBe(
-      false,
-    );
+    // the dashboard's quick controls are here too, in the same form
+    await toggle("Port Sharing", true);
+    await choose("Transparent Proxy/System Proxy", "Off");
+    expect(
+      wrapper.find('input[aria-label="Excluded Interface Prefixes"]').exists(),
+    ).toBe(false);
     await wrapper.get('button[type="submit"]').trigger("click");
     await flushPromises();
     expect(putSetting).toHaveBeenCalledExactlyOnceWith(
       {
         ...loaded,
+        transparent: "close",
+        portSharing: true,
         logLevel: "debug",
         pacAutoUpdateIntervalHour: 48,
         mux: 16,
