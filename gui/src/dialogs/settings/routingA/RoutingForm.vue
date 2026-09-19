@@ -104,12 +104,12 @@ async function edit(index?: number, outbound = false) {
 }
 
 /** the outbound's colour: block in error, direct in tertiary, anything else (proxy, custom) in primary */
-function outboundClass(outbound: string) {
+function outboundColor(outbound: string) {
   return outbound === "block"
-    ? "text-error"
+    ? "error"
     : outbound === "direct"
-      ? "text-tertiary"
-      : "text-primary";
+      ? "tertiary"
+      : "primary";
 }
 </script>
 
@@ -140,11 +140,14 @@ function outboundClass(outbound: string) {
               >({{ condition.args.join(", ") }})
             </template>
           </v-list-item-title>
-          <v-list-item-subtitle dir="ltr">
-            <v-icon :icon="mdiArrowRight" size="14" class="me-1" />
-            <span :class="outboundClass(entry.outbound)">{{
-              entry.outbound
-            }}</span>
+          <v-list-item-subtitle dir="ltr" class="mt-1">
+            <v-chip
+              size="small"
+              variant="tonal"
+              :color="outboundColor(entry.outbound)"
+              :prepend-icon="mdiArrowRight"
+              >{{ entry.outbound }}</v-chip
+            >
           </v-list-item-subtitle>
         </template>
         <div
