@@ -60,7 +60,6 @@ export default {
     nodeLatency: "노드 지연 시간",
     moreMembers: "{n}개 더 보기",
     inUse: "사용 중인 노드",
-    inUseAfterStart: "코어를 시작하면 표시됩니다",
     pinned: "고정됨",
     balanced: "자동 · 멤버 {n}개",
     switchNode: "전환",

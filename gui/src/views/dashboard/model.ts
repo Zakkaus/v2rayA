@@ -36,7 +36,16 @@ export interface DashboardMember {
   row: TouchServer;
   alive: boolean;
   latency: string;
+  /** the observatory's delay */
   delay?: number;
+  /** the number behind `latency`: the observatory's delay, else a measured ping; undefined when untested or timed out */
+  ms?: number;
+}
+
+/** parseMs reads "157ms" / "157 ms"; anything else (TIMEOUT, empty) is undefined. */
+function parseMs(text: string): number | undefined {
+  const match = /^(\d+)\s*ms$/i.exec(text.trim());
+  return match ? Number(match[1]) : undefined;
 }
 
 // The backend formats both quota values in GiB.
@@ -98,6 +107,9 @@ export function useDashboard() {
             latency:
               measured.value.get(key) ??
               (delay !== undefined ? `${delay} ms` : row.pingLatency || "—"),
+            ms:
+              delay ??
+              parseMs(measured.value.get(key) ?? row.pingLatency ?? ""),
           },
         ];
       }),

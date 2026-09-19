@@ -61,7 +61,6 @@ export default {
     nodeLatency: "Latência dos nós",
     moreMembers: "Mais {n}",
     inUse: "Nó em uso",
-    inUseAfterStart: "Aparece quando o núcleo estiver em execução",
     pinned: "Fixado",
     balanced: "Automático · {n} membros",
     switchNode: "Trocar",

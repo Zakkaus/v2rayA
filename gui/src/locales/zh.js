@@ -58,7 +58,6 @@ export default {
     nodeLatency: "节点延迟",
     moreMembers: "其他 {n} 个",
     inUse: "当前节点",
-    inUseAfterStart: "启动核心后显示使用中的节点",
     pinned: "已指定",
     balanced: "自动 · {n} 个成员",
     switchNode: "切换",

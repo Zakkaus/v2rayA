@@ -70,11 +70,11 @@ const ranked = computed(() =>
   [...members.value].sort(
     (a, b) =>
       Number(b.alive) - Number(a.alive) ||
-      (a.delay ?? Infinity) - (b.delay ?? Infinity),
+      (a.ms ?? Infinity) - (b.ms ?? Infinity),
   ),
 );
 const slowest = computed(() =>
-  Math.max(1, ...members.value.map((member) => member.delay ?? 0)),
+  Math.max(1, ...members.value.map((member) => member.ms ?? 0)),
 );
 
 function switchNode() {
@@ -199,40 +199,31 @@ function switchNode() {
           class="bg-transparent"
         />
         <template v-else-if="members.length">
-          <p class="md3-title-medium mb-2 dashboard-wrap" dir="auto">
-            {{
-              nodeInUse
-                ? nodeInUse.row.name || nodeInUse.row.address
-                : t("dashboard.balanced", { n: members.length })
-            }}
+          <template v-if="nodeInUse">
+            <p class="md3-title-medium mb-2 dashboard-wrap" dir="auto">
+              {{ nodeInUse.row.name || nodeInUse.row.address }}
+            </p>
+            <div class="d-flex align-center flex-wrap ga-2 mb-4">
+              <span class="md3-body-medium text-on-surface-variant" dir="ltr"
+                >{{ nodeInUse.row.net }} · {{ nodeInUse.latency }}</span
+              >
+              <v-chip
+                v-if="nodeInUse.which.selected"
+                size="small"
+                variant="tonal"
+                >{{ t("dashboard.pinned") }}</v-chip
+              >
+              <v-chip
+                v-else-if="members.length >= 2"
+                size="small"
+                variant="tonal"
+                >{{ t("dashboard.balanced", { n: members.length }) }}</v-chip
+              >
+            </div>
+          </template>
+          <p v-else class="md3-body-medium text-on-surface-variant mb-4">
+            {{ t("dashboard.balanced", { n: members.length }) }}
           </p>
-          <div class="d-flex align-center flex-wrap ga-2 mb-4">
-            <span
-              v-if="nodeInUse"
-              class="md3-body-medium text-on-surface-variant"
-              dir="ltr"
-              >{{ nodeInUse.row.net }} · {{ nodeInUse.latency }}</span
-            >
-            <span v-else class="md3-body-medium text-on-surface-variant">{{
-              t(
-                store.running === "running"
-                  ? "common.checkRunning"
-                  : "dashboard.inUseAfterStart",
-              )
-            }}</span>
-            <v-chip
-              v-if="nodeInUse?.which.selected"
-              size="small"
-              variant="tonal"
-              >{{ t("dashboard.pinned") }}</v-chip
-            >
-            <v-chip
-              v-else-if="nodeInUse && members.length >= 2"
-              size="small"
-              variant="tonal"
-              >{{ t("dashboard.balanced", { n: members.length }) }}</v-chip
-            >
-          </div>
           <div class="d-flex align-center justify-end ga-2">
             <v-btn variant="text" :disabled="selecting" @click="switchNode">{{
               t("dashboard.switchNode")
@@ -379,14 +370,12 @@ function switchNode() {
               <span
                 class="md3-label-medium flex-shrink-0 dashboard-figures"
                 dir="ltr"
-                >{{
-                  member.delay !== undefined ? `${member.delay} ms` : "—"
-                }}</span
+                >{{ member.latency }}</span
               >
             </div>
             <v-progress-linear
               :model-value="
-                member.delay === undefined ? 0 : (member.delay / slowest) * 100
+                member.ms === undefined ? 0 : (member.ms / slowest) * 100
               "
               :aria-label="member.row.name || member.row.address"
               height="4"

@@ -61,7 +61,6 @@ export default {
     nodeLatency: "Node latency",
     moreMembers: "{n} more",
     inUse: "Node in use",
-    inUseAfterStart: "Shown once the core runs",
     pinned: "Pinned",
     balanced: "Auto · {n} members",
     switchNode: "Switch",

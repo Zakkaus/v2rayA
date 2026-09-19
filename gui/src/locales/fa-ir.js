@@ -60,7 +60,6 @@ export default {
     nodeLatency: "تأخیر گره‌ها",
     moreMembers: "{n} مورد دیگر",
     inUse: "گره در حال استفاده",
-    inUseAfterStart: "پس از اجرای هسته نمایش داده می‌شود",
     pinned: "ثابت",
     balanced: "خودکار · {n} عضو",
     switchNode: "تغییر",

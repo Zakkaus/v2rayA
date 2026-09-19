@@ -60,7 +60,6 @@ export default {
     nodeLatency: "Задержка узлов",
     moreMembers: "Ещё {n}",
     inUse: "Текущий узел",
-    inUseAfterStart: "Появится после запуска ядра",
     pinned: "Закреплён",
     balanced: "Авто · участников: {n}",
     switchNode: "Сменить",
