@@ -106,13 +106,20 @@ function switchNode() {
           <v-icon :icon="mdiPower" size="20" color="on-surface-variant" />
           <h2 class="md3-title-small">{{ t("dashboard.status") }}</h2>
         </div>
-        <p class="md3-title-large mb-4 d-flex align-center ga-3" role="status">
+        <p
+          class="md3-headline-small mb-1 d-flex align-center ga-3"
+          role="status"
+        >
           <span
             class="dashboard-state-dot"
             :class="`dashboard-state-dot--${store.running}`"
             aria-hidden="true"
           />
           {{ stateLabel }}
+        </p>
+        <p class="md3-body-small text-on-surface-variant mb-4" dir="ltr">
+          {{ store.version?.variant || "" }}
+          {{ store.version?.coreVersion || "" }}
         </p>
         <div class="d-flex flex-wrap align-center ga-2">
           <v-btn
