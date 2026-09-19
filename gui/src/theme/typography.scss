@@ -1,7 +1,11 @@
 // Material 3 type scale, expressed as utility classes on top of Vuetify's
 // own text classes so a template says which role it renders. The family is
-// the system stack the GUI has always used; MD3's Roboto is not shipped.
+// Red Hat Text (self-hosted, fonts.scss) over the system stack, which
+// carries the CJK and other scripts.
+@use "./fonts";
+
 $md3-font:
+  "Red Hat Text",
   BlinkMacSystemFont,
   -apple-system,
   "Segoe UI",
@@ -17,6 +21,8 @@ $md3-font:
   sans-serif;
 
 .v-application {
+  --v-font-body: #{$md3-font};
+  --v-font-heading: #{$md3-font};
   font-family: $md3-font;
 }
 
