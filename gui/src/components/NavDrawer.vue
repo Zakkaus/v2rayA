@@ -41,18 +41,9 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
         class="drawer__version text-none"
         @click="openAbout"
       >
-        <span class="d-flex flex-column align-start">
-          <span class="md3-label-large"
-            >v2rayA {{ store.version?.version ?? "" }}</span
-          >
-          <span
-            v-if="store.version?.coreVersion"
-            class="md3-label-small"
-            dir="ltr"
-          >
-            {{ store.version.variant }} {{ store.version.coreVersion }}
-          </span>
-        </span>
+        <span class="md3-label-large"
+          >v2rayA {{ store.version?.version ?? "" }}</span
+        >
         <v-tooltip activator="parent" location="top">
           {{ t("common.about") }}
         </v-tooltip>
