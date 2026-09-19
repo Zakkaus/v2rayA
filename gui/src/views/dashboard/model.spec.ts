@@ -266,7 +266,11 @@ describe("dashboard", () => {
     store.connectedServer = [{ _type: "server", id: 1 }];
     await flushPromises();
     expect(connection()).toContain("Standalone");
-    await wrapper.get('button[aria-label="Test latency"]').trigger("click");
+    await wrapper
+      .get(".dashboard-connection")
+      .findAll("button")
+      .find((b) => b.text() === "Test latency")!
+      .trigger("click");
     await flushPromises();
     expect(getPingLatency).toHaveBeenCalledWith([{ _type: "server", id: 1 }]);
     expect(connection()).toContain("17ms");
