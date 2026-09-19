@@ -110,7 +110,7 @@ onMounted(() => {
 <template>
   <div class="logs">
     <v-sheet color="surface-container-low" rounded="xl" class="pa-4 mb-4">
-      <div class="d-flex flex-wrap align-center ga-3">
+      <div class="d-flex flex-wrap align-center ga-2">
         <v-chip-group v-model="level" mandatory>
           <v-chip
             v-for="l in levels"
@@ -123,11 +123,12 @@ onMounted(() => {
           </v-chip>
         </v-chip-group>
       </div>
-      <div class="d-flex flex-wrap align-center ga-3 mt-2">
+      <div class="d-flex flex-wrap align-center ga-3 mt-3">
         <v-select
           v-model="source"
           :items="sourceItems"
           :label="t('log.source')"
+          variant="outlined"
           density="compact"
           hide-details
           class="logs__select"
@@ -136,6 +137,7 @@ onMounted(() => {
           v-model="interval"
           :items="intervalItems"
           :label="t('log.refreshInterval')"
+          variant="outlined"
           density="compact"
           hide-details
           class="logs__select"
@@ -145,6 +147,7 @@ onMounted(() => {
           :label="t('log.autoShowNew')"
           hide-details
           density="compact"
+          class="ms-1"
         />
         <v-spacer />
         <v-btn
@@ -195,7 +198,7 @@ onMounted(() => {
         ref="scroller"
         :items="shown"
         :item-height="28"
-        height="60vh"
+        class="logs__scroll"
       >
         <template #default="{ item, index }">
           <div class="logs__row">
@@ -215,6 +218,10 @@ onMounted(() => {
 .logs__select {
   max-width: 220px;
   min-width: 160px;
+}
+/* the pane fills what the toolbar leaves of the viewport */
+.logs__scroll {
+  height: max(320px, calc(100dvh - 300px));
 }
 .logs__pane:focus-visible {
   outline: 2px solid rgb(var(--v-theme-primary));

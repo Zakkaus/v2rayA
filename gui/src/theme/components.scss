@@ -37,3 +37,9 @@
 .v-card-title + .v-card-text {
   padding-top: 8px;
 }
+
+// scrollbars: thin, in the outline colour, on every scrolling region
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--v-theme-outline-variant)) transparent;
+}
