@@ -58,10 +58,10 @@ describe("the custom inbound dialog", () => {
     await flushPromises();
     expect(api.getCustomInbound).toHaveBeenCalledOnce();
     expect(api.getOutbounds).toHaveBeenCalledOnce();
-    expect(w.get(".v-data-table").text()).toContain("work");
-    expect(w.get(".v-data-table").text()).toContain("10801");
-    expect(w.get(".v-data-table").text()).toContain("HTTP");
-    expect(w.get(".v-data-table").text()).toContain("PROXY");
+    expect(w.get(".inbound-list").text()).toContain("work");
+    expect(w.get(".inbound-list").text()).toContain("10801");
+    expect(w.get(".inbound-list").text()).toContain("HTTP");
+    expect(w.get(".inbound-list").text()).toContain("PROXY");
     const outbound = w
       .findAllComponents({ name: "VSelect" })
       .find((c) => c.props("label") === en.customInbound.outbound)!;
@@ -90,7 +90,7 @@ describe("the custom inbound dialog", () => {
     await w.get("form").trigger("submit");
     await flushPromises();
     expect(api.postCustomInbound).toHaveBeenCalledWith(body);
-    expect(w.get(".v-data-table").text()).toContain("home");
+    expect(w.get(".inbound-list").text()).toContain("home");
     expect(w.get<HTMLInputElement>('input[name="tag"]').element.value).toBe("");
     expect(
       w.get<HTMLInputElement>('input[name="password"]').element.value,
@@ -137,13 +137,13 @@ describe("the custom inbound dialog", () => {
     closeDialog(dialogState.stack.at(-1)!.id, false);
     await flushPromises();
     expect(api.deleteCustomInbound).not.toHaveBeenCalled();
-    expect(w.get(".v-data-table").text()).toContain("work");
+    expect(w.get(".inbound-list").text()).toContain("work");
     await remove();
     closeDialog(dialogState.stack.at(-1)!.id, true);
     await flushPromises();
     expect(api.deleteCustomInbound).toHaveBeenCalledWith({ tag: "work" });
-    expect(w.get(".v-data-table").text()).not.toContain("work");
-    expect(w.get(".v-data-table").text()).toContain(en.customInbound.empty);
+    expect(w.get(".inbound-list").text()).not.toContain("work");
+    expect(w.get(".inbound-list").text()).toContain(en.customInbound.empty);
   });
 
   test("validates required fields and retains input after a failed save", async () => {
@@ -168,6 +168,6 @@ describe("the custom inbound dialog", () => {
     expect(w.get<HTMLInputElement>('input[name="tag"]').element.value).toBe(
       "home",
     );
-    expect(w.get(".v-data-table").text()).toContain("work");
+    expect(w.get(".inbound-list").text()).toContain("work");
   });
 });

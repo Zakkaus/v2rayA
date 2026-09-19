@@ -36,14 +36,6 @@ const modes = computed(() => [
   { value: "direct", title: t("customInbound.outboundTypeDirect") },
   { value: "routingA", title: t("customInbound.outboundTypeRoutingA") },
 ]);
-const headers = computed(() => [
-  { key: "tag", title: t("customInbound.tag") },
-  { key: "protocol", title: t("customInbound.protocol") },
-  { key: "port", title: t("customInbound.port") },
-  { key: "outbound", title: t("customInbound.outbound") },
-  { key: "actions", title: t("operations.name"), sortable: false },
-]);
-
 function emptyForm() {
   return {
     tag: "",
@@ -148,69 +140,66 @@ async function remove(tag: string) {
       <v-alert v-if="loadError" type="warning" variant="tonal" class="mb-4">
         {{ loadError }}
       </v-alert>
-      <v-data-table
-        :headers="headers"
-        :items="inbounds"
-        item-value="tag"
-        :loading="loading"
-        :items-per-page="5"
-        class="mb-6"
+      <v-skeleton-loader v-if="loading" type="list-item-two-line@2" />
+      <v-list
+        v-else-if="inbounds.length"
+        bg-color="surface-container-low"
+        rounded="lg"
+        class="mb-6 inbound-list"
       >
-        <template #item.protocol="{ item }">
-          <v-chip size="small" variant="tonal">{{
-            item.protocol.toUpperCase()
-          }}</v-chip>
-          <v-tooltip
-            v-if="item.username"
-            :text="t('customInbound.authEnabled')"
-          >
-            <template #activator="{ props: tooltip }">
+        <v-list-item
+          v-for="item in inbounds"
+          :key="item.tag"
+          :title="item.tag"
+          lines="two"
+        >
+          <template #subtitle>
+            <span class="d-inline-flex flex-wrap align-center ga-2" dir="ltr">
+              <v-chip size="small" variant="tonal">{{
+                item.protocol.toUpperCase()
+              }}</v-chip>
+              <span class="md3-body-medium">{{ item.port }}</span>
               <v-icon
-                v-bind="tooltip"
+                v-if="item.username"
                 :icon="mdiLockOutline"
                 size="18"
                 :aria-label="t('customInbound.authEnabled')"
-                aria-hidden="false"
                 role="img"
-                tabindex="0"
-                class="ms-2"
               />
-            </template>
-          </v-tooltip>
-        </template>
-        <template #item.outbound="{ item }">
-          <v-chip v-if="item.outbound" size="small" variant="tonal">{{
-            item.outbound
-          }}</v-chip>
-          <template v-else>—</template>
-          <v-chip
-            v-if="item.outboundType === 'routingA'"
-            size="small"
-            variant="text"
-            >RoutingA</v-chip
-          >
-        </template>
-        <template #item.actions="{ item }">
-          <v-btn
-            :icon="mdiDeleteOutline"
-            variant="text"
-            color="error"
-            size="48"
-            :aria-label="`${t('operations.delete')}: ${item.tag}`"
-            :disabled="busy"
-            :loading="deleting === item.tag"
-            @click="remove(item.tag)"
-          >
-            <v-icon :icon="mdiDeleteOutline" size="18" />
-            <v-tooltip activator="parent">{{
-              t("operations.delete")
-            }}</v-tooltip>
-          </v-btn>
-        </template>
-        <template #no-data>
-          <v-empty-state :text="t('customInbound.empty')" />
-        </template>
-      </v-data-table>
+              <v-chip v-if="item.outbound" size="small" variant="tonal">{{
+                item.outbound
+              }}</v-chip>
+              <v-chip
+                v-if="item.outboundType === 'routingA'"
+                size="small"
+                variant="text"
+                >RoutingA</v-chip
+              >
+            </span>
+          </template>
+          <template #append>
+            <v-btn
+              :icon="mdiDeleteOutline"
+              variant="text"
+              size="40"
+              :aria-label="`${t('operations.delete')}: ${item.tag}`"
+              :disabled="busy"
+              :loading="deleting === item.tag"
+              @click="remove(item.tag)"
+            >
+              <v-icon :icon="mdiDeleteOutline" size="20" />
+              <v-tooltip activator="parent">{{
+                t("operations.delete")
+              }}</v-tooltip>
+            </v-btn>
+          </template>
+        </v-list-item>
+      </v-list>
+      <v-empty-state
+        v-else
+        :text="t('customInbound.empty')"
+        class="mb-4 inbound-list"
+      />
       <v-card-subtitle class="md3-title-medium pa-0 mb-4">
         {{ t("customInbound.addNew") }}
       </v-card-subtitle>
