@@ -107,17 +107,16 @@ function switchNode() {
           <h2 class="md3-title-small">{{ t("dashboard.status") }}</h2>
         </div>
         <p
-          class="md3-headline-small mb-1 d-flex align-center ga-3"
+          class="md3-headline-small mb-1"
+          :class="{
+            'text-primary': store.running === 'running',
+            'text-tertiary': store.running === 'paused',
+          }"
           role="status"
         >
-          <span
-            class="dashboard-state-dot"
-            :class="`dashboard-state-dot--${store.running}`"
-            aria-hidden="true"
-          />
           {{ stateLabel }}
         </p>
-        <p class="md3-body-small text-on-surface-variant mb-4" dir="ltr">
+        <p class="md3-body-small text-on-surface-variant mb-5" dir="ltr">
           {{ store.version?.variant || "" }}
           {{ store.version?.coreVersion || "" }}
         </p>
@@ -562,20 +561,6 @@ function switchNode() {
 }
 .dashboard-wrap {
   overflow-wrap: anywhere;
-}
-/* the core's state at a glance: a 12 dp dot in the state's colour */
-.dashboard-state-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: rgb(var(--v-theme-outline-variant));
-}
-.dashboard-state-dot--running {
-  background: rgb(var(--v-theme-primary));
-}
-.dashboard-state-dot--paused {
-  background: rgb(var(--v-theme-tertiary));
 }
 
 .dashboard-chart {
