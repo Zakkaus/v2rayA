@@ -13,6 +13,8 @@ export interface Which {
   pingLatency?: string;
   Link?: string;
   outbound?: string;
+  /** in a touch's connectedServer: the member its group routes through alone */
+  selected?: boolean;
 }
 
 /** touch.Server; `sub` and `connected` are the page's own marks on a row */

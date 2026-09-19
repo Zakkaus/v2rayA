@@ -95,40 +95,18 @@ async function save() {
         {{ loadError }}
       </v-alert>
       <template v-else>
-        <v-row v-for="(rule, index) in rules" :key="index" dense class="mb-4">
-          <v-col cols="12" sm="6">
-            <v-text-field
-              v-model="rule.server"
-              :label="t('dns.colServer')"
-              :placeholder="t('dns.serverPlaceholder')"
-              :disabled="saving"
-              hide-details="auto"
-              dir="ltr"
-            />
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-select
-              v-model="rule.outbound"
-              :label="t('dns.colOutbound')"
-              :items="choices"
-              :disabled="saving"
-              hide-details="auto"
-              dir="ltr"
-            />
-          </v-col>
-          <v-col cols="10">
-            <v-textarea
-              v-model="rule.domains"
-              :label="t('dns.colDomains')"
-              :placeholder="t('dns.domainsPlaceholder')"
-              :disabled="saving"
-              rows="2"
-              auto-grow
-              hide-details="auto"
-              dir="ltr"
-            />
-          </v-col>
-          <v-col cols="2" class="d-flex justify-end align-center">
+        <v-sheet
+          v-for="(rule, index) in rules"
+          :key="index"
+          color="surface-container-low"
+          rounded="lg"
+          class="pa-4 mb-3"
+        >
+          <div class="d-flex align-center mb-3">
+            <span class="md3-title-small">
+              {{ t("dns.rule", { n: index + 1 }) }}
+            </span>
+            <v-spacer />
             <v-tooltip :text="t('operations.delete')">
               <template #activator="{ props }">
                 <v-btn
@@ -136,43 +114,70 @@ async function save() {
                   icon
                   variant="text"
                   type="button"
-                  width="48"
-                  height="48"
+                  size="40"
                   :aria-label="t('operations.delete')"
                   :disabled="saving"
                   @click="rules.splice(index, 1)"
                 >
-                  <v-icon :icon="mdiDeleteOutline" size="18" />
+                  <v-icon :icon="mdiDeleteOutline" size="20" />
                 </v-btn>
               </template>
             </v-tooltip>
-          </v-col>
-        </v-row>
-        <v-row dense>
-          <v-col cols="12" sm="6">
-            <v-btn
-              variant="tonal"
-              type="button"
-              :prepend-icon="mdiPlus"
-              :disabled="saving"
-              @click="
-                rules.push({ server: '', domains: '', outbound: 'direct' })
-              "
-            >
-              {{ t("dns.addRule") }}
-            </v-btn>
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-btn
-              variant="tonal"
-              type="button"
-              :disabled="saving"
-              @click="resetDefault"
-            >
-              {{ t("dns.resetDefault") }}
-            </v-btn>
-          </v-col>
-        </v-row>
+          </div>
+          <v-row dense>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="rule.server"
+                :label="t('dns.colServer')"
+                :placeholder="t('dns.serverPlaceholder')"
+                :disabled="saving"
+                hide-details="auto"
+                dir="ltr"
+              />
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-select
+                v-model="rule.outbound"
+                :label="t('dns.colOutbound')"
+                :items="choices"
+                :disabled="saving"
+                hide-details="auto"
+                dir="ltr"
+              />
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                v-model="rule.domains"
+                :label="t('dns.colDomains')"
+                :placeholder="t('dns.domainsPlaceholder')"
+                :disabled="saving"
+                rows="2"
+                auto-grow
+                hide-details="auto"
+                dir="ltr"
+              />
+            </v-col>
+          </v-row>
+        </v-sheet>
+        <div class="d-flex flex-wrap ga-2">
+          <v-btn
+            variant="tonal"
+            type="button"
+            :prepend-icon="mdiPlus"
+            :disabled="saving"
+            @click="rules.push({ server: '', domains: '', outbound: 'direct' })"
+          >
+            {{ t("dns.addRule") }}
+          </v-btn>
+          <v-btn
+            variant="text"
+            type="button"
+            :disabled="saving"
+            @click="resetDefault"
+          >
+            {{ t("dns.resetDefault") }}
+          </v-btn>
+        </div>
       </template>
     </v-card-text>
     <v-card-actions class="px-6 pb-4">

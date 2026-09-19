@@ -270,6 +270,7 @@ export default {
     domainsPlaceholder:
       "هر مورد در یک خط؛ برای نمونه geosite:cn\nبرای DNS جایگزین خالی بگذارید",
     addRule: "افزودن قانون",
+    rule: "قانون {n}",
     resetDefault: "بازنشانی به پیش‌فرض‌ها",
     errNoRules: "دست‌کم یک قانون به سرور DNS نیاز دارد",
     saveFailed: "ذخیره قوانین DNS ناموفق بود: {message}",

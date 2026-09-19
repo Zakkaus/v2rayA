@@ -266,6 +266,7 @@ export default {
     serverPlaceholder: "如 8.8.8.8 或 https://dns.google/dns-query",
     domainsPlaceholder: "每行一个，如 geosite:cn\n留空表示兜底 DNS",
     addRule: "添加规则",
+    rule: "规则 {n}",
     resetDefault: "恢复默认",
     errNoRules: "至少一条规则需要填写 DNS 服务器",
     saveFailed: "无法保存 DNS 规则：{message}",

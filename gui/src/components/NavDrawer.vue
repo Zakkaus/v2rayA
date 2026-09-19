@@ -36,20 +36,19 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
       />
     </v-list>
     <template #append>
-      <v-tooltip :text="t('common.about')" location="top">
-        <template #activator="{ props: tip }">
-          <v-btn
-            v-bind="tip"
-            variant="text"
-            size="small"
-            :prepend-icon="mdiInformationOutline"
-            class="drawer__version text-none md3-label-medium"
-            @click="openAbout"
-          >
-            v2rayA {{ store.version?.version ?? "" }}
-          </v-btn>
-        </template>
-      </v-tooltip>
+      <v-list nav density="default" class="px-3 pt-0 pb-3">
+        <v-list-item
+          :prepend-icon="mdiInformationOutline"
+          :title="`v2rayA ${store.version?.version ?? ''}`"
+          rounded="xl"
+          class="drawer__item drawer__version"
+          @click="openAbout"
+        >
+          <v-tooltip activator="parent" location="top">
+            {{ t("common.about") }}
+          </v-tooltip>
+        </v-list-item>
+      </v-list>
     </template>
   </v-navigation-drawer>
 </template>
@@ -61,8 +60,8 @@ const openAbout = () => open(AboutDialog, {}, { width: 640 });
   gap: 12px;
   padding: 28px 28px 20px;
 }
+/* the version reads like a destination but quieter: outline text and icon */
 .drawer__version {
-  margin: 12px 16px 16px;
   color: rgb(var(--v-theme-outline));
 }
 .drawer__logo {

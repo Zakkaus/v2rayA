@@ -269,6 +269,7 @@ export default {
     serverPlaceholder: "예: 8.8.8.8 또는 https://dns.google/dns-query",
     domainsPlaceholder: "한 줄에 하나, 예: geosite:cn\n비우면 폴백 DNS 사용",
     addRule: "규칙 추가",
+    rule: "규칙 {n}",
     resetDefault: "기본값으로 재설정",
     errNoRules: "DNS 서버가 있는 규칙이 하나 이상 필요합니다",
     saveFailed: "DNS 규칙 저장 실패: {message}",

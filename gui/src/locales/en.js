@@ -271,6 +271,7 @@ export default {
     domainsPlaceholder:
       "One per line, e.g. geosite:cn\nLeave empty for fallback DNS",
     addRule: "Add Rule",
+    rule: "Rule {n}",
     resetDefault: "Reset to Defaults",
     errNoRules: "At least one rule needs a DNS server",
     saveFailed: "Failed to save DNS rules: {message}",

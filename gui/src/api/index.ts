@@ -82,6 +82,16 @@ export const putOutboundConnections = (body: {
     method: "put",
     data: body,
   });
+/** the member a group routes through alone; null returns it to balancing */
+export const putOutboundSelection = (body: {
+  outbound: string;
+  which: Which | null;
+}) =>
+  call<TouchResponse>({
+    url: "outboundSelection",
+    method: "put",
+    data: body,
+  });
 export const postV2ray = (o: RequestOptions = {}) =>
   call<TouchResponse>({ url: "v2ray", method: "post", ...o });
 export const deleteV2ray = () =>
@@ -94,6 +104,8 @@ export interface OutboundSetting {
   probeURL: string;
   probeInterval: string;
   type: string;
+  /** the share link of the member routed through alone; empty balances */
+  selected?: string;
 }
 export const getOutbound = (outbound: string) =>
   call<{ setting: OutboundSetting }>({

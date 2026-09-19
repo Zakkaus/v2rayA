@@ -271,6 +271,7 @@ export default {
     domainsPlaceholder:
       "По одному в строке, например geosite:cn\nОставьте пустым для резервного DNS",
     addRule: "Добавить правило",
+    rule: "Правило {n}",
     resetDefault: "Восстановить значения по умолчанию",
     errNoRules: "Хотя бы в одном правиле должен быть указан DNS-сервер",
     saveFailed: "Не удалось сохранить правила DNS: {message}",
