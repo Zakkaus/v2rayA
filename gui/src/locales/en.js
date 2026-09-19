@@ -275,6 +275,7 @@ export default {
     saveFailed: "Failed to save egress port whitelist: {message}",
   },
   configureServer: {
+    required: "Required",
     title: "Configure Server | Server",
     servername: "Servername",
     host: "Host",

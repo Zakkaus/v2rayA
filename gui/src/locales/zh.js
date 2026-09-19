@@ -273,6 +273,7 @@ export default {
     saveFailed: "无法保存出方向端口白名单：{message}",
   },
   configureServer: {
+    required: "必填",
     title: "配置节点 | 节点",
     servername: "节点名称",
     host: "地址",

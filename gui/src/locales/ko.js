@@ -276,6 +276,7 @@ export default {
     saveFailed: "송신 포트 화이트리스트 저장 실패: {message}",
   },
   configureServer: {
+    required: "필수",
     title: "서버 구성 | 서버",
     servername: "서버 이름",
     host: "호스트",

@@ -274,6 +274,7 @@ export default {
     saveFailed: "Не удалось сохранить белый список исходящих портов: {message}",
   },
   configureServer: {
+    required: "Обязательно",
     title: "Настройка сервера | Сервер",
     servername: "Имя сервера",
     host: "Хост",

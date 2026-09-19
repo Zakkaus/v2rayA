@@ -274,6 +274,7 @@ export default {
     saveFailed: "ذخیره فهرست سفید پورت‌های خروجی ناموفق بود: {message}",
   },
   configureServer: {
+    required: "الزامی",
     title: "پیکربندی سرور | سرور",
     servername: "نام سرور",
     host: "میزبان",

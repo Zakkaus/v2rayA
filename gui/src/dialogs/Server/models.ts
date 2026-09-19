@@ -14,6 +14,7 @@ export const v2rayModel = () => ({
   host: "",
   path: "",
   tls: "none",
+  sni: "",
   quicSecurity: "none",
   fp: "",
   pbk: "",

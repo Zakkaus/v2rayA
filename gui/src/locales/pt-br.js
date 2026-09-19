@@ -268,6 +268,7 @@ export default {
     saveFailed: "Falha ao salvar a lista branca de portas de saída: {message}",
   },
   configureServer: {
+    required: "Obrigatório",
     title: "Configurar servidor | Servidor",
     servername: "Nome do servidor",
     host: "Host",
