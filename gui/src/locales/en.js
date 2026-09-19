@@ -38,6 +38,11 @@ export default {
     modeNeedsMembers:
       "Balancing needs at least two members; the core then routes through the one with the lowest latency.",
     groupSettings: "Group settings",
+    deleteGroup: "Delete group",
+    modeHint: {
+      auto: "Auto: the core routes through the lowest latency",
+      manual: "Manual: the group uses the node you pick",
+    },
     useThis: "Use this node",
     unselect: "Clear selection",
     addToGroup: "Add to group",

@@ -3,12 +3,14 @@ import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
 import {
-  mdiCheck,
+  mdiChevronDown,
   mdiCogOutline,
+  mdiDeleteOutline,
   mdiMagnify,
   mdiPlus,
   mdiRss,
   mdiServerNetworkOutline,
+  mdiSitemapOutline,
   mdiSpeedometer,
   mdiTrayArrowDown,
   mdiViewGridOutline,
@@ -25,6 +27,7 @@ const { t } = useI18n();
 const { width } = useDisplay();
 const expanded = computed(() => width.value >= 840);
 const model = useProxies();
+const { store } = model;
 const {
   query,
   source,
@@ -38,6 +41,7 @@ const {
   rows,
   subscriptions,
   members,
+  groupList,
   mode,
   listed,
   selected,
@@ -189,29 +193,62 @@ onMounted(sync);
             }}</v-btn>
           </v-btn-toggle>
         </div>
-        <div class="d-flex flex-wrap align-center ga-3 mb-4">
-          <v-btn-toggle
-            :model-value="mode"
+        <div class="proxies__groups mb-4">
+          <v-chip-group
+            :model-value="store.outboundName"
             mandatory
-            divided
-            variant="outlined"
-            rounded="xl"
-            :disabled="disabled || members.length < 2"
-            selected-class="bg-secondary-container text-on-secondary-container"
-            :aria-label="t('proxies.groupMode')"
-            @update:model-value="model.setMode"
+            :disabled="disabled"
+            @update:model-value="(v: string) => v && (store.outboundName = v)"
           >
-            <v-btn
-              value="auto"
-              :prepend-icon="mode === 'auto' ? mdiCheck : undefined"
-              >{{ t("proxies.mode.auto") }}</v-btn
+            <v-chip
+              v-for="g in groupList"
+              :key="g.name"
+              :value="g.name"
+              variant="outlined"
+              filter
+              :prepend-icon="mdiSitemapOutline"
             >
-            <v-btn
-              value="manual"
-              :prepend-icon="mode === 'manual' ? mdiCheck : undefined"
-              >{{ t("proxies.mode.manual") }}</v-btn
-            >
-          </v-btn-toggle>
+              <span class="proxies__name">{{ g.name.toUpperCase() }}</span>
+              <span class="ms-2 md3-label-medium text-on-surface-variant">{{
+                g.count
+              }}</span>
+            </v-chip>
+          </v-chip-group>
+          <v-chip
+            variant="outlined"
+            :prepend-icon="mdiPlus"
+            :disabled="disabled"
+            @click="model.newGroup"
+            >{{ t("proxies.newGroup") }}</v-chip
+          >
+        </div>
+        <div class="d-flex flex-wrap align-center ga-3 mb-4">
+          <v-menu>
+            <template #activator="{ props: menu }">
+              <v-btn
+                v-bind="menu"
+                variant="tonal"
+                :append-icon="mdiChevronDown"
+                :disabled="disabled || members.length < 2"
+                :aria-label="t('proxies.groupMode')"
+                class="text-none"
+                >{{ t("proxies.groupMode") }}:
+                {{ t(`proxies.mode.${mode}`) }}</v-btn
+              >
+            </template>
+            <v-list density="compact" min-width="260">
+              <v-list-item
+                v-for="value in ['auto', 'manual']"
+                :key="value"
+                :active="mode === value"
+                :title="t(`proxies.mode.${value}`)"
+                :subtitle="t(`proxies.modeHint.${value}`)"
+                role="menuitemradio"
+                :aria-checked="mode === value"
+                @click="model.setMode(value)"
+              />
+            </v-list>
+          </v-menu>
           <span
             v-if="members.length < 2"
             class="md3-body-small text-on-surface-variant"
@@ -236,6 +273,14 @@ onMounted(sync);
             :disabled="disabled"
             @click="model.groupSettings"
             >{{ t("proxies.groupSettings") }}</v-btn
+          >
+          <v-btn
+            v-if="store.outboundName !== 'proxy'"
+            variant="text"
+            :prepend-icon="mdiDeleteOutline"
+            :disabled="disabled"
+            @click="model.removeGroup"
+            >{{ t("proxies.deleteGroup") }}</v-btn
           >
         </div>
         <v-empty-state
@@ -355,6 +400,12 @@ onMounted(sync);
 </template>
 
 <style scoped>
+.proxies__groups {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
 .proxies {
   padding-bottom: 96px;
 }

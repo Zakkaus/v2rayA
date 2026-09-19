@@ -38,6 +38,11 @@ export default {
     modeNeedsMembers:
       "Com dois ou mais nós, o núcleo usa automaticamente o de menor latência.",
     groupSettings: "Configurações do grupo",
+    deleteGroup: "Excluir grupo",
+    modeHint: {
+      auto: "Automático: o núcleo usa o nó de menor latência",
+      manual: "Manual: o grupo usa o nó escolhido",
+    },
     useThis: "Usar este nó",
     unselect: "Desmarcar",
     addToGroup: "Adicionar ao grupo",

@@ -36,6 +36,11 @@ export default {
     groupMode: "分组模式",
     modeNeedsMembers: "分组里有两个以上节点时核心会自动走延迟最低的那个。",
     groupSettings: "分组设置",
+    deleteGroup: "删除分组",
+    modeHint: {
+      auto: "自动：核心走延迟最低的节点",
+      manual: "手动：只用你指定的节点",
+    },
     useThis: "使用此节点",
     unselect: "取消选择",
     addToGroup: "加入分组",

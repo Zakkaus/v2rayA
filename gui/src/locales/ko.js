@@ -38,6 +38,11 @@ export default {
     modeNeedsMembers:
       "노드가 두 개 이상이면 코어가 지연이 가장 낮은 노드를 자동으로 사용합니다.",
     groupSettings: "그룹 설정",
+    deleteGroup: "그룹 삭제",
+    modeHint: {
+      auto: "자동: 코어가 지연이 가장 낮은 노드를 사용",
+      manual: "수동: 지정한 노드만 사용",
+    },
     useThis: "이 노드 사용",
     unselect: "선택 해제",
     addToGroup: "그룹에 추가",

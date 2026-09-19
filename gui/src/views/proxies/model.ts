@@ -76,6 +76,15 @@ export function useProxies() {
   const members = computed(() =>
     groupMembers(nodes.touch.value, store.connectedServer, store.outboundName),
   );
+  /** every group with its member count; the page lists them as chips */
+  const groupList = computed(() =>
+    store.outbounds.map((name) => ({
+      name,
+      count: store.connectedServer.filter(
+        (w) => (w.outbound ?? "proxy") === name,
+      ).length,
+    })),
+  );
   const selectedMember = computed(() =>
     store.connectedServer.find(
       (w) => (w.outbound ?? "proxy") === store.outboundName && w.selected,
@@ -293,6 +302,11 @@ export function useProxies() {
   function groupSettings() {
     open(OutboundGroupDialog, { outbound: store.outboundName }, { width: 440 });
   }
+  async function removeGroup() {
+    await run(async () => {
+      if (await groups.remove(store.outboundName)) await sync();
+    });
+  }
   async function newGroup() {
     await run(async () => {
       if (await groups.add()) await sync();
@@ -431,7 +445,9 @@ export function useProxies() {
     removeRows,
     exportSelected,
     newGroup,
+    removeGroup,
     groupSettings,
+    groupList,
     newNode,
     importNodes,
     subscriptionSettings,
