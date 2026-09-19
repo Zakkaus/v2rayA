@@ -5,7 +5,9 @@ import {
   mdiArrowUp,
   mdiArrowDown,
   mdiArrowRight,
+  mdiDeleteOutline,
   mdiDotsVertical,
+  mdiPencilOutline,
 } from "@mdi/js";
 import { useConfirm, useDialog } from "@/composables";
 import { parse, serialize, type Entry } from "./rules";
@@ -100,6 +102,15 @@ async function edit(index?: number, outbound = false) {
   else entries.value[index] = result;
   update();
 }
+
+/** the outbound's colour: block in error, direct in tertiary, anything else (proxy, custom) in primary */
+function outboundClass(outbound: string) {
+  return outbound === "block"
+    ? "text-error"
+    : outbound === "direct"
+      ? "text-tertiary"
+      : "text-primary";
+}
 </script>
 
 <template>
@@ -118,28 +129,27 @@ async function edit(index?: number, outbound = false) {
         :key="index"
         :disabled="disabled"
         :class="{ 'routing-form__comment': entry.kind === 'comment' }"
+        lines="two"
         @click="entry.kind === 'rule' && edit(index)"
       >
-        <div
-          v-if="entry.kind === 'rule'"
-          class="d-flex flex-wrap align-center ga-2 py-2"
-          dir="ltr"
-        >
-          <v-chip
-            v-for="(condition, part) in entry.conditions"
-            :key="part"
-            size="small"
-            variant="tonal"
-            >{{ condition.fn }}: {{ condition.args.join(", ") }}</v-chip
-          >
-          <v-icon :icon="mdiArrowRight" size="18" />
-          <v-chip color="primary" size="small" variant="tonal">{{
-            entry.outbound
-          }}</v-chip>
-        </div>
+        <template v-if="entry.kind === 'rule'">
+          <v-list-item-title class="routing-form__conditions" dir="ltr">
+            <template v-for="(condition, part) in entry.conditions" :key="part">
+              <span v-if="part" class="text-on-surface-variant"> && </span>
+              <span class="routing-form__fn">{{ condition.fn }}</span
+              >({{ condition.args.join(", ") }})
+            </template>
+          </v-list-item-title>
+          <v-list-item-subtitle dir="ltr">
+            <v-icon :icon="mdiArrowRight" size="14" class="me-1" />
+            <span :class="outboundClass(entry.outbound)">{{
+              entry.outbound
+            }}</span>
+          </v-list-item-subtitle>
+        </template>
         <div
           v-else-if="entry.kind === 'comment' || entry.kind === 'raw'"
-          class="routing-form__raw py-2"
+          class="routing-form__raw"
           dir="ltr"
         >
           <span
@@ -150,22 +160,6 @@ async function edit(index?: number, outbound = false) {
           >{{ entry.text }}
         </div>
         <template #append>
-          <v-btn
-            :icon="mdiArrowUp"
-            variant="text"
-            size="40"
-            :aria-label="t('routingA.form.moveUp')"
-            :disabled="disabled || position === 0"
-            @click.stop="move(index, -1)"
-          />
-          <v-btn
-            :icon="mdiArrowDown"
-            variant="text"
-            size="40"
-            :aria-label="t('routingA.form.moveDown')"
-            :disabled="disabled || position === rows.length - 1"
-            @click.stop="move(index, 1)"
-          />
           <v-menu>
             <template #activator="{ props: menu }"
               ><v-btn
@@ -177,13 +171,27 @@ async function edit(index?: number, outbound = false) {
                 :disabled="disabled"
                 @click.stop
             /></template>
-            <v-list>
+            <v-list density="compact">
               <v-list-item
                 v-if="entry.kind === 'rule'"
+                :prepend-icon="mdiPencilOutline"
                 :title="t('operations.modify')"
                 @click="edit(index)"
               />
               <v-list-item
+                :prepend-icon="mdiArrowUp"
+                :title="t('routingA.form.moveUp')"
+                :disabled="position === 0"
+                @click="move(index, -1)"
+              />
+              <v-list-item
+                :prepend-icon="mdiArrowDown"
+                :title="t('routingA.form.moveDown')"
+                :disabled="position === rows.length - 1"
+                @click="move(index, 1)"
+              />
+              <v-list-item
+                :prepend-icon="mdiDeleteOutline"
                 :title="t('operations.delete')"
                 @click="remove(index)"
               />
@@ -260,14 +268,15 @@ async function edit(index?: number, outbound = false) {
   overflow-wrap: anywhere;
   font-family: ui-monospace, "Cascadia Mono", "Fira Mono", Menlo, monospace;
 }
-.routing-form :deep(.v-chip__content) {
+.routing-form__conditions {
   white-space: normal;
   overflow-wrap: anywhere;
+  font-family: ui-monospace, "Cascadia Mono", "Fira Mono", Menlo, monospace;
+  font-size: 13px;
+  line-height: 20px;
 }
-.routing-form :deep(.v-chip) {
-  height: auto;
-  min-height: 24px;
-  max-width: 100%;
+.routing-form__fn {
+  color: rgb(var(--v-theme-tertiary));
 }
 @media (max-width: 599px) {
   .routing-form :deep(.v-list-item__append) {
