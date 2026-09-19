@@ -8,9 +8,9 @@ import { mdiEye, mdiEyeOff } from "@mdi/js";
 import { postAccount, postLogin } from "@/api";
 import { errorText } from "@/api/errors";
 import { useNotify } from "@/composables/useNotify";
-import { openLegacy } from "@/plugins/session";
+import { useDialog } from "@/composables/useDialog";
 import { resetSession } from "@/session";
-import ModalCustomPorts from "@/components/modalCustomPorts.vue";
+import PortsDialog from "@/dialogs/settings/Ports.vue";
 import logo from "@/assets/img/v2raya-icon.svg";
 
 const props = defineProps<{ first: boolean }>();
@@ -45,14 +45,8 @@ async function submit() {
   }
 }
 
-// The backend address dialog, still the old one during the coexistence
-// period: a wrong address is the one thing to fix from here.
 function openAddress() {
-  openLegacy({
-    component: ModalCustomPorts,
-    hasModalCard: true,
-    customClass: "modal-custom-ports",
-  });
+  useDialog().open(PortsDialog, {}, { width: 520 });
 }
 </script>
 

@@ -5,8 +5,6 @@
 // the current page's pane under v-main; the hosts for notices, dialogs
 // and the loading overlay. The shell also runs the session: it is the
 // starter resetSession() calls.
-//
-// Coexistence period: the address dialog is still the old Buefy one.
 import {
   computed,
   onBeforeUnmount,
@@ -32,7 +30,6 @@ import { errorText } from "@/api/errors";
 import type {
   ObservatoryMessage,
   RunningStateMessage,
-  Which,
   WsMessage,
 } from "@/api/types";
 import { installClientHooks } from "@/clientHooks";
@@ -43,6 +40,7 @@ import {
   useBanner,
   useNotify,
 } from "@/composables";
+import { useDialog } from "@/composables/useDialog";
 import BannerHost from "@/components/hosts/BannerHost.vue";
 import DialogHost from "@/components/hosts/DialogHost.vue";
 import LoadingHost from "@/components/hosts/LoadingHost.vue";
@@ -54,16 +52,13 @@ import ShellMenus from "@/components/ShellMenus.vue";
 import { destinations } from "@/components/destinations";
 import { languages } from "@/components/languages";
 import LoginDialog from "@/dialogs/Login.vue";
-import ServerDialog from "@/dialogs/Server/index.vue";
-import { closeProgrammatic, openLegacy } from "@/plugins/session";
 import { onSessionTeardown, resetSession, setSessionStarter } from "@/session";
 import { useAppStore, type Running } from "@/stores/app";
 import { vuetifyLocales } from "@/theme";
 import { schemeColors } from "@/theme/scheme";
 import logo from "@/assets/img/v2raya-icon.svg";
-// the address dialog is still the old one
 import OutboundMenu from "@/components/OutboundMenu.vue";
-import ModalCustomPorts from "@/components/modalCustomPorts.vue";
+import PortsDialog from "@/dialogs/settings/Ports.vue";
 import AboutView from "@/views/AboutView.vue";
 import DashboardView from "@/views/DashboardView.vue";
 import LogsView from "@/views/LogsView.vue";
@@ -204,7 +199,6 @@ function onMessage(msg: WsMessage) {
 }
 
 async function startSession() {
-  onSessionTeardown(closeProgrammatic);
   sessionSerial.value++;
   applyTitle();
   if (!store.loggedIn) {
@@ -230,17 +224,6 @@ async function startSession() {
 
 setSessionStarter(startSession);
 installClientHooks({ openAddressDialog: openPorts });
-
-// Development builds expose the dialogs the node list does not open yet,
-// for the screenshot set and the parity harness.
-if (import.meta.env.DEV) {
-  Object.assign(window, {
-    v2rayaDev: {
-      openServerDialog: (which: Which | null = null, readonly = false) =>
-        openDialog(ServerDialog, { which, readonly }, { width: 560 }),
-    },
-  });
-}
 
 // ---- the core's state ---------------------------------------------------------
 
@@ -297,14 +280,10 @@ async function toggleRunning() {
   }
 }
 
-// ---- the address dialog (still the old one) ------------------------------------
+// ---- the address dialog -------------------------------------------------------
 
 function openPorts() {
-  openLegacy({
-    component: ModalCustomPorts,
-    hasModalCard: true,
-    customClass: "modal-custom-ports",
-  });
+  useDialog().open(PortsDialog, {}, { width: 520 });
 }
 
 // ---- theme and language ---------------------------------------------------------

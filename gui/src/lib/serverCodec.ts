@@ -5,7 +5,7 @@
 // only consumer: the import dialog posts links as typed, and the share
 // dialog shows the backend's link.
 import { Base64 } from "js-base64";
-import { generateURL as buildURL, parseURL } from "@/assets/js/utils";
+import { generateURL as buildURL, parseURL } from "@/lib/url";
 
 export type ShareForm = Record<string, any>;
 

@@ -17,18 +17,12 @@ export default {
     notLogin: "Não conectado",
     latest: "Mais recente",
     local: "No dispositivo",
-    success: "Concluído",
     fail: "Falhou",
     empty: "Nenhum nó adicionado",
     none: "nenhum",
-    optional: "opcional",
     loadBalance: "Balanceamento de carga",
     log: "Registros",
     proxyGroups: "Grupos de proxy",
-    darkTheme: "Tema escuro",
-    lightTheme: "Tema claro",
-    autoTheme: "Tema automático",
-    expand: "Mostrar o estado da conexão",
   },
   theme: {
     auto: "Automático",
@@ -44,7 +38,6 @@ export default {
     docker: "O serviço v2rayA está em execução no Docker. Versão: {version}",
     default: "O serviço v2rayA está em execução. Versão: {version}",
     newVersion: "Nova versão disponível: {version}",
-    separator: " — ",
     messages: [
       "Ainda não há servidores.",
       "Importe um link de servidor ou endereço de assinatura, ou crie um servidor manualmente.",
@@ -74,7 +67,8 @@ export default {
     timeLastUpdate: "Data e hora da última atualização",
     numberServers: "Número de servidores",
     subscription: "Assinatura",
-    autoSelect: "Conectar automaticamente aos novos servidores da assinatura após uma atualização automática",
+    autoSelect:
+      "Conectar automaticamente aos novos servidores da assinatura após uma atualização automática",
     autoSelectLabel: "Seleção automática",
     updated: "Assinatura atualizada",
     saved: "Assinatura salva",
@@ -93,7 +87,6 @@ export default {
     delete: "Excluir",
     create: "Criar",
     import: "Importar",
-    inBatch: "Em lote",
     connect: "Conectar",
     disconnect: "Desconectar",
     addTo: "Adicionar a",
@@ -109,8 +102,6 @@ export default {
     copySelected: "Copiar nós selecionados",
     downloadTxt: "Baixar arquivo TXT",
     helpManual: "Ajuda e manual",
-    yes: "Sim",
-    no: "Não",
     switchSite: "Mudar para o site alternativo",
     addOutbound: "Adicionar um grupo de proxy",
     add: "Adicionar",
@@ -120,7 +111,8 @@ export default {
     ping: "PING",
     copySelectedDone: "Nós selecionados copiados",
     downloadTxtDone: "Arquivo TXT baixado",
-    exportEmpty: "Não foi possível gerar um link de compartilhamento para os nós selecionados",
+    exportEmpty:
+      "Não foi possível gerar um link de compartilhamento para os nós selecionados",
     exportFailed: "Falha ao exportar: {message}",
   },
   register: {
@@ -175,14 +167,17 @@ export default {
       pac: "Depende da porta de regras",
       whitelistCn: "Proxy exceto sites da China",
       gfwlist: "Proxy apenas para GFWList",
-      sameAsPacMode: "O modo de divisão de tráfego é igual ao da porta de regras",
+      sameAsPacMode:
+        "O modo de divisão de tráfego é igual ao da porta de regras",
       default: "Manter o padrão",
       on: "Ativado",
       off: "Desativado",
       updateSubWhenStart: "Atualizar assinaturas ao iniciar o serviço",
-      updateSubAtIntervals: "Atualizar assinaturas regularmente (unidade: hora)",
+      updateSubAtIntervals:
+        "Atualizar assinaturas regularmente (unidade: hora)",
       updateGfwlistWhenStart: "Atualizar GFWList ao iniciar o serviço",
-      updateGfwlistAtIntervals: "Atualizar GFWList regularmente (unidade: hora)",
+      updateGfwlistAtIntervals:
+        "Atualizar GFWList regularmente (unidade: hora)",
       dependTransparentMode: "Segue o proxy transparente/proxy do sistema",
       leastPing: "Menor latência primeiro",
       backendV2ray: "v2ray / xray",
@@ -191,18 +186,27 @@ export default {
       tunUnsupported: "não suportado nesta plataforma",
     },
     messages: {
-      inboundSniffing: "Inspeciona o tráfego de entrada. Se estiver desativado, parte do tráfego poderá não ser redirecionada corretamente.",
-      gfwlist: "Baseia-se na data de modificação do arquivo, que às vezes é posterior à versão mais recente online.",
-      transparentProxy: "Com o proxy transparente ativado, nenhuma configuração extra é necessária e todo o tráfego TCP passará pelo v2rayA. Para fornecer proxy a outros computadores e ao Docker pelo gateway, ative a opção 'Compartilhar na LAN'.",
-      transparentType: "★tproxy: suporta UDP, mas não Docker. ★redirect: compatível com Docker, mas não suporta UDP e precisa ocupar a porta local 53 para evitar a poluição do DNS. ★tun: o núcleo abre um dispositivo TUN e assume a rota padrão; funciona em Linux, Windows e macOS, suporta UDP, exclui o v2rayA e o núcleo automaticamente e permite excluir outros processos pelo nome. No Windows e no macOS, aplicativos que consultam diretamente um resolvedor da rede local ainda o ignoram.",
-      tproxyExcludedInterfaces: "Defina os prefixos das interfaces de rede que não devem passar pelo proxy transparente. O curinga * é aceito (convertido automaticamente em + no modo iptables). Por exemplo: docker*, veth*, wg*, ppp*, br-*. Separe vários prefixos com vírgulas.",
-      tunAutoRoute: "Quando ativado, o v2rayA instala as rotas e as configurações de DNS por conta própria. Quando desativado, você deverá fornecer scripts de configuração e remoção que configurem o roteamento.",
-      tunExcludeProcesses: "Nomes de processos cujo tráfego não passa pelo proxy, um por linha, por exemplo chrome.exe ou firefox. O v2rayA e o núcleo são sempre excluídos. O processo é identificado pelo nome do executável dono do socket; um socket fechado antes da consulta ou uma porta reutilizada por outro processo não podem ser atribuídos. As consultas DNS desses processos continuam sendo respondidas pelo módulo DNS do núcleo.",
+      inboundSniffing:
+        "Inspeciona o tráfego de entrada. Se estiver desativado, parte do tráfego poderá não ser redirecionada corretamente.",
+      gfwlist:
+        "Baseia-se na data de modificação do arquivo, que às vezes é posterior à versão mais recente online.",
+      transparentProxy:
+        "Com o proxy transparente ativado, nenhuma configuração extra é necessária e todo o tráfego TCP passará pelo v2rayA. Para fornecer proxy a outros computadores e ao Docker pelo gateway, ative a opção 'Compartilhar na LAN'.",
+      transparentType:
+        "★tproxy: suporta UDP, mas não Docker. ★redirect: compatível com Docker, mas não suporta UDP e precisa ocupar a porta local 53 para evitar a poluição do DNS. ★tun: o núcleo abre um dispositivo TUN e assume a rota padrão; funciona em Linux, Windows e macOS, suporta UDP, exclui o v2rayA e o núcleo automaticamente e permite excluir outros processos pelo nome. No Windows e no macOS, aplicativos que consultam diretamente um resolvedor da rede local ainda o ignoram.",
+      tproxyExcludedInterfaces:
+        "Defina os prefixos das interfaces de rede que não devem passar pelo proxy transparente. O curinga * é aceito (convertido automaticamente em + no modo iptables). Por exemplo: docker*, veth*, wg*, ppp*, br-*. Separe vários prefixos com vírgulas.",
+      tunAutoRoute:
+        "Quando ativado, o v2rayA instala as rotas e as configurações de DNS por conta própria. Quando desativado, você deverá fornecer scripts de configuração e remoção que configurem o roteamento.",
+      tunExcludeProcesses:
+        "Nomes de processos cujo tráfego não passa pelo proxy, um por linha, por exemplo chrome.exe ou firefox. O v2rayA e o núcleo são sempre excluídos. O processo é identificado pelo nome do executável dono do socket; um socket fechado antes da consulta ou uma porta reutilizada por outro processo não podem ser atribuídos. As consultas DNS desses processos continuam sendo respondidas pelo módulo DNS do núcleo.",
       pacMode: `Aqui você pode definir a regra de divisão de tráfego da porta de regras. Por padrão, a porta da "Regra de divisão de tráfego" é 20172 e usa o protocolo HTTP.`,
-      tcpFastOpen: "Simplifica o handshake TCP para acelerar o estabelecimento da conexão. Isso pode destacar as características dos pacotes e causar falha na conexão se o sistema não for compatível.",
+      tcpFastOpen:
+        "Simplifica o handshake TCP para acelerar o estabelecimento da conexão. Isso pode destacar as características dos pacotes e causar falha na conexão se o sistema não for compatível.",
       mux: "Multiplexa conexões TCP para reduzir o número de handshakes, mas isso afeta casos de alto throughput, como assistir a vídeos, fazer downloads e testar a velocidade. Isso pode destacar as características dos pacotes. Atualmente, é compatível apenas com vmess.",
       grpcShouldWithTls: "gRPC requer TLS; o TLS foi ativado",
-      ssPluginImpl: "★default: 'transport' para simple-obfs, 'chained' para v2ray-plugin." +
+      ssPluginImpl:
+        "★default: 'transport' para simple-obfs, 'chained' para v2ray-plugin." +
         "★chained: o tráfego do shadowsocks será redirecionado para um plugin independente." +
         "★transport: processado diretamente pela camada de transporte do núcleo v2ray/xray.",
     },
@@ -218,35 +222,16 @@ export default {
     portVmessLink: "Link da porta VMess",
     portApi: "Porta da API (0 para aleatória)",
     apiServices: "Serviços de API ativados",
-    noVmessLink: "Ainda não há um link VMess. Defina uma porta VMess e salve primeiro.",
-    saveFailed: "Falha ao salvar as configurações de endereço e porta: {message}",
+    noVmessLink:
+      "Ainda não há um link VMess. Defina uma porta VMess e salve primeiro.",
+    saveFailed:
+      "Falha ao salvar as configurações de endereço e porta: {message}",
     messages: [
       "O endereço padrão do serviço, 0.0.0.0:2017, pode ser alterado definindo a variável de ambiente <code>V2RAYA_ADDRESS</code> e o argumento de comando <code>--address</code>.",
       "Se você iniciar o contêiner Docker do v2rayA com mapeamento de portas em vez de <code>--network host</code>, poderá remapear as portas desta forma.",
       "Não é possível verificar a ocupação das portas no modo Docker. Confirme por conta própria.",
       "Zero significa fechar esta porta.",
     ],
-  },
-  customRouting: {
-    title: "Personalizar regra de roteamento",
-    defaultRoutingRule: "Regra de roteamento padrão",
-    sameAsDefaultRule: "igual à regra padrão",
-    appendRule: "Adicionar regra",
-    direct: "Direto",
-    proxy: "Proxy",
-    block: "Bloquear",
-    rule: "Regra",
-    domainFile: "Arquivo de domínios",
-    typeRule: "Tipo de regra",
-    tags: "Tags",
-    saveFailed: "Falha ao salvar as regras de roteamento personalizadas: {message}",
-    messages: {
-      0: "O v2rayA reconhecerá todos os arquivos SiteDat em <b>{V2RayLocationAsset}</b>",
-      1: "Para criar um arquivo SiteDat por conta própria: <a href=\"https://github.com/ToutyRater/V2Ray-SiteDAT\">ToutyRater/V2Ray-SiteDAT</a>",
-      2: "A seleção múltipla é compatível.",
-      noSiteDatFileFound: "Nenhum arquivo siteDat encontrado em {V2RayLocationAsset}",
-      emptyRuleNotPermitted: "Cada regra deve selecionar pelo menos uma tag",
-    },
   },
   dns: {
     title: "Configurações de DNS",
@@ -256,24 +241,12 @@ export default {
     colDomains: "Lista de domínios",
     colOutbound: "Saída",
     serverPlaceholder: "por exemplo, 8.8.8.8 ou https://dns.google/dns-query",
-    domainsPlaceholder: "Um por linha, por exemplo, geosite:cn\nDeixe vazio para usar o DNS de fallback",
+    domainsPlaceholder:
+      "Um por linha, por exemplo, geosite:cn\nDeixe vazio para usar o DNS de fallback",
     addRule: "Adicionar regra",
     resetDefault: "Restaurar padrões",
     errNoRules: "Pelo menos uma regra precisa de um servidor DNS",
     saveFailed: "Falha ao salvar as regras de DNS: {message}",
-  },
-  egressPortWhitelist: {
-    title: "Lista branca de portas de saída",
-    tcpPortWhitelist: "Lista branca de portas TCP",
-    udpPortWhitelist: "Lista branca de portas UDP",
-    messages: [
-      "Se o v2rayA estiver configurado no servidor A, conectado a um servidor proxy B, preste atenção:",
-      "O proxy transparente forçará todo o tráfego TCP e UDP a passar pelo servidor proxy B, substituindo o IP de origem pelo IP do proxy B. Além disso, se clientes enviarem solicitações ao servidor A, que fornece um serviço, receberão respostas do IP do proxy B, o que é ilegal.",
-      "Para resolver isso, adicione essas portas de serviço à lista branca para que não passem pelo proxy. Por exemplo, ssh(22) e v2raya({v2rayaPort}).",
-      "Se o servidor não fornecer nenhum serviço, você poderá ignorar esta configuração.",
-      "Formato: 22 significa a porta 22; 20170:20172 significa três portas, de 20170 a 20172.",
-    ],
-    saveFailed: "Falha ao salvar a lista branca de portas de saída: {message}",
   },
   configureServer: {
     required: "Obrigatório",
@@ -362,28 +335,33 @@ export default {
   import: {
     server: "Link do servidor",
     subscription: "Endereço da assinatura",
-    serverMessage: "Digite um link de servidor:",
     subscriptionMessage: "Digite um endereço de assinatura:",
     batchMessage: "Um link de servidor por linha:",
-    qrcodeError: "Nenhum código QR encontrado na imagem. Tente uma imagem mais nítida.",
+    qrcodeError:
+      "Nenhum código QR encontrado na imagem. Tente uma imagem mais nítida.",
     notImage: "Escolha um arquivo de imagem",
     success: "Importação concluída",
     failed: "Falha na importação: {message}",
-    timeout: "A importação atingiu o tempo limite. O servidor de assinatura não respondeu a tempo.",
+    timeout:
+      "A importação atingiu o tempo limite. O servidor de assinatura não respondeu a tempo.",
   },
   delete: {
     title: "Excluir itens selecionados",
-    message: "Excluir os {n} servidores ou assinaturas selecionados? Esta ação não pode ser desfeita.",
+    message:
+      "Excluir os {n} servidores ou assinaturas selecionados? Esta ação não pode ser desfeita.",
     failed: "Falha ao excluir: {message}",
   },
   latency: {
-    message: "Os testes de latência podem levar vários minutos. Aguarde com paciência.",
+    message:
+      "Os testes de latência podem levar vários minutos. Aguarde com paciência.",
     testing: "testando…",
     failed: "Falha no teste de latência: {message}",
   },
   version: {
-    v2rayInvalid: "geosite.dat, geoip.dat ou o v2ray-core podem não estar instalados corretamente",
-    coreVersionMismatch: "Incompatibilidade de versão do núcleo: a versão do v2raya_core deve corresponder exatamente à versão do v2rayA. {err}",
+    v2rayInvalid:
+      "geosite.dat, geoip.dat ou o v2ray-core podem não estar instalados corretamente",
+    coreVersionMismatch:
+      "Incompatibilidade de versão do núcleo: a versão do v2raya_core deve corresponder exatamente à versão do v2rayA. {err}",
   },
   about: {
     intro: "v2rayA é um cliente web do V2Ray.",
@@ -393,18 +371,20 @@ export default {
       service: "porta de serviço do v2rayA",
       socks: "protocolo SOCKS",
       http: "protocolo HTTP",
-      httpRules: "protocolo HTTP com a \"Regra de divisão de tráfego\"",
+      httpRules: 'protocolo HTTP com a "Regra de divisão de tráfego"',
       tproxy: "tproxy, necessária para o proxy transparente",
     },
     local: "Todos os dados são armazenados localmente, não na nuvem.",
-    report: "Problemas encontrados durante o uso podem ser relatados em {discussions}.",
+    report:
+      "Problemas encontrados durante o uso podem ser relatados em {discussions}.",
     discussions: "discussões",
     docs: "Documentação:",
   },
   axios: {
     messages: {
       optimizeBackend: "Alterar o endereço do serviço v2rayA?",
-      noBackendFound: "Não foi possível encontrar o v2rayA em {url}. Verifique se o v2rayA está em execução nesse endereço.",
+      noBackendFound:
+        "Não foi possível encontrar o v2rayA em {url}. Verifique se o v2rayA está em execução nesse endereço.",
       cannotCommunicate: [
         "Não foi possível comunicar. Se o serviço estiver em execução e as portas estiverem abertas corretamente, o navegador atual pode não permitir que sites HTTPS acessem recursos HTTP. Tente usar o Chrome ou mudar para o site HTTP alternativo.",
         "Não foi possível comunicar. O Firefox não permite que sites HTTPS acessem recursos HTTP. Tente mudar para o site HTTP alternativo.",
@@ -416,20 +396,24 @@ export default {
   },
   routingA: {
     messages: ["clique no botão 'Ajuda e manual' para obter ajuda"],
-    inboundDeprecated: "Definir inbounds no RoutingA está obsoleto. A configuração JSON gerada NÃO incluirá essas portas de entrada. Use as configurações de entrada personalizada com regras do RoutingA.",
-    inboundDeprecatedConfirm: "Esta configuração do RoutingA contém definições de entrada obsoletas. A configuração gerada não incluirá essas portas de entrada. Continuar salvando?",
+    inboundDeprecated:
+      "Definir inbounds no RoutingA está obsoleto. A configuração JSON gerada NÃO incluirá essas portas de entrada. Use as configurações de entrada personalizada com regras do RoutingA.",
+    inboundDeprecatedConfirm:
+      "Esta configuração do RoutingA contém definições de entrada obsoletas. A configuração gerada não incluirá essas portas de entrada. Continuar salvando?",
     savedWithWarning: "RoutingA salvo com um aviso: {warning}",
     saveFailed: "Falha ao salvar o RoutingA: {message}",
   },
   outbound: {
     addMessage: "Insira o nome do grupo de proxy que deseja adicionar:",
-    deleteMessage: "Excluir o grupo de proxy \"{outboundName}\"? Os nós serão desconectados. Esta ação não pode ser desfeita.",
+    deleteMessage:
+      'Excluir o grupo de proxy "{outboundName}"? Os nós serão desconectados. Esta ação não pode ser desfeita.',
     added: "Grupo de proxy adicionado",
     addFailed: "Falha ao adicionar o grupo de proxy: {message}",
     deleted: "Grupo de proxy excluído",
     deleteFailed: "Falha ao excluir o grupo de proxy {group}: {message}",
     settingSaved: "Configurações do grupo de proxy salvas",
-    settingSaveFailed: "Falha ao salvar as configurações do grupo de proxy: {message}",
+    settingSaveFailed:
+      "Falha ao salvar as configurações do grupo de proxy: {message}",
     probeUrl: "URL de sondagem",
     probeInterval: "Intervalo de sondagem",
     type: "Tipo",
@@ -453,12 +437,10 @@ export default {
     failed: "Falha ao criar o link de compartilhamento: {message}",
   },
   log: {
-    logModalTitle: "Visualizar registros",
     logsLabel: "Registros",
     refreshInterval: "Intervalo de atualização",
     seconds: "segundos",
     autoShowNew: "Mostrar novos registros automaticamente",
-    category: "Categoria",
     source: "Origem do registro",
     categories: {
       all: "Todos",
@@ -472,7 +454,8 @@ export default {
     sources: {
       all: "Todas",
     },
-    tailOnly: "Mostrando as últimas {count} linhas ({skipped} linhas mais antigas ocultas nesta tela)",
+    tailOnly:
+      "Mostrando as últimas {count} linhas ({skipped} linhas mais antigas ocultas nesta tela)",
     export: "Exportar",
   },
   tproxyWhiteIpGroups: {
@@ -484,7 +467,8 @@ export default {
     formName1: "Mantenha Ctrl pressionado para selecionar vários itens.",
     formName2: "IPs personalizados (um por linha, formato CIDR padrão)",
     formPlaceholder2: "172.30.0.0/16\nfd00:aaaa:bbbb::/48",
-    invalidCustomIps: "Os IPs personalizados devem ser um CIDR por linha, por exemplo, 10.0.0.0/8",
+    invalidCustomIps:
+      "Os IPs personalizados devem ser um CIDR por linha, por exemplo, 10.0.0.0/8",
     saveFailed: "Falha ao salvar os grupos de IPs diretos: {message}",
     cn: "China continental",
     private: "Privado",
@@ -508,7 +492,8 @@ export default {
       "Atenção: um arquivo incorreto pode impedir a inicialização do serviço. Se o serviço não iniciar após o download, clique no botão Excluir GFWList.",
     ],
     formName: "Link de download personalizado",
-    wrongCustomLink: "O link de download personalizado deve começar com http:// ou https://",
+    wrongCustomLink:
+      "O link de download personalizado deve começar com http:// ou https://",
     updated: "GFWList atualizada",
     saveFailed: "Falha ao atualizar a GFWList: {message}",
     alreadyUpToDate: "A GFWList já está na versão mais recente ({version})",
@@ -516,19 +501,24 @@ export default {
   tun: {
     routeScript: {
       title: "Script de rota personalizado do TUN",
-      warning: "Aviso: scripts incorretos podem danificar sua rede ou o roteamento do sistema. Certifique-se de saber o que está fazendo antes de salvar.",
+      warning:
+        "Aviso: scripts incorretos podem danificar sua rede ou o roteamento do sistema. Certifique-se de saber o que está fazendo antes de salvar.",
       shellType: "Tipo de shell",
       customShell: "Personalizado (especifique o caminho abaixo)",
       shellPath: "Caminho do shell",
       shellPathPlaceholder: "/usr/bin/bash",
       setupScript: "Script de configuração (executado após o TUN ficar ativo)",
-      setupScriptPlaceholder: "# Script para configurar rotas quando o TUN estiver ativo\n# por exemplo: ip route add default dev tun0",
-      teardownScript: "Script de remoção (executado antes de o TUN ser fechado)",
-      teardownScriptPlaceholder: "# Script para remover rotas antes de o TUN ser fechado\n# por exemplo: ip route del default dev tun0",
+      setupScriptPlaceholder:
+        "# Script para configurar rotas quando o TUN estiver ativo\n# por exemplo: ip route add default dev tun0",
+      teardownScript:
+        "Script de remoção (executado antes de o TUN ser fechado)",
+      teardownScriptPlaceholder:
+        "# Script para remover rotas antes de o TUN ser fechado\n# por exemplo: ip route del default dev tun0",
     },
     processExclude: {
       title: "Exclusão de processos personalizada do TUN",
-      warning: "Aviso: nomes de processos incorretos podem ignorar o tráfego inesperadamente. Adicione apenas nomes de processos confiáveis.",
+      warning:
+        "Aviso: nomes de processos incorretos podem ignorar o tráfego inesperadamente. Adicione apenas nomes de processos confiáveis.",
       listLabel: "Nomes de processos excluídos",
       placeholder: "v2raya, v2ray, chrome.exe",
       hint: "Aceita separadores por vírgula ou nova linha. Os valores são deduplicados ao salvar.",
@@ -564,7 +554,8 @@ export default {
   pinnedPeerCertSha256: "SHA256 do certificado fixado",
   verifyPeerCertByName: "Verificar certificado do peer pelo nome",
   backend: {
-    NO_SERVER_SELECTED: "Nenhum servidor selecionado. Conecte um servidor primeiro.",
+    NO_SERVER_SELECTED:
+      "Nenhum servidor selecionado. Conecte um servidor primeiro.",
     CORE_START_FAILED: "Falha ao iniciar o v2raya_core: {detail}",
     CORE_NOT_FOUND: "v2raya_core não encontrado.",
     CORE_VERSION_MISMATCH:

@@ -17,18 +17,12 @@ export default {
     notLogin: "未登录",
     latest: "最新",
     local: "本地",
-    success: "成功",
     fail: "失败",
     empty: "没有加入节点",
     none: "无",
-    optional: "可选",
     loadBalance: "负载均衡",
     log: "日志",
     proxyGroups: "代理分组",
-    darkTheme: "深色主题",
-    lightTheme: "浅色主题",
-    autoTheme: "自动主题",
-    expand: "显示连接状态",
   },
   theme: {
     auto: "自动",
@@ -44,7 +38,6 @@ export default {
     docker: "v2rayA 服务端运行于 Docker，版本：{version}",
     default: "v2rayA 服务端正在运行，版本：{version}",
     newVersion: "检测到新版本：{version}",
-    separator: "；",
     messages: [
       "尚未创建或导入任何节点或订阅。",
       "可以导入节点链接或订阅地址，也可以手动创建节点。",
@@ -93,7 +86,6 @@ export default {
     delete: "删除",
     create: "创建",
     import: "导入",
-    inBatch: "批量",
     connect: "连接",
     disconnect: "断开",
     addTo: "添加到",
@@ -109,8 +101,6 @@ export default {
     copySelected: "复制勾选节点",
     downloadTxt: "下载 TXT 文件",
     helpManual: "查看帮助",
-    yes: "是",
-    no: "否",
     switchSite: "切换至备用站点",
     addOutbound: "新增一个代理分组",
     add: "添加",
@@ -195,11 +185,14 @@ export default {
       gfwlist: "该时间是指本地文件最后修改时间，因此可能会领先最新版本",
       transparentProxy:
         "全局代理开启后，无需经过额外设置，任何TCP流量均会经过V2RayA。另外，如需作为网关使得连接本机的其他主机或docker也享受代理，请勾选“开启局域网共享”。",
-      transparentType: "★tproxy: 支持udp，不支持docker。★redirect: docker友好，不支持udp，需要占用本地53端口以应对dns污染。★tun: 由核心打开 TUN 设备并接管默认路由；支持 Linux、Windows、macOS 与 UDP，自动排除 v2rayA 与核心自身，并可按进程名排除其他进程。Windows 与 macOS 上直接查询局域网 DNS 的应用仍会绕过它。",
+      transparentType:
+        "★tproxy: 支持udp，不支持docker。★redirect: docker友好，不支持udp，需要占用本地53端口以应对dns污染。★tun: 由核心打开 TUN 设备并接管默认路由；支持 Linux、Windows、macOS 与 UDP，自动排除 v2rayA 与核心自身，并可按进程名排除其他进程。Windows 与 macOS 上直接查询局域网 DNS 的应用仍会绕过它。",
       tproxyExcludedInterfaces:
         "设置不经过透明代理的网卡前缀。支持通配符 * (iptables模式下会自动转换为 +)。例如: docker*, veth*, wg*, ppp*, br-*。多个前缀用逗号隔开。",
-      tunAutoRoute: "开启时，v2rayA 自行安装路由与 DNS 设置。关闭时，需要提供自定义的启动/停止脚本手动配置路由。",
-      tunExcludeProcesses: "流量直连的进程名，一行一个，例如：chrome.exe、firefox。v2rayA 与核心始终排除。按 socket 属主的可执行文件名识别；查找前已关闭的 socket 或被其他进程复用的端口无法归属。被排除进程的 DNS 查询仍由核心 DNS 模块回答。",
+      tunAutoRoute:
+        "开启时，v2rayA 自行安装路由与 DNS 设置。关闭时，需要提供自定义的启动/停止脚本手动配置路由。",
+      tunExcludeProcesses:
+        "流量直连的进程名，一行一个，例如：chrome.exe、firefox。v2rayA 与核心始终排除。按 socket 属主的可执行文件名识别；查找前已关闭的 socket 或被其他进程复用的端口无法归属。被排除进程的 DNS 查询仍由核心 DNS 模块回答。",
       pacMode:
         "该选项设置规则分流端口所使用的路由模式。默认情况下规则分流端口为20172，HTTP协议。",
       tcpFastOpen:
@@ -232,27 +225,6 @@ export default {
       "如将端口设为0则表示关闭该端口。",
     ],
   },
-  customRouting: {
-    title: "自定义路由规则",
-    defaultRoutingRule: "默认路由规则",
-    sameAsDefaultRule: "与默认规则相同",
-    appendRule: "追加规则",
-    direct: "直连",
-    proxy: "代理",
-    block: "拦截",
-    rule: "规则",
-    domainFile: "域名文件",
-    typeRule: "规则类型",
-    tags: "标签",
-    saveFailed: "无法保存自定义路由规则：{message}",
-    messages: {
-      0: "将SiteDat文件放于 <b>{V2RayLocationAsset}</b> 目录下，V2rayA将自动进行识别",
-      1: '制作SiteDat文件：<a href="https://github.com/ToutyRater/V2Ray-SiteDAT">ToutyRater/V2Ray-SiteDAT</a>',
-      2: "在选择Tags时，可按Ctrl等多选键进行多选。",
-      noSiteDatFileFound: "未在{V2RayLocationAsset}中发现siteDat文件",
-      emptyRuleNotPermitted: "每条规则至少选择一个 tag",
-    },
-  },
   dns: {
     title: "DNS 设置",
     help: "DNS 帮助",
@@ -266,19 +238,6 @@ export default {
     resetDefault: "恢复默认",
     errNoRules: "至少一条规则需要填写 DNS 服务器",
     saveFailed: "无法保存 DNS 规则：{message}",
-  },
-  egressPortWhitelist: {
-    title: "出方向端口白名单",
-    tcpPortWhitelist: "TCP端口白名单",
-    udpPortWhitelist: "UDP端口白名单",
-    messages: [
-      "如果你将v2rayA架设在对外提供服务的服务器A上，连接了代理服务器B，那么你需要注意：",
-      "透明代理会使得所有TCP、UDP流量走代理，通过走代理的流量其源IP地址会被替换为代理服务器B的IP地址，那么如果有客户向你的服务器A发出请求，他却将得到从你代理服务器B发出的回答，该回答在客户看来无疑是不合法的，从而导致连接被拒绝。",
-      "因此，需要将服务器提供的对外服务端口包含在白名单中，使其不走代理。如ssh(22)、v2raya({v2rayaPort})。",
-      "如不对外提供服务或仅对局域网内主机提供服务，则可不设置白名单。",
-      "格式：22表示端口22，20170:20172表示20170到20172三个端口。",
-    ],
-    saveFailed: "无法保存出方向端口白名单：{message}",
   },
   configureServer: {
     required: "必填",
@@ -367,7 +326,6 @@ export default {
   import: {
     server: "节点链接",
     subscription: "订阅地址",
-    serverMessage: "填入节点链接：",
     subscriptionMessage: "填入订阅地址：",
     batchMessage: "一行一个节点链接:",
     qrcodeError: "图片中未识别到二维码，请换一张更清晰的图片",
@@ -423,8 +381,10 @@ export default {
   },
   routingA: {
     messages: ["点击“查看帮助”按钮以获取帮助"],
-    inboundDeprecated: "RoutingA 中定义入站(inbound)的功能已弃用，生成的 JSON 配置将不会包含对应的入站端口。请使用自定义入站设置中的 RoutingA 规则功能替代。",
-    inboundDeprecatedConfirm: "当前 RoutingA 配置包含已弃用的入站定义，生成的配置将不会包含这些入站端口。是否继续保存？",
+    inboundDeprecated:
+      "RoutingA 中定义入站(inbound)的功能已弃用，生成的 JSON 配置将不会包含对应的入站端口。请使用自定义入站设置中的 RoutingA 规则功能替代。",
+    inboundDeprecatedConfirm:
+      "当前 RoutingA 配置包含已弃用的入站定义，生成的配置将不会包含这些入站端口。是否继续保存？",
     savedWithWarning: "RoutingA 已保存，但有警告：{warning}",
     saveFailed: "无法保存 RoutingA：{message}",
   },
@@ -461,12 +421,10 @@ export default {
     failed: "无法创建分享链接：{message}",
   },
   log: {
-    logModalTitle: "查看日志",
     logsLabel: "日志",
     refreshInterval: "刷新间隔",
     seconds: "秒",
     autoShowNew: "自动显示新日志",
-    category: "分类",
     source: "日志来源",
     categories: {
       all: "全部",
@@ -483,27 +441,27 @@ export default {
     tailOnly: "仅显示最近 {count} 行（此屏幕上隐藏了较早的 {skipped} 行）",
     export: "导出",
   },
-  
+
   tproxyWhiteIpGroups: {
     title: "直通白名单IP组",
     messages: [
       "选中的IP组将会不经过XRay/V2Ray核心直接出站（通过Nftables/Iptables直接转发），请确保你的DNS服务器足够可靠无污染能使客户端能解析到正确的IP",
-      "最好系统使用Nftables时使用此功能，Iptables可能在添加大量IP时存在性能问题"
+      "最好系统使用Nftables时使用此功能，Iptables可能在添加大量IP时存在性能问题",
     ],
     formName1: "按住Ctrl可以多选",
     formName2: "自定义IP（一行一个，标准CIDR格式）",
     formPlaceholder2: "172.30.0.0/16\nfd00:dead:beef::/48",
     invalidCustomIps: "自定义 IP 须每行一个 CIDR，例如 10.0.0.0/8",
     saveFailed: "无法保存直通 IP 分组：{message}",
-    cn: '中国大陆',
-    private: '私网网段',
-    us: '美国',
-    cloudflare: 'Cloudflare',
+    cn: "中国大陆",
+    private: "私网网段",
+    us: "美国",
+    cloudflare: "Cloudflare",
   },
   domainsExcluded: {
     title: "排除域名",
     messages: [
-      "一个域名列表，如果流量探测结果在这个列表中时，将 不会 重置目标地址。"
+      "一个域名列表，如果流量探测结果在这个列表中时，将 不会 重置目标地址。",
     ],
     formName: "排除域名列表",
     formPlaceholder: "courier.push.apple.com\nMijia Cloud\ndlg.io.mi.com",
@@ -514,7 +472,7 @@ export default {
     messages: [
       "如果当前环境访问Github困难，你可以从此处（https://github.com/v2rayA/dist-v2ray-rules-dat）手动下载最新GFWList（geosite.dat），上传到你的服务器，然后填写你的服务器链接进行下载",
       "如果不填写自定义下载链接输入框则自动从Github进行下载",
-      "注意：错误的文件可能导致服务启动失败，如果更新后服务器启动失败，你可以点击删除按钮删除下载的GFWList"
+      "注意：错误的文件可能导致服务启动失败，如果更新后服务器启动失败，你可以点击删除按钮删除下载的GFWList",
     ],
     formName: "自定义下载链接",
     wrongCustomLink: "自定义下载链接必须以 http:// 或 https:// 开头",
@@ -525,19 +483,23 @@ export default {
   tun: {
     routeScript: {
       title: "TUN 自定义路由脚本",
-      warning: "警告：错误的脚本可能会破坏您的网络或系统路由。请确保您清楚自己正在做什么再保存。",
+      warning:
+        "警告：错误的脚本可能会破坏您的网络或系统路由。请确保您清楚自己正在做什么再保存。",
       shellType: "Shell 类型",
       customShell: "自定义（在下方指定路径）",
       shellPath: "Shell 路径",
       shellPathPlaceholder: "/usr/bin/bash",
       setupScript: "启动脚本（TUN 就绪后执行）",
-      setupScriptPlaceholder: "# TUN 就绪时配置路由的脚本\n# 例如: ip route add default dev tun0",
+      setupScriptPlaceholder:
+        "# TUN 就绪时配置路由的脚本\n# 例如: ip route add default dev tun0",
       teardownScript: "停止脚本（关闭 TUN 前执行）",
-      teardownScriptPlaceholder: "# 关闭 TUN 前移除路由的脚本\n# 例如: ip route del default dev tun0",
+      teardownScriptPlaceholder:
+        "# 关闭 TUN 前移除路由的脚本\n# 例如: ip route del default dev tun0",
     },
     processExclude: {
       title: "TUN 自定义进程排除",
-      warning: "警告：错误的进程名可能导致流量被意外直通。请仅添加你确认需要排除的进程。",
+      warning:
+        "警告：错误的进程名可能导致流量被意外直通。请仅添加你确认需要排除的进程。",
       listLabel: "排除进程名称",
       placeholder: "v2raya, v2ray, chrome.exe",
       hint: "支持逗号或换行分隔。保存时会自动去重。",
@@ -576,7 +538,8 @@ export default {
     NO_SERVER_SELECTED: "未选择节点，请先连接一个节点。",
     CORE_START_FAILED: "无法启动 v2raya_core：{detail}",
     CORE_NOT_FOUND: "未找到 v2raya_core。",
-    CORE_VERSION_MISMATCH: "v2raya_core 版本 {core} 与 v2rayA 版本 {app} 不一致。",
+    CORE_VERSION_MISMATCH:
+      "v2raya_core 版本 {core} 与 v2rayA 版本 {app} 不一致。",
     PORT_OCCUPIED: "端口 {port} 已被占用。",
     INVALID_PORT: "端口 {port} 无效。",
     PORT_DUPLICATE: "端口 {port} 重复使用。",

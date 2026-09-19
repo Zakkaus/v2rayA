@@ -17,18 +17,12 @@ export default {
     notLogin: "Not logged in",
     latest: "Latest",
     local: "Local",
-    success: "Succeeded",
     fail: "Failed",
     empty: "No nodes added",
     none: "none",
-    optional: "optional",
     loadBalance: "Load Balance",
     log: "Logs",
     proxyGroups: "Proxy Groups",
-    darkTheme: "Dark Theme",
-    lightTheme: "Light Theme",
-    autoTheme: "Auto Theme",
-    expand: "Show the connection status",
   },
   theme: {
     auto: "Auto",
@@ -44,7 +38,6 @@ export default {
     docker: "v2rayA service is running in Docker. Version: {version}",
     default: "v2rayA service is running. Version: {version}",
     newVersion: "New version available: {version}",
-    separator: " ",
     messages: [
       "No servers yet.",
       "Import a server link or subscription address, or create a server manually.",
@@ -74,7 +67,8 @@ export default {
     timeLastUpdate: "Datetime of Last Update",
     numberServers: "Number of Servers",
     subscription: "Subscription",
-    autoSelect: "Automatically connect to new servers from the subscription after an automatic update of the subscription",
+    autoSelect:
+      "Automatically connect to new servers from the subscription after an automatic update of the subscription",
     autoSelectLabel: "Auto-select",
     updated: "Subscription updated",
     saved: "Subscription saved",
@@ -93,7 +87,6 @@ export default {
     delete: "Delete",
     create: "Create",
     import: "Import",
-    inBatch: "In batch",
     connect: "Connect",
     disconnect: "Disconnect",
     addTo: "Add to",
@@ -109,8 +102,6 @@ export default {
     copySelected: "Copy selected nodes",
     downloadTxt: "Download TXT file",
     helpManual: "Help & Manual",
-    yes: "Yes",
-    no: "No",
     switchSite: "Switch to alternate site",
     addOutbound: "Add a proxy group",
     add: "Add",
@@ -191,16 +182,20 @@ export default {
       tunUnsupported: "not supported on this platform",
     },
     messages: {
-      inboundSniffing: "Sniff inbound traffic. If it is not turned on, some traffic may not be diverted correctly.",
+      inboundSniffing:
+        "Sniff inbound traffic. If it is not turned on, some traffic may not be diverted correctly.",
       gfwlist:
         "Based on modified time of file which sometimes is after latest version online.",
       transparentProxy:
         "If transparent proxy on, no extra configure needed and all TCP traffic will pass through the v2rayA. Providing proxy service to other computers and docker as the gateway should make option 'Share in LAN' on.",
-      transparentType: "★tproxy: supports UDP, but not docker. ★redirect: friendly for docker, but does not support UDP and needs local port 53 for DNS anti-pollution. ★tun: the core opens a TUN device and takes the default route; works on Linux, Windows and macOS, supports UDP, excludes v2rayA and the core by itself and lets you exclude other processes by name. On Windows and macOS, applications that query a LAN resolver directly still bypass it.",
+      transparentType:
+        "★tproxy: supports UDP, but not docker. ★redirect: friendly for docker, but does not support UDP and needs local port 53 for DNS anti-pollution. ★tun: the core opens a TUN device and takes the default route; works on Linux, Windows and macOS, supports UDP, excludes v2rayA and the core by itself and lets you exclude other processes by name. On Windows and macOS, applications that query a LAN resolver directly still bypass it.",
       tproxyExcludedInterfaces:
         "Set the network interface prefixes that should not pass through the transparent proxy. Wildcard * is supported (automatically converted to + in iptables mode). For example: docker*, veth*, wg*, ppp*, br-*. Use commas to separate multiple prefixes.",
-      tunAutoRoute: "When enabled, v2rayA installs the routes and DNS settings itself. When disabled, you must provide setup/teardown scripts that configure routing yourself.",
-      tunExcludeProcesses: "Process names whose traffic bypasses the proxy, one per line, e.g. chrome.exe or firefox. v2rayA and the core are always excluded. A process is identified by the executable name of the socket owner; a socket that closed before the lookup, or a port reused by another process, cannot be attributed. Their DNS queries are still answered by the core's DNS module.",
+      tunAutoRoute:
+        "When enabled, v2rayA installs the routes and DNS settings itself. When disabled, you must provide setup/teardown scripts that configure routing yourself.",
+      tunExcludeProcesses:
+        "Process names whose traffic bypasses the proxy, one per line, e.g. chrome.exe or firefox. v2rayA and the core are always excluded. A process is identified by the executable name of the socket owner; a socket that closed before the lookup, or a port reused by another process, cannot be attributed. Their DNS queries are still answered by the core's DNS module.",
       pacMode: `Here you can set the splitting traffic rule of the rule port. By default, "Rule of Splitting Traffic" port is 20172 and HTTP protocol.`,
       tcpFastOpen:
         "Simplify TCP handshake process to speed up connection establishment. Risk of emphasizing characteristics of packets exists. It may cause failed to connect if your system does not support it.",
@@ -234,27 +229,6 @@ export default {
       "Zero means to close this port.",
     ],
   },
-  customRouting: {
-    title: "Customize Routing Rule",
-    defaultRoutingRule: "Default Routing Rule",
-    sameAsDefaultRule: "the same as default rule",
-    appendRule: "Append Rule",
-    direct: "Direct",
-    proxy: "Proxy",
-    block: "Block",
-    rule: "Rule",
-    domainFile: "Domain File",
-    typeRule: "Type of Rule",
-    tags: "Tags",
-    saveFailed: "Failed to save custom routing rules: {message}",
-    messages: {
-      0: "v2rayA will recognize all SiteDat file in <b>{V2RayLocationAsset}</b>",
-      1: 'To make a SiteDat file by yourself: <a href="https://github.com/ToutyRater/V2Ray-SiteDAT">ToutyRater/V2Ray-SiteDAT</a>',
-      2: "Multi-select is supported.",
-      noSiteDatFileFound: "No siteDat file found in {V2RayLocationAsset}",
-      emptyRuleNotPermitted: "Every rule must select at least one tag",
-    },
-  },
   dns: {
     title: "DNS Settings",
     help: "DNS Help",
@@ -263,24 +237,12 @@ export default {
     colDomains: "Domain List",
     colOutbound: "Outbound",
     serverPlaceholder: "e.g. 8.8.8.8 or https://dns.google/dns-query",
-    domainsPlaceholder: "One per line, e.g. geosite:cn\nLeave empty for fallback DNS",
+    domainsPlaceholder:
+      "One per line, e.g. geosite:cn\nLeave empty for fallback DNS",
     addRule: "Add Rule",
     resetDefault: "Reset to Defaults",
     errNoRules: "At least one rule needs a DNS server",
     saveFailed: "Failed to save DNS rules: {message}",
-  },
-  egressPortWhitelist: {
-    title: "Egress Port Whitelist",
-    tcpPortWhitelist: "TCP Port Whitelist",
-    udpPortWhitelist: "UDP Port Whitelist",
-    messages: [
-      "If v2rayA is setup on a server A which connected with a proxy server B, pay attention:",
-      "Transparent proxy will force all TCP and UDP traffic to pass through proxy server B, where source IP address will be replaced with proxy B's. Moreover, if some clients send requests to server A that provides service, they will received responses from your proxy B's IP address weirdly, which is illegal.",
-      "To resolve it, we need to add those service ports to whitelist so that not pass through proxy.For examples, ssh(22)、v2raya({v2rayaPort}).",
-      "Obviously, if the server does not provide any service, you can skip configuring.",
-      "Formatting：22 means port 22，20170:20172 means three ports 20170 to 20172.",
-    ],
-    saveFailed: "Failed to save egress port whitelist: {message}",
   },
   configureServer: {
     required: "Required",
@@ -369,23 +331,23 @@ export default {
   import: {
     server: "Server link",
     subscription: "Subscription address",
-    serverMessage: "Input a server link:",
     subscriptionMessage: "Input a subscription address:",
     batchMessage: "One server link per line:",
     qrcodeError: "No QR code found in the image. Try a clearer image",
     notImage: "Choose an image file",
     success: "Import succeeded",
     failed: "Import failed: {message}",
-    timeout: "Import timed out. The subscription server did not respond in time",
+    timeout:
+      "Import timed out. The subscription server did not respond in time",
   },
   delete: {
     title: "Delete selected items",
-    message: "Delete the selected {n} servers or subscriptions? This cannot be undone.",
+    message:
+      "Delete the selected {n} servers or subscriptions? This cannot be undone.",
     failed: "Delete failed: {message}",
   },
   latency: {
-    message:
-      "Latency tests can take several minutes. Wait patiently please.",
+    message: "Latency tests can take several minutes. Wait patiently please.",
     testing: "testing…",
     failed: "Latency test failed: {message}",
   },
@@ -403,7 +365,7 @@ export default {
       service: "v2rayA service port",
       socks: "SOCKS protocol",
       http: "HTTP protocol",
-      httpRules: "HTTP protocol with \"Rule of Splitting Traffic\"",
+      httpRules: 'HTTP protocol with "Rule of Splitting Traffic"',
       tproxy: "tproxy, needed by transparent proxy",
     },
     local: "All data is stored in local instead of in the cloud.",
@@ -427,8 +389,10 @@ export default {
   },
   routingA: {
     messages: ["click the button 'Help&Manual' for help"],
-    inboundDeprecated: "Defining inbounds in RoutingA is deprecated. The generated JSON config will NOT include those inbound ports. Please use the custom inbound settings with RoutingA rules instead.",
-    inboundDeprecatedConfirm: "This RoutingA configuration contains deprecated inbound definitions. The generated config will not include those inbound ports. Continue saving?",
+    inboundDeprecated:
+      "Defining inbounds in RoutingA is deprecated. The generated JSON config will NOT include those inbound ports. Please use the custom inbound settings with RoutingA rules instead.",
+    inboundDeprecatedConfirm:
+      "This RoutingA configuration contains deprecated inbound definitions. The generated config will not include those inbound ports. Continue saving?",
     savedWithWarning: "RoutingA saved with a warning: {warning}",
     saveFailed: "Failed to save RoutingA: {message}",
   },
@@ -465,12 +429,10 @@ export default {
     failed: "Failed to create sharing link: {message}",
   },
   log: {
-    logModalTitle: "View logs",
     logsLabel: "Logs",
     refreshInterval: "Refresh Interval",
     seconds: "seconds",
     autoShowNew: "Auto Show New Logs",
-    category: "Category",
     source: "Log Source",
     categories: {
       all: "All",
@@ -484,29 +446,30 @@ export default {
     sources: {
       all: "All",
     },
-    tailOnly: "Showing the last {count} lines ({skipped} older lines hidden on this screen)",
+    tailOnly:
+      "Showing the last {count} lines ({skipped} older lines hidden on this screen)",
     export: "Export",
   },
   tproxyWhiteIpGroups: {
     title: "White IP Groups",
     messages: [
       "The selected IP group will bypass the XRay/V2Ray core and go directly outbound (through Nftables/Iptables). Please ensure your DNS server is reliable and free of contamination so that clients can resolve the correct IPs.",
-      "It's best to use this feature when your system is using Nftables, as iptables may experience performance issues when adding a large number of IPs."
+      "It's best to use this feature when your system is using Nftables, as iptables may experience performance issues when adding a large number of IPs.",
     ],
     formName1: "Hold down Ctrl to select multiple items.",
     formName2: "Custom IPs (one per line, standard CIDR format)",
     formPlaceholder2: "172.30.0.0/16\nfd00:aaaa:bbbb::/48",
     invalidCustomIps: "Custom IPs must be one CIDR per line, e.g. 10.0.0.0/8",
     saveFailed: "Failed to save direct IP groups: {message}",
-    cn: 'China Mainland',
-    private: 'Private',
-    us: 'United States',
-    cloudflare: 'Cloudflare',
+    cn: "China Mainland",
+    private: "Private",
+    us: "United States",
+    cloudflare: "Cloudflare",
   },
   domainsExcluded: {
     title: "Domains Excluded",
     messages: [
-      "A list of domain names. If the traffic sniffing result matches a domain name in this list, the target address will not be reset."
+      "A list of domain names. If the traffic sniffing result matches a domain name in this list, the target address will not be reset.",
     ],
     formName: "Domains Excluded List",
     formPlaceholder: "courier.push.apple.com\nMijia Cloud\ndlg.io.mi.com",
@@ -517,10 +480,11 @@ export default {
     messages: [
       "If accessing GitHub is difficult in your current environment, you can download the latest GFWList（geosite.dat）from GitHub（https://github.com/v2rayA/dist-v2ray-rules-dat）, upload it to your server, and then enter your server address here to download it.",
       "If the input form is empty it will automatically download from Github, otherwise it will download using the custom link",
-      "Please note: Wrong file may cause service startup failure. If the service cannot be started after downloading, you can click the Delete GFWList button"
+      "Please note: Wrong file may cause service startup failure. If the service cannot be started after downloading, you can click the Delete GFWList button",
     ],
     formName: "Custom Download Link",
-    wrongCustomLink: "The custom download link must start with http:// or https://",
+    wrongCustomLink:
+      "The custom download link must start with http:// or https://",
     updated: "GFWList updated",
     saveFailed: "Failed to update GFWList: {message}",
     alreadyUpToDate: "GFWList is already the latest version ({version})",
@@ -528,19 +492,23 @@ export default {
   tun: {
     routeScript: {
       title: "TUN Custom Route Script",
-      warning: "Warning: Incorrect scripts may break your network or system routing. Make sure you know what you are doing before saving.",
+      warning:
+        "Warning: Incorrect scripts may break your network or system routing. Make sure you know what you are doing before saving.",
       shellType: "Shell Type",
       customShell: "Custom (specify path below)",
       shellPath: "Shell Path",
       shellPathPlaceholder: "/usr/bin/bash",
       setupScript: "Setup Script (runs after the TUN is up)",
-      setupScriptPlaceholder: "# Script to configure routes when the TUN is up\n# e.g. ip route add default dev tun0",
+      setupScriptPlaceholder:
+        "# Script to configure routes when the TUN is up\n# e.g. ip route add default dev tun0",
       teardownScript: "Teardown Script (runs before the TUN is closed)",
-      teardownScriptPlaceholder: "# Script to remove routes before the TUN is closed\n# e.g. ip route del default dev tun0",
+      teardownScriptPlaceholder:
+        "# Script to remove routes before the TUN is closed\n# e.g. ip route del default dev tun0",
     },
     processExclude: {
       title: "TUN Custom Process Exclusion",
-      warning: "Warning: incorrect process names may bypass traffic unexpectedly. Add only trusted process names.",
+      warning:
+        "Warning: incorrect process names may bypass traffic unexpectedly. Add only trusted process names.",
       listLabel: "Excluded Process Names",
       placeholder: "v2raya, v2ray, chrome.exe",
       hint: "Supports comma or newline separators. Values are deduplicated when saved.",
