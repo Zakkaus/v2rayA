@@ -43,3 +43,14 @@
   scrollbar-width: thin;
   scrollbar-color: rgb(var(--v-theme-outline-variant)) transparent;
 }
+
+// plain tooltips: Material's inverse surface, 4 dp corners, body-small
+.v-tooltip > .v-overlay__content {
+  background: rgb(var(--v-theme-inverse-surface));
+  color: rgb(var(--v-theme-inverse-on-surface));
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.4px;
+}
