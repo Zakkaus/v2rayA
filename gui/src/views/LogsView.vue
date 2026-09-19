@@ -102,6 +102,7 @@ onMounted(() => {
   void stream.fetch();
   stream.start();
 });
+defineExpose({ sync: () => stream.fetch() });
 </script>
 
 <template>

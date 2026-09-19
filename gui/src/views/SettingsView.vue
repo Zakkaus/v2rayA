@@ -169,6 +169,7 @@ async function save() {
     saving.value = false;
   }
 }
+defineExpose({ sync: () => settings.load() });
 </script>
 
 <template>

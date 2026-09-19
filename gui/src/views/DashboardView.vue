@@ -60,6 +60,7 @@ const {
   updatingAll,
   subscriptionsBusy,
   toggleRunning,
+  sync,
   setQuick,
   selectNode,
   testMembers,
@@ -127,6 +128,7 @@ function pick(value: string) {
   const member = members.value.find((m) => m.key === value);
   void selectNode(member ? member.which : null, outbound);
 }
+defineExpose({ sync });
 </script>
 
 <template>

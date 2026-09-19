@@ -2,12 +2,17 @@
 // form as GET /setting returns it, saved with PUT /setting in the shape
 // the old dialog sent (integers where it parsed them).
 import { reactive, ref } from "vue";
-import { getRemoteGFWListVersion, getSetting, putSetting } from "@/api";
-import { ApiError } from "@/api/client";
+import {
+  getRemoteGFWListVersion,
+  getSetting,
+  getTouch,
+  putSetting,
+} from "@/api";
 import { watchConnected } from "@/api/connect";
 import type { Setting } from "@/api/types";
 import { openLoading } from "@/composables/useLoading";
 import { useAppStore } from "@/stores/app";
+import { runningOf } from "@/views/nodes/model";
 
 export const defaultForm = () => ({
   transparent: "close",
@@ -82,12 +87,16 @@ export function useSettings() {
         () => control.abort(),
       );
     } catch (err) {
-      if (
-        err instanceof ApiError &&
-        (err.body?.errorCode === "INVALID_CONFIG" ||
-          err.body?.message?.includes("invalid config"))
-      )
-        store.setRunning("stopped");
+      // the backend restores the previous setting and keeps the core as it
+      // was; the touch says which state that is
+      await getTouch()
+        .then((res) =>
+          store.setRunning(
+            runningOf(res.running, !!res.networkPaused),
+            !!res.networkPaused,
+          ),
+        )
+        .catch(() => {});
       throw err;
     } finally {
       loading.close();

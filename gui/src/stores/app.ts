@@ -24,8 +24,7 @@ export function normalizeOutbounds(outbounds: unknown): string[] {
 export type Running = "checking" | "running" | "stopped" | "paused";
 export type ThemePreference = "auto" | "light" | "dark";
 /** The page's destinations, in the order the rail and the bar show them. */
-export type View =
-  "dashboard" | "proxies" | "nodes" | "settings" | "logs" | "about";
+export type View = "dashboard" | "proxies" | "settings" | "logs" | "about";
 
 // One store for the session-wide state the old App.vue kept in data and
 // localStorage: what was a translated text ("正在运行") is an enum here, so
@@ -99,6 +98,9 @@ export const useAppStore = defineStore("app", {
       this.outbounds = normalizeOutbounds(outbounds);
       if (!this.outbounds.includes(this.outboundName))
         this.outboundName = "proxy";
+      // a deleted group's last frame would otherwise outlive it
+      for (const name of Object.keys(this.observatory))
+        if (!this.outbounds.includes(name)) delete this.observatory[name];
     },
     setTheme(preference: ThemePreference) {
       this.themePreference = preference;
@@ -120,14 +122,14 @@ export const useAppStore = defineStore("app", {
       this.variant = v.variant;
       this.loadBalanceValid = v.loadBalanceValid;
       this.coreVersionValid = v.coreVersionValid;
-      this.coreVersionErr = v.coreVersionErr;
+      this.coreVersionErr = v.coreVersionErr ?? "";
       localStorage.setItem("lite", String(v.lite));
       localStorage.setItem("docker", String(!!v.docker));
-      localStorage.setItem("variant", v.variant);
+      localStorage.setItem("variant", v.variant ?? "");
       localStorage.setItem("loadBalanceValid", String(v.loadBalanceValid));
       localStorage.setItem("coreVersionValid", String(v.coreVersionValid));
-      localStorage.setItem("coreVersionErr", v.coreVersionErr);
-      localStorage.setItem("version", v.version);
+      localStorage.setItem("coreVersionErr", v.coreVersionErr ?? "");
+      localStorage.setItem("version", v.version ?? "");
     },
   },
 });

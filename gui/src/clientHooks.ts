@@ -59,7 +59,7 @@ export function installClientHooks(ui: { openAddressDialog(): void }): void {
             onClick: () => window.open("http://v.v2raya.org", "_self"),
           },
         });
-      } else if (err.kind === "network" || err.url.endsWith("/api/version")) {
+      } else if (err.kind === "network") {
         informNotRunning(origin);
       }
     },

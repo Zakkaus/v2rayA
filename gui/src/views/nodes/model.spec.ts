@@ -67,7 +67,6 @@ describe("latency testing", () => {
         ],
       });
       const untouched = nodes.touch.value.servers[0];
-      nodes.selected.value = [untouched];
       const rows = [
         nodes.touch.value.servers[1],
         nodes.touch.value.subscriptions[0].servers[0],
@@ -92,74 +91,6 @@ describe("latency testing", () => {
     const rows = nodes.touch.value.servers;
     await expect(nodes.testAll(rows, false, "Testing")).rejects.toBe(error);
     expect(rows.map((r) => r.pingLatency)).toEqual(["", ""]);
-  });
-
-  test("testLatency sends only selected nodes, not subscriptions", async () => {
-    const nodes = createNodes();
-    api.getPingLatency.mockResolvedValue({ whiches: [] });
-    nodes.selected.value = [
-      nodes.touch.value.servers[1],
-      nodes.touch.value.subscriptions[0],
-    ];
-    await nodes.testLatency(false, "Testing");
-    expect(api.getPingLatency).toHaveBeenCalledExactlyOnceWith([
-      { _type: "server", id: 2, sub: null },
-    ]);
-  });
-});
-
-describe("connecting the fastest node", () => {
-  test("replaces the group with one lowest-latency node and applies the response", async () => {
-    const nodes = createNodes();
-    const rows = [
-      row(1, "timeout"),
-      row(2, "90ms"),
-      row(3, "12ms"),
-      row(4, "30ms"),
-    ];
-    const fastest = {
-      ...row(1, "8ms"),
-      _type: "subscriptionServer" as const,
-      sub: 0,
-    };
-    nodes.touch.value.connectedServer = [
-      { _type: "server", id: 2, outbound: "streaming" },
-    ];
-    api.putOutboundConnections.mockResolvedValue({
-      running: true,
-      networkPaused: false,
-      touch: {
-        ...nodes.touch.value,
-        connectedServer: [
-          { _type: "subscriptionServer", id: 1, sub: 0, outbound: "streaming" },
-        ],
-      },
-    });
-    expect(await nodes.connectFastest([...rows, fastest], "streaming")).toBe(
-      fastest,
-    );
-    expect(api.putOutboundConnections).toHaveBeenCalledExactlyOnceWith({
-      outbound: "streaming",
-      touches: [{ _type: "subscriptionServer", id: 1, sub: 0 }],
-    });
-    expect(
-      nodes.inGroup(nodes.touch.value.subscriptions[0].servers[0], "streaming"),
-    ).toBe(true);
-    expect(nodes.inGroup(nodes.touch.value.servers[1], "streaming")).toBe(
-      false,
-    );
-  });
-
-  test("does nothing without a numeric latency", async () => {
-    const nodes = createNodes();
-    expect(
-      await nodes.connectFastest(
-        [row(1), row(2, "timeout"), row(3, "Testing")],
-        "proxy",
-      ),
-    ).toBeNull();
-    expect(await nodes.connectFastest([], "proxy")).toBeNull();
-    expect(api.putOutboundConnections).not.toHaveBeenCalled();
   });
 });
 

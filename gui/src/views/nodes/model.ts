@@ -2,19 +2,12 @@
 import { computed, ref, watch } from "vue";
 import dayjs from "dayjs";
 import {
-  deleteConnection,
-  deleteTouch,
   getHttpLatency,
   getPingLatency,
-  getSharingAddress,
   getTouch,
-  postConnection,
   putOutboundConnections,
-  putSubscription,
 } from "@/api";
-import { watchConnected } from "@/api/connect";
 import type {
-  OutboundStatus,
   Touch,
   TouchResponse,
   TouchServer,
@@ -27,9 +20,6 @@ import { useAppStore, type Running } from "@/stores/app";
 export type Row = TouchServer;
 /** what a table row may be: a server, a subscription's server, or a subscription */
 export type Selectable = TouchServer | TouchSubscription;
-/** the tab: the subscription list, the servers, or one subscription's servers */
-export type Tab = "subscriptions" | "servers" | `sub-${number}`;
-
 export function runningOf(running: boolean, networkPaused: boolean): Running {
   if (networkPaused) return "paused";
   return running ? "running" : "stopped";
@@ -95,20 +85,7 @@ export function useNodes() {
     connectedServer: [],
   });
   const ready = ref(false);
-  const selected = ref<Selectable[]>([]);
-  const tab = ref<Tab>(storedTab());
 
-  watch(tab, (t) => {
-    localStorage.setItem("lastNodeTab", t);
-    selected.value = [];
-  });
-
-  const isEmpty = computed(
-    () =>
-      ready.value &&
-      !touch.value.servers.length &&
-      !touch.value.subscriptions.length,
-  );
   const connected = computed<Which[]>(() => touch.value.connectedServer ?? []);
   /** the rows connected in the current outbound */
   const connectedRows = computed(() =>
@@ -117,27 +94,6 @@ export function useNodes() {
       .map((w) => ({ which: w, row: locate(touch.value, w) }))
       .filter((x): x is { which: Which; row: Row } => x.row !== null),
   );
-  const observatory = computed<OutboundStatus[]>(
-    () => store.observatory[store.outboundName] ?? [],
-  );
-  /** the tabs holding a connected node of the current outbound */
-  const connectedTabs = computed(() => {
-    const tabs = new Set<Tab>();
-    for (const { which } of connectedRows.value)
-      tabs.add(which._type === "server" ? "servers" : `sub-${which.sub ?? 0}`);
-    return tabs;
-  });
-  const canDelete = computed(
-    () =>
-      selected.value.length > 0 &&
-      selected.value.every((r) => r._type !== "subscriptionServer"),
-  );
-  const canTest = computed(
-    () =>
-      selected.value.length > 0 &&
-      selected.value.some((r) => r._type !== "subscription"),
-  );
-
   function apply(res: TouchResponse) {
     const next = res.touch;
     next.subscriptions.forEach((s, i) => {
@@ -155,21 +111,7 @@ export function useNodes() {
       const row = locate(next, w);
       if (row) row.connected = true;
     }
-    // keep the selection on the rows that replace the selected ones
-    const keys = selected.value.map(rowKey);
-    const byKey = new Map<string, Selectable>();
-    for (const row of [
-      ...next.servers,
-      ...next.subscriptions,
-      ...next.subscriptions.flatMap((s) => s.servers),
-    ]) {
-      const k = rowKey(row);
-      if (!byKey.has(k)) byKey.set(k, row);
-    }
     touch.value = next;
-    selected.value = keys
-      .map((k) => byKey.get(k))
-      .filter((r): r is Selectable => !!r);
     store.setRunning(
       runningOf(res.running, !!res.networkPaused),
       !!res.networkPaused,
@@ -197,49 +139,6 @@ export function useNodes() {
   async function sync(): Promise<void> {
     apply(await getTouch());
     ready.value = true;
-  }
-
-  /** load is the first sync, with retries while the backend comes up. */
-  async function load(retries = 3): Promise<void> {
-    try {
-      await sync();
-      if (!connectedTabs.value.has(tab.value) && connectedTabs.value.size)
-        tab.value = [...connectedTabs.value][0];
-    } catch {
-      if (retries > 0) {
-        await new Promise((r) => setTimeout(r, 2000));
-        return load(retries - 1);
-      }
-      ready.value = true;
-    }
-  }
-
-  async function connect(
-    row: Row,
-    outbound = store.outboundName,
-  ): Promise<void> {
-    const loading = openLoading();
-    const control = new AbortController();
-    try {
-      const res = await watchConnected(
-        postConnection(
-          { ...whichOf(row), outbound },
-          { signal: control.signal },
-        ),
-        () => control.abort(),
-      );
-      if (res) apply(res);
-      else await sync();
-    } finally {
-      loading.close();
-    }
-  }
-
-  async function disconnect(
-    row: Row,
-    outbound = store.outboundName,
-  ): Promise<void> {
-    apply(await deleteConnection({ ...whichOf(row), outbound }));
   }
 
   function inGroup(row: Row, group: string): boolean {
@@ -273,46 +172,6 @@ export function useNodes() {
     }
   }
 
-  async function connectFastest(
-    rows: Row[],
-    group: string,
-  ): Promise<Row | null> {
-    let fastest: Row | null = null;
-    let lowest = Infinity;
-    for (const row of rows) {
-      const latency = latencyOf(row);
-      if (latency < lowest) {
-        fastest = row;
-        lowest = latency;
-      }
-    }
-    if (!fastest) return null;
-    const loading = openLoading();
-    try {
-      apply(
-        await putOutboundConnections({
-          outbound: group,
-          touches: [whichOf(fastest)],
-        }),
-      );
-      return fastest;
-    } finally {
-      loading.close();
-    }
-  }
-
-  /** testLatency measures the selected rows by TCP ping or an HTTP request; rows show "testing" meanwhile. */
-  async function testLatency(
-    http: boolean,
-    testingText: string,
-  ): Promise<void> {
-    return testAll(
-      selected.value.filter((r): r is Row => r._type !== "subscription"),
-      http,
-      testingText,
-    );
-  }
-
   async function testAll(
     rows: Row[],
     http: boolean,
@@ -336,56 +195,14 @@ export function useNodes() {
     }
   }
 
-  async function deleteSelected(): Promise<void> {
-    await deleteTouch(
-      selected.value.map((r) => ({ id: r.id, _type: r._type })),
-    );
-    selected.value = [];
-    await sync();
-  }
-
-  /** sharingLinks collects the share link of every selected row; a row without one is skipped. */
-  async function sharingLinks(): Promise<string[]> {
-    const links = await Promise.all(
-      selected.value.map((r) =>
-        getSharingAddress(whichOf(r)).then((x) => x.sharingAddress),
-      ),
-    );
-    return links.filter((l) => !!l);
-  }
-
-  async function updateSubscription(s: TouchSubscription): Promise<void> {
-    apply(await putSubscription({ id: s.id, _type: s._type }));
-  }
-
-  /** statusOf is what the observatory last saw of a connected node, if anything. */
-  function statusOf(which: Which): OutboundStatus | undefined {
-    return observatory.value.find((o) => sameWhich(o.which, which));
-  }
-
   return {
     touch,
     ready,
-    selected,
-    tab,
-    isEmpty,
     connectedRows,
-    connectedTabs,
-    canDelete,
-    canTest,
-    load,
     sync,
-    connect,
-    disconnect,
     inGroup,
     toggleGroup,
-    connectFastest,
     testAll,
-    testLatency,
-    deleteSelected,
-    sharingLinks,
-    updateSubscription,
-    statusOf,
     apply,
   };
 }
@@ -396,11 +213,4 @@ export function locate(touch: Touch, which: Which): Row | null {
   if (which._type === "subscriptionServer")
     return touch.subscriptions[which.sub ?? -1]?.servers[which.id - 1] ?? null;
   return null;
-}
-
-function storedTab(): Tab {
-  const t = localStorage.getItem("lastNodeTab") ?? "";
-  if (t === "subscriptions" || t === "servers" || /^sub-\d+$/.test(t))
-    return t as Tab;
-  return "subscriptions";
 }

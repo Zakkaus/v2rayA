@@ -246,8 +246,13 @@ export function useDashboard() {
     openDialog(PortsDialog, {}, { width: 520 });
   }
 
+  /** sync reloads the touch; the shell calls it when the socket reopens. */
+  async function sync() {
+    await getTouch().then(apply).catch(report);
+  }
+
   onMounted(async () => {
-    await Promise.all([getTouch().then(apply).catch(report), loadQuick()]);
+    await Promise.all([sync(), loadQuick()]);
     loading.value = false;
     // the members' latency once on arrival, so the tile reads at a glance
     void testMembers();
@@ -454,6 +459,7 @@ export function useDashboard() {
     stateLabel,
     canToggle,
     toggleRunning,
+    sync,
     setQuick,
     selectNode,
     testNode,

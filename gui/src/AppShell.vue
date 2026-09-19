@@ -23,6 +23,7 @@ import {
   getOutbounds,
   getVersion,
   postV2ray,
+  getTouch,
 } from "@/api";
 import { ApiError, currentSession } from "@/api/client";
 import { watchConnected } from "@/api/connect";
@@ -84,13 +85,14 @@ const { width } = useDisplay();
 const compact = computed(() => width.value < 600);
 const expanded = computed(() => width.value >= 840);
 const pageTitle = computed(() =>
-  t(destinations.find((d) => d.view === store.view)?.label ?? "common.nodes"),
+  t(destinations.find((d) => d.view === store.view)?.label ?? "common.about"),
 );
 
-// ---- the node page ----------------------------------------------------------------
+// ---- the page -------------------------------------------------------------------
 
+// the rendered view; the shell calls its sync when the socket reopens
 const pageRef = ref<{ sync?(): Promise<void> } | null>(null);
-// a new session gets a new node page
+// a new session gets a new page
 const sessionSerial = ref(0);
 
 function labelOf(running: Running): string {
@@ -258,40 +260,47 @@ const statusText = computed(() => {
   return labelOf(store.running);
 });
 
+const toggling = ref(false);
 async function toggleRunning() {
-  if (store.running === "stopped" || store.running === "paused") {
-    const loading = openLoading();
-    const control = new AbortController();
-    try {
-      const res = await watchConnected(
-        postV2ray({ signal: control.signal }),
-        () => control.abort(),
-        {
-          onCheckFailed: (err) =>
-            notify.warning(
-              t("connection.checkFailed", { message: errorText(err) }),
-            ),
-        },
-      );
-      if (res) {
-        store.setRunning("running");
-        store.connectedServer = res.touch.connectedServer ?? [];
+  if (toggling.value) return;
+  toggling.value = true;
+  try {
+    if (store.running === "stopped" || store.running === "paused") {
+      const loading = openLoading();
+      const control = new AbortController();
+      try {
+        const res = await watchConnected(
+          postV2ray({ signal: control.signal }),
+          () => control.abort(),
+          {
+            onCheckFailed: (err) =>
+              notify.warning(
+                t("connection.checkFailed", { message: errorText(err) }),
+              ),
+          },
+        );
+        // the watcher may win the race; the confirmed state comes from a touch
+        const touch = res ?? (await getTouch());
+        store.setRunning(touch.running ? "running" : "stopped");
+        store.connectedServer = touch.touch.connectedServer ?? [];
+        void pageRef.value?.sync?.();
+      } catch (err) {
+        notify.warning(t("v2ray.startFailed", { message: errorText(err) }));
+      } finally {
+        loading.close();
       }
-      void pageRef.value?.sync?.();
-    } catch (err) {
-      notify.warning(t("v2ray.startFailed", { message: errorText(err) }));
-    } finally {
-      loading.close();
+    } else if (store.running === "running") {
+      try {
+        const res = await deleteV2ray();
+        store.setRunning("stopped");
+        store.connectedServer = res.touch.connectedServer ?? [];
+        void pageRef.value?.sync?.();
+      } catch (err) {
+        notify.warning(t("v2ray.stopFailed", { message: errorText(err) }));
+      }
     }
-  } else if (store.running === "running") {
-    try {
-      const res = await deleteV2ray();
-      store.setRunning("stopped");
-      store.connectedServer = res.touch.connectedServer ?? [];
-      void pageRef.value?.sync?.();
-    } catch (err) {
-      notify.warning(t("v2ray.stopFailed", { message: errorText(err) }));
-    }
+  } finally {
+    toggling.value = false;
   }
 }
 
@@ -360,6 +369,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
         :prepend-icon="mdiPower"
         height="40"
         class="text-none"
+        :disabled="toggling"
         @mouseenter="hovering = true"
         @mouseleave="hovering = false"
         @click="toggleRunning"
@@ -407,6 +417,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
               variant="tonal"
               :prepend-icon="mdiPower"
               class="text-none"
+              :disabled="toggling"
               @mouseenter="hovering = true"
               @mouseleave="hovering = false"
               @click="toggleRunning"
