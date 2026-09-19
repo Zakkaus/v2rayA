@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onUnmounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
 import {
@@ -85,6 +85,25 @@ const ranked = computed(() =>
       (a.ms ?? Infinity) - (b.ms ?? Infinity),
   ),
 );
+// the latency list fills the height its row gives the tile: as many rows
+// as fit, at least four, measured whenever the tile resizes
+const latencyRowHeight = 44;
+const latencyList = ref<{ $el: HTMLElement } | null>(null);
+const latencyRows = ref(4);
+let latencyObserver: ResizeObserver | undefined;
+watch(latencyList, (list) => {
+  latencyObserver?.disconnect();
+  latencyObserver = undefined;
+  if (!list?.$el || typeof ResizeObserver === "undefined") return;
+  latencyObserver = new ResizeObserver(([entry]) => {
+    latencyRows.value = Math.max(
+      4,
+      Math.floor(entry.contentRect.height / latencyRowHeight),
+    );
+  });
+  latencyObserver.observe(list.$el);
+});
+onUnmounted(() => latencyObserver?.disconnect());
 const slowest = computed(() =>
   Math.max(1, ...members.value.map((member) => member.ms ?? 0)),
 );
@@ -415,9 +434,14 @@ function pick(value: string) {
           type="list-item-two-line@2"
           class="bg-transparent"
         />
-        <v-list v-else-if="members.length" bg-color="transparent" class="pa-0">
+        <v-list
+          v-else-if="members.length"
+          ref="latencyList"
+          bg-color="transparent"
+          class="pa-0 dashboard-latency-list"
+        >
           <v-list-item
-            v-for="member in ranked.slice(0, 8)"
+            v-for="member in ranked.slice(0, latencyRows)"
             :key="member.key"
             class="px-0 py-1"
             min-height="0"
@@ -452,9 +476,12 @@ function pick(value: string) {
           </v-list-item>
         </v-list>
         <p v-else class="md3-body-medium">{{ t("dashboard.emptyGroup") }}</p>
-        <div v-if="members.length > 8" class="dashboard-actions d-flex">
+        <div
+          v-if="members.length > latencyRows"
+          class="dashboard-actions d-flex"
+        >
           <v-btn variant="text" @click="store.view = 'proxies'">{{
-            t("dashboard.moreMembers", { n: members.length - 8 })
+            t("dashboard.moreMembers", { n: members.length - latencyRows })
           }}</v-btn>
         </div>
       </v-card>
@@ -599,9 +626,14 @@ function pick(value: string) {
   display: flex;
   flex-direction: column;
 }
-/* nothing but the action row takes the tile's spare height (a v-input would) */
-.dashboard-grid > .v-card > :not(.dashboard-actions) {
+/* nothing but the action row and the latency list takes the tile's spare height (a v-input would) */
+.dashboard-grid > .v-card > :not(.dashboard-actions, .dashboard-latency-list) {
   flex: 0 0 auto;
+}
+.dashboard-latency-list {
+  flex: 1 1 auto;
+  min-height: 176px;
+  overflow: hidden;
 }
 .dashboard-actions {
   margin-top: auto;
