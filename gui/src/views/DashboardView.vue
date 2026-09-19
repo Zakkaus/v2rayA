@@ -87,7 +87,6 @@ const ranked = computed(() =>
 );
 // the latency list fills the height its row gives the tile: as many rows
 // as fit, at least four, measured whenever the tile resizes
-const latencyRowHeight = 44;
 const latencyList = ref<{ $el: HTMLElement } | null>(null);
 const latencyRows = ref(4);
 let latencyObserver: ResizeObserver | undefined;
@@ -96,9 +95,12 @@ watch(latencyList, (list) => {
   latencyObserver = undefined;
   if (!list?.$el || typeof ResizeObserver === "undefined") return;
   latencyObserver = new ResizeObserver(([entry]) => {
+    // a rendered row says how tall rows are; 36 px until one exists
+    const row = list.$el.querySelector<HTMLElement>(".v-list-item");
+    const rowHeight = row?.offsetHeight || 36;
     latencyRows.value = Math.max(
       4,
-      Math.floor(entry.contentRect.height / latencyRowHeight),
+      Math.floor(entry.contentRect.height / rowHeight),
     );
   });
   latencyObserver.observe(list.$el);
@@ -632,7 +634,7 @@ function pick(value: string) {
 }
 .dashboard-latency-list {
   flex: 1 1 auto;
-  min-height: 176px;
+  min-height: 144px;
   overflow: hidden;
 }
 .dashboard-actions {
