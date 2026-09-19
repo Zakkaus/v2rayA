@@ -18,6 +18,7 @@ export const brandSeed = "#13aab7";
 
 export const presetSeeds: { name: string; seed: string }[] = [
   { name: "brand", seed: brandSeed },
+  { name: "yellow", seed: "#fbbc04" },
   { name: "blue", seed: "#4a6fd5" },
   { name: "green", seed: "#3d8f5a" },
   { name: "purple", seed: "#7b57c7" },
