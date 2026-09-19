@@ -35,11 +35,20 @@ On Linux, transparent proxy is available as `redirect`, `tproxy` or `tun`; on Wi
 
 Known limitation: on Windows and macOS an application that queries a LAN resolver directly still bypasses the TUN. The system resolver is pointed at the TUN and is covered.
 
-## Screenshot
+## Screenshots
+
+The dashboard: the core, the node in use, live traffic, the transparent proxy and splitting modes, the members' latency and the subscriptions, each a tile.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/screenshot-dark.png">
-  <img src="docs/images/screenshot-light.png" alt="v2rayA web interface" width="100%">
+  <img src="docs/images/screenshot-light.png" alt="v2rayA dashboard" width="100%">
+</picture>
+
+The RoutingA editor: rules as a list with a rule editor, or as text with line numbers, colouring and per-line checks; the syntax at hand; import and export.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/routinga-dark.png">
+  <img src="docs/images/routinga-light.png" alt="the RoutingA editor" width="100%">
 </picture>
 
 ## Statement

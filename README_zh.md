@@ -37,9 +37,18 @@ Linux 上透明代理有 `redirect`、`tproxy`、`tun` 三种；Windows 与 macO
 
 ## 界面截图
 
+仪表板：核心状态、当前节点、实时流量、透明代理与分流模式、成员延迟、订阅，各占一格。
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/screenshot-dark.png">
-  <img src="docs/images/screenshot-light.png" alt="v2rayA 网页界面" width="100%">
+  <img src="docs/images/screenshot-light.png" alt="v2rayA 仪表板" width="100%">
+</picture>
+
+RoutingA 编辑器：规则以列表编辑，或以带行号、着色和逐行检查的文本编辑；语法速查在旁；可导入导出。
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/routinga-dark.png">
+  <img src="docs/images/routinga-light.png" alt="RoutingA 编辑器" width="100%">
 </picture>
 
 
