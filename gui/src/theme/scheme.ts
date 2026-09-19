@@ -12,16 +12,16 @@ import {
   SchemeTonalSpot,
 } from "@material/material-color-utilities";
 
-/** The brand yellow; as a seed it gives itself back as primary-container. */
-export const brandSeed = "#ffe08a";
+/** The default seed, a teal; the brand yellow stays a swatch. */
+export const brandSeed = "#2a8c96";
 
 export const presetSeeds: { name: string; seed: string }[] = [
-  { name: "brand", seed: brandSeed },
+  { name: "teal", seed: brandSeed },
+  { name: "brand", seed: "#ffe08a" },
   { name: "blue", seed: "#4a6fd5" },
   { name: "green", seed: "#3d8f5a" },
   { name: "purple", seed: "#7b57c7" },
   { name: "red", seed: "#c8493f" },
-  { name: "teal", seed: "#2a8c96" },
 ];
 
 // role → Vuetify colour key
