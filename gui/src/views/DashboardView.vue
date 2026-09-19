@@ -9,6 +9,8 @@ import {
   mdiRefresh,
   mdiSpeedometer,
   mdiServerNetwork,
+  mdiPencilOutline,
+  mdiPlus,
   mdiShieldOutline,
   mdiRoutes,
   mdiChartLine,
@@ -48,6 +50,8 @@ const {
   quickDisabled,
   showSettings,
   ports,
+  editPorts,
+  importNodes,
   subscriptions,
   selecting,
   testing,
@@ -431,9 +435,24 @@ function switchNode() {
         <div class="d-flex align-center flex-wrap ga-2 mb-3">
           <v-icon :icon="mdiRss" size="20" color="on-surface-variant" />
           <h2 class="md3-title-small flex-grow-1">
-            {{ t("common.subscriptions") }} ·
-            {{ loading ? "—" : subscriptions.length }}
+            {{ t("common.subscriptions") }}
+            <span class="md3-label-medium text-on-surface-variant ms-1">{{
+              loading ? "" : subscriptions.length
+            }}</span>
           </h2>
+          <v-tooltip :text="t('operations.import')">
+            <template #activator="{ props }">
+              <v-btn
+                v-bind="props"
+                :icon="mdiPlus"
+                size="40"
+                variant="text"
+                :aria-label="t('operations.import')"
+                :disabled="loading"
+                @click="importNodes"
+              />
+            </template>
+          </v-tooltip>
           <v-btn
             variant="tonal"
             class="dashboard-text-button"
@@ -577,12 +596,6 @@ function switchNode() {
           </div>
           <div>
             <dt class="md3-label-medium text-on-surface-variant">
-              {{ t("dashboard.address") }}
-            </dt>
-            <dd dir="ltr" class="dashboard-wrap">{{ address }}</dd>
-          </div>
-          <div>
-            <dt class="md3-label-medium text-on-surface-variant">
               {{ t("dashboard.ports") }}
             </dt>
             <dd dir="ltr" class="dashboard-figures">
@@ -595,9 +608,17 @@ function switchNode() {
             </dd>
           </div>
         </dl>
-        <v-btn variant="text" class="mt-4" @click="store.view = 'logs'">{{
-          t("common.log")
-        }}</v-btn>
+        <div class="d-flex flex-wrap ga-2 mt-4">
+          <v-btn
+            variant="text"
+            :prepend-icon="mdiPencilOutline"
+            @click="editPorts"
+            >{{ t("customAddressPort.title") }}</v-btn
+          >
+          <v-btn variant="text" @click="store.view = 'logs'">{{
+            t("common.log")
+          }}</v-btn>
+        </div>
       </v-card>
 
       <v-card

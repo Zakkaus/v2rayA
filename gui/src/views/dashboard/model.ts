@@ -20,7 +20,9 @@ import type {
   TouchServer,
   Which,
 } from "@/api/types";
-import { openLoading, useNotify } from "@/composables";
+import { openLoading, useDialog, useNotify } from "@/composables";
+import ImportDialog from "@/dialogs/Import.vue";
+import PortsDialog from "@/dialogs/settings/Ports.vue";
 import { useAppStore } from "@/stores/app";
 import { locate, runningOf, sameWhich } from "@/views/nodes/model";
 import { useSettings, type SettingForm } from "@/views/settings/model";
@@ -189,13 +191,29 @@ export function useDashboard() {
     }
   }
 
+  const { open: openDialog } = useDialog();
+  const loadPorts = () =>
+    getPorts()
+      .then((value) => (ports.value = value))
+      .catch(report);
+  /** importNodes opens the import dialog; a subscription or link added there shows at once. */
+  async function importNodes() {
+    const imported = await openDialog<boolean>(ImportDialog, {}, { width: 480 })
+      .result;
+    if (imported) await getTouch().then(apply).catch(report);
+  }
+  /** editPorts opens the address dialog; the tile reloads the ports it shows after a save. */
+  async function editPorts() {
+    const saved = await openDialog<boolean>(PortsDialog, {}, { width: 520 })
+      .result;
+    if (saved) await loadPorts();
+  }
+
   onMounted(async () => {
     await Promise.all([
       getTouch().then(apply).catch(report),
       loadQuick(),
-      getPorts()
-        .then((value) => (ports.value = value))
-        .catch(report),
+      loadPorts(),
     ]);
     loading.value = false;
   });
@@ -344,6 +362,8 @@ export function useDashboard() {
     members,
     nodeInUse,
     ports,
+    editPorts,
+    importNodes,
     subscriptions,
     quick: settings.form,
     quickLoading,
