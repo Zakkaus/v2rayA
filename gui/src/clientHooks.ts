@@ -1,9 +1,9 @@
 // What the app does with a failed request beyond the caller's own notice:
 // a 401 ends the session, and a backend that cannot be reached is
 // announced once per address with the way out (the address dialog, the
-// manual). This is the old axios interceptor's UI, on the notice queue.
+// manual). This is the old axios interceptor's UI, as a banner.
 import { setClientHooks, type ApiError } from "@/api/client";
-import { useNotify } from "@/composables/useNotify";
+import { showBanner } from "@/composables/useBanner";
 import i18n from "@/plugins/i18n";
 import { resetSession } from "@/session";
 import { useAppStore } from "@/stores/app";
@@ -12,21 +12,16 @@ let informed = "";
 
 export function installClientHooks(ui: { openAddressDialog(): void }): void {
   const t = i18n.global.t;
-  const notify = useNotify();
-  const suggestAddress = () =>
-    notify.info(t("axios.messages.optimizeBackend"), {
-      timeout: 10_000,
-      action: { label: t("operations.yes"), onClick: ui.openAddressDialog },
-    });
   const informNotRunning = (url: string) => {
     if (informed === url) return;
     informed = url;
-    suggestAddress();
-    notify.warning(t("axios.messages.noBackendFound", { url }), {
-      timeout: 10_000,
+    showBanner({
+      key: "backend",
+      kind: "warning",
+      text: t("axios.messages.noBackendFound", { url }),
       action: {
-        label: t("operations.helpManual"),
-        onClick: () => window.open(t("axios.urls.usage"), "_blank"),
+        label: t("axios.messages.optimizeBackend"),
+        onClick: ui.openAddressDialog,
       },
     });
   };
@@ -49,17 +44,15 @@ export function installClientHooks(ui: { openAddressDialog(): void }): void {
           return;
         }
         const gecko = ua.includes("Gecko") && !ua.includes("KHTML");
-        notify.warning(
-          t(`axios.messages.cannotCommunicate.${local && gecko ? 1 : 0}`),
-          {
-            timeout: 10_000,
-            action: {
-              label: t("operations.switchSite"),
-              onClick: () => window.open("http://v.v2raya.org", "_self"),
-            },
+        showBanner({
+          key: "backend",
+          kind: "warning",
+          text: t(`axios.messages.cannotCommunicate.${local && gecko ? 1 : 0}`),
+          action: {
+            label: t("operations.switchSite"),
+            onClick: () => window.open("http://v.v2raya.org", "_self"),
           },
-        );
-        suggestAddress();
+        });
       } else if (err.kind === "network" || err.url.endsWith("/api/version")) {
         informNotRunning(origin);
       }

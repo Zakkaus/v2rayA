@@ -7,6 +7,7 @@ import { getActivePinia, type Pinia } from "pinia";
 import { abortSession } from "@/api/client";
 import { closeAllDialogs } from "@/composables/useDialog";
 import { closeAllNotices } from "@/composables/useNotify";
+import { closeAllBanners } from "@/composables/useBanner";
 import { closeAllLoadings } from "@/composables/useLoading";
 import { useAppStore } from "@/stores/app";
 
@@ -43,6 +44,7 @@ export async function resetSession(
   // 3. nothing of the old session stays on screen
   closeAllDialogs();
   closeAllNotices();
+  closeAllBanners();
   closeAllLoadings();
   // the dialogs' result handlers run before the next session starts
   await new Promise((r) => setTimeout(r, 0));

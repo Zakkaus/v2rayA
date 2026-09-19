@@ -1,12 +1,13 @@
 <script setup lang="ts">
-// The outbound groups: a chip naming the current one, a menu to switch,
-// add (a prompt) and delete (a confirmation). Membership is edited from
-// the node list (add to group) and the group dialog.
+// The outbound groups: a button naming the current one, a menu to
+// switch, add (a prompt), open a group's settings and delete (a
+// confirmation). Membership is edited from the node list.
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   mdiCheck,
   mdiChevronDown,
+  mdiCogOutline,
   mdiDeleteOutline,
   mdiPlus,
   mdiSitemapOutline,
@@ -14,7 +15,8 @@ import {
 import { deleteOutbound, getOutbounds, postOutbound } from "@/api";
 import { errorText } from "@/api/errors";
 import { watchConnected } from "@/api/connect";
-import { useConfirm, useNotify, usePrompt } from "@/composables";
+import { useConfirm, useDialog, useNotify, usePrompt } from "@/composables";
+import OutboundGroupDialog from "@/dialogs/OutboundGroup.vue";
 import { useAppStore } from "@/stores/app";
 
 defineProps<{
@@ -27,7 +29,13 @@ const store = useAppStore();
 const notify = useNotify();
 const prompt = usePrompt();
 const confirm = useConfirm();
+const { open: openDialog } = useDialog();
 const open = ref(false);
+
+function settings(outbound: string) {
+  open.value = false;
+  openDialog(OutboundGroupDialog, { outbound }, { width: 440 });
+}
 
 async function add() {
   const outbound = await prompt({
@@ -128,8 +136,16 @@ async function remove(outbound: string) {
             :class="{ invisible: outbound !== store.outboundName }"
           />
         </template>
-        <template v-if="outbound !== 'proxy'" #append>
+        <template #append>
           <v-btn
+            :icon="mdiCogOutline"
+            variant="text"
+            size="small"
+            :aria-label="t('common.setting')"
+            @click.stop="settings(outbound)"
+          />
+          <v-btn
+            v-if="outbound !== 'proxy'"
             :icon="mdiDeleteOutline"
             variant="text"
             size="small"

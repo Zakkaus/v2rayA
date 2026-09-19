@@ -19,7 +19,7 @@ const store = useAppStore();
       <img :src="logo" alt="" class="drawer__logo" />
       <span class="md3-title-large">v2rayA</span>
     </div>
-    <v-list nav density="default" class="px-3 py-0">
+    <v-list nav density="default" class="px-3 pt-2 pb-0">
       <v-list-item
         v-for="d in destinations"
         :key="d.view"
@@ -50,7 +50,7 @@ const store = useAppStore();
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px 28px 12px;
+  padding: 28px 28px 20px;
 }
 .drawer__logo {
   width: 28px;

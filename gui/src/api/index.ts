@@ -88,14 +88,25 @@ export const deleteV2ray = () =>
 // ---- outbound groups ---------------------------------------------------------
 export const getOutbounds = () =>
   call<{ outbounds: string[] }>({ url: "outbounds", method: "get" });
+export interface OutboundSetting {
+  probeURL: string;
+  probeInterval: string;
+  type: string;
+}
 export const getOutbound = (outbound: string) =>
-  call<unknown>({ url: "outbound", method: "get", params: { outbound } });
+  call<{ setting: OutboundSetting }>({
+    url: "outbound",
+    method: "get",
+    params: { outbound },
+  });
 export const postOutbound = (
   body: Record<string, unknown>,
   o: RequestOptions = {},
 ) => call<unknown>({ url: "outbound", method: "post", data: body, ...o });
-export const putOutbound = (body: Record<string, unknown>) =>
-  call<unknown>({ url: "outbound", method: "put", data: body });
+export const putOutbound = (body: {
+  outbound: string;
+  setting: OutboundSetting;
+}) => call<unknown>({ url: "outbound", method: "put", data: body });
 export const deleteOutbound = (
   body: Record<string, unknown>,
   o: RequestOptions = {},

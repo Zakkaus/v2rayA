@@ -24,7 +24,6 @@ import ImportDialog from "@/dialogs/Import.vue";
 import ServerDialog from "@/dialogs/Server/index.vue";
 import SharingDialog from "@/dialogs/Sharing.vue";
 import SubscriptionDialog from "@/dialogs/Subscription.vue";
-import { useAppStore } from "@/stores/app";
 import NodeTable from "./nodes/NodeTable.vue";
 import StatusCards from "./nodes/StatusCards.vue";
 import SubscriptionTable from "./nodes/SubscriptionTable.vue";
@@ -32,7 +31,6 @@ import { rowKey, useNodes, whichOf, type Row, type Tab } from "./nodes/model";
 
 defineOptions({ name: "NodesView" });
 const { t } = useI18n();
-const store = useAppStore();
 const notify = useNotify();
 const confirm = useConfirm();
 const { open } = useDialog();
@@ -210,15 +208,6 @@ const tabs = computed<{ value: Tab; title: string }[]>(() => [
 
 <template>
   <div class="nodes">
-    <v-alert
-      v-if="ready && store.coreVersionValid === false"
-      type="error"
-      variant="tonal"
-      rounded="lg"
-      class="mb-4"
-      :text="t('version.coreVersionMismatch', { err: store.coreVersionErr })"
-    />
-
     <v-sheet
       v-if="!ready"
       color="surface-container-low"

@@ -1,5 +1,11 @@
 export { useNotify, dismissNotice, closeAllNotices } from "./useNotify";
 export {
+  useBanner,
+  showBanner,
+  withdrawBanner,
+  closeAllBanners,
+} from "./useBanner";
+export {
   useDialog,
   openDialog,
   closeDialog,

@@ -40,8 +40,10 @@ import {
   createMessageSocket,
   openDialog,
   openLoading,
+  useBanner,
   useNotify,
 } from "@/composables";
+import BannerHost from "@/components/hosts/BannerHost.vue";
 import DialogHost from "@/components/hosts/DialogHost.vue";
 import LoadingHost from "@/components/hosts/LoadingHost.vue";
 import NoticeHost from "@/components/hosts/NoticeHost.vue";
@@ -70,6 +72,7 @@ import SettingsView from "@/views/SettingsView.vue";
 const store = useAppStore();
 const { t, locale } = useI18n();
 const notify = useNotify();
+const banner = useBanner();
 const theme = useTheme();
 const vuetifyLocale = useLocale();
 // Material's window size classes: compact < 600, medium < 840, expanded
@@ -140,16 +143,6 @@ async function askForLogin() {
 async function announceVersion() {
   const v = await getVersion();
   store.applyVersion(v);
-  let text = t(v.docker ? "welcome.docker" : "welcome.default", {
-    version: v.version,
-  });
-  let timeout = 3000;
-  if (v.foundNew) {
-    text +=
-      t("welcome.separator") +
-      t("welcome.newVersion", { version: v.remoteVersion });
-    timeout = 5000;
-  }
   // the running notice once per browser session, not on every reload
   const seenKey = "welcomeShown:" + v.version;
   let seen = false;
@@ -159,13 +152,37 @@ async function announceVersion() {
   } catch {
     // storage unavailable: show it
   }
-  if (!seen || v.foundNew) {
-    if (v.foundNew) notify.success(text, { timeout });
-    else notify.info(text, { timeout });
-  }
-  // a core version mismatch is the node list's persistent banner already
-  if (v.coreVersionValid !== false && v.serviceValid === false)
-    notify.error(t("version.v2rayInvalid"), { timeout: 10_000 });
+  if (!seen)
+    notify.info(
+      t(v.docker ? "welcome.docker" : "welcome.default", {
+        version: v.version,
+      }),
+    );
+  // what stays true stays on screen: a banner, not a toast
+  if (v.foundNew)
+    banner.show({
+      key: "newVersion",
+      kind: "info",
+      text: t("welcome.newVersion", { version: v.remoteVersion }),
+      action: {
+        label: "GitHub",
+        onClick: () =>
+          window.open("https://github.com/v2rayA/v2rayA/releases", "_blank"),
+      },
+    });
+  if (v.coreVersionValid === false)
+    banner.show({
+      key: "coreVersion",
+      kind: "error",
+      text: t("version.coreVersionMismatch", { err: v.coreVersionErr || "" }),
+      dismissible: false,
+    });
+  else if (v.serviceValid === false)
+    banner.show({
+      key: "serviceInvalid",
+      kind: "error",
+      text: t("version.v2rayInvalid"),
+    });
 }
 
 function onMessage(msg: WsMessage) {
@@ -389,6 +406,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
         <h1 v-if="expanded" class="md3-headline-medium page__title">
           {{ pageTitle }}
         </h1>
+        <BannerHost />
         <NodesView
           v-if="store.loggedIn"
           v-show="store.view === 'nodes'"
