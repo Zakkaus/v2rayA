@@ -121,17 +121,17 @@ function switchNode() {
           />
           {{ stateLabel }}
         </p>
-        <v-btn
-          color="primary"
-          variant="flat"
-          :prepend-icon="mdiPower"
-          :loading="busy"
-          :disabled="!canToggle"
-          @click="toggleRunning"
-        >
-          {{ t(store.running === "running" ? "v2ray.stop" : "v2ray.start") }}
-        </v-btn>
-        <div class="d-flex flex-wrap ga-2 mt-4">
+        <div class="d-flex flex-wrap align-center ga-2">
+          <v-btn
+            color="primary"
+            variant="flat"
+            :prepend-icon="mdiPower"
+            :loading="busy"
+            :disabled="!canToggle"
+            @click="toggleRunning"
+          >
+            {{ t(store.running === "running" ? "v2ray.stop" : "v2ray.start") }}
+          </v-btn>
           <v-btn variant="text" @click="store.view = 'logs'">{{
             t("common.log")
           }}</v-btn>
