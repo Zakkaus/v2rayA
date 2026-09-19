@@ -208,7 +208,6 @@ export function useProxies() {
       await nodes.sync();
     } catch (err) {
       loadError.value = errorText(err);
-      notify.warning(loadError.value);
     } finally {
       loading.value = false;
     }

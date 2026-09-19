@@ -3,7 +3,7 @@
 // announced once per address with the way out (the address dialog, the
 // manual). This is the old axios interceptor's UI, as a banner.
 import { setClientHooks, type ApiError } from "@/api/client";
-import { showBanner } from "@/composables/useBanner";
+import { showBanner, withdrawBanner } from "@/composables/useBanner";
 import i18n from "@/plugins/i18n";
 import { resetSession } from "@/session";
 import { useAppStore } from "@/stores/app";
@@ -27,6 +27,12 @@ export function installClientHooks(ui: { openAddressDialog(): void }): void {
   };
 
   setClientHooks({
+    onReached() {
+      // the backend is back: the banner about it goes, and a later outage
+      // is announced afresh
+      if (informed) withdrawBanner("backend");
+      informed = "";
+    },
     onUnauthorized() {
       const store = useAppStore();
       if (store.loggedIn) void resetSession({ token: "" });

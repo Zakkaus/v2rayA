@@ -186,9 +186,9 @@ export function useDashboard() {
     );
   }
 
+  // a load failure shows as the page's alert; a toast on top would say it twice
   function report(err: unknown) {
     error.value = errorText(err);
-    notify.warning(error.value);
   }
 
   async function loadQuick() {

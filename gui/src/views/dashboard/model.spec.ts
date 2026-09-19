@@ -206,7 +206,7 @@ describe("dashboard", () => {
     expect(wrapper.get('[role="alert"]').text()).toContain(
       "Backend unreachable",
     );
-    expect(noticeState.current?.text).toContain("Backend unreachable");
+    expect(noticeState.current).toBeNull();
     expect(control().attributes("disabled")).toBeDefined();
   });
 

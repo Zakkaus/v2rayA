@@ -85,6 +85,8 @@ type Hooks = {
   onUnauthorized?: () => void;
   /** Any failure other than a cancellation; the app decides how to show it. */
   onError?: (err: ApiError) => void;
+  /** The backend answered: whatever said it was unreachable can go. */
+  onReached?: () => void;
 };
 const hooks: Hooks = {};
 
@@ -151,6 +153,7 @@ client.interceptors.response.use(
         res.config.url ?? "",
       );
     }
+    hooks.onReached?.();
     return res;
   },
   (raw: unknown) => {
