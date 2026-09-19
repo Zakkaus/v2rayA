@@ -54,7 +54,11 @@ const text = ref(parse(props.value).join("\n"));
       <v-btn variant="text" @click="emit('close')">{{
         t("operations.cancel")
       }}</v-btn>
-      <v-btn color="primary" @click="emit('close', parse(text).join(','))">
+      <v-btn
+        variant="flat"
+        color="primary"
+        @click="emit('close', parse(text).join(','))"
+      >
         {{ t("operations.save") }}
       </v-btn>
     </v-card-actions>

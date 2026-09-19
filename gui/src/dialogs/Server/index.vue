@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// The node editor: one tab per protocol, the form of the tab that is up,
+// The node editor: a protocol choice, the form of the chosen protocol,
 // save as a share link. `which` names the node to edit (its link is
 // loaded first); null creates one. `readonly` shows a subscription's node.
 // The dialog resolves true after a save.
@@ -96,18 +96,15 @@ async function save() {
         {{ t("configureServer.title", readonly ? 2 : 1) }}
       </v-card-title>
     </v-card-item>
-    <v-tabs
-      v-model="protocol"
-      show-arrows
-      density="comfortable"
-      color="primary"
-      class="px-2"
-    >
-      <v-tab v-for="p in protocols" :key="p" :value="p" class="text-none">
-        {{ protocolLabels[p] }}
-      </v-tab>
-    </v-tabs>
-    <v-divider />
+    <v-card-text class="px-6 pb-0">
+      <v-select
+        v-model="protocol"
+        :items="protocols.map((p) => ({ value: p, title: protocolLabels[p] }))"
+        :label="t('server.protocol')"
+        :readonly="readonly"
+        hide-details
+      />
+    </v-card-text>
     <v-card-text class="px-6 server-editor__body">
       <v-skeleton-loader v-if="loading" type="list-item-two-line@3" />
       <v-form v-else ref="form" :readonly="readonly" @submit.prevent="save">
@@ -125,6 +122,7 @@ async function save() {
         {{ t(readonly ? "operations.confirm" : "operations.cancel") }}
       </v-btn>
       <v-btn
+        variant="flat"
         v-if="!readonly"
         color="primary"
         :loading="saving"

@@ -21,6 +21,22 @@ import SubscriptionDialog from "@/dialogs/Subscription.vue";
 import { useSubscriptions } from "./subscriptions/model";
 
 defineOptions({ name: "SubscriptionsView" });
+
+// The backend writes the subscription's quota as "Used X / Y · Expires D"
+// (server/service/subscription.go); read it back for the bar.
+function usage(s: { info?: string }) {
+  const m = /Used ([\d.]+ \w+) \/ ([\d.]+ \w+)(?: · Expires (\S+))?/.exec(
+    s.info ?? "",
+  );
+  if (!m) return null;
+  const percent = (parseFloat(m[1]) / parseFloat(m[2])) * 100;
+  return {
+    used: m[1],
+    total: m[2],
+    expires: m[3] ?? "",
+    percent: Math.min(100, percent),
+  };
+}
 const { t } = useI18n();
 const { width } = useDisplay();
 const expanded = computed(() => width.value >= 840);
@@ -104,6 +120,17 @@ onMounted(() => run(model.sync));
 
 <template>
   <div class="subscriptions">
+    <div v-if="subscriptions.length" class="d-flex justify-end mb-4">
+      <v-btn
+        color="primary"
+        variant="flat"
+        :prepend-icon="mdiTrayArrowDown"
+        :disabled="disabled"
+        @click="openImport"
+      >
+        {{ t("operations.import") }}
+      </v-btn>
+    </div>
     <v-alert v-if="loadError" type="error" variant="tonal" class="mb-4">
       {{ loadError }}
       <template #append>
@@ -154,9 +181,9 @@ onMounted(() => run(model.sync));
         class="pa-2"
       >
         <v-card
-          color="surface-container-low"
+          color="surface-container-high"
           variant="flat"
-          rounded="lg"
+          rounded="xl"
           class="h-100"
           :loading="disabled"
         >
@@ -210,36 +237,44 @@ onMounted(() => run(model.sync));
               </v-menu>
             </template>
           </v-card-item>
-          <v-card-text class="px-4 pb-4 pt-0 md3-body-medium">
-            <p v-if="subscription.info" class="mb-4 text-pre-wrap">
+          <v-card-text class="px-4 pb-4 pt-0">
+            <template v-if="usage(subscription)">
+              <div class="d-flex justify-space-between md3-body-medium mb-1">
+                <span dir="ltr"
+                  >{{ usage(subscription)!.used }} /
+                  {{ usage(subscription)!.total }}</span
+                >
+                <span class="text-on-surface-variant" dir="ltr">
+                  {{ usage(subscription)!.expires }}
+                </span>
+              </div>
+              <v-progress-linear
+                :model-value="usage(subscription)!.percent"
+                color="primary"
+                bg-color="surface-container-highest"
+                rounded
+                height="6"
+                class="mb-4"
+              />
+            </template>
+            <p v-else-if="subscription.info" class="md3-body-medium mb-4">
               {{ subscription.info }}
             </p>
-            <p class="text-on-surface-variant">
-              {{ t("subscription.timeLastUpdate") }}:
-              <span dir="ltr">
-                {{ dayjs(subscription.status).format("YYYY-MM-DD HH:mm:ss") }}
-              </span>
-            </p>
-            <p class="mt-2 text-on-surface-variant">
-              {{ t("subscription.numberServers") }}:
-              {{ subscription.servers.length }}
-            </p>
+            <div class="d-flex flex-wrap ga-2">
+              <v-chip size="small" variant="tonal">
+                {{ t("subscription.numberServers") }}:
+                {{ subscription.servers.length }}
+              </v-chip>
+              <v-chip size="small" variant="outlined">
+                <span dir="ltr">{{
+                  dayjs(subscription.status).format("YYYY-MM-DD HH:mm")
+                }}</span>
+              </v-chip>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
-
-    <v-fab
-      v-if="subscriptions.length"
-      :prepend-icon="mdiTrayArrowDown"
-      :text="t('operations.import')"
-      extended
-      app
-      location="bottom end"
-      color="primary-container"
-      :disabled="disabled"
-      @click="openImport"
-    />
   </div>
 </template>
 

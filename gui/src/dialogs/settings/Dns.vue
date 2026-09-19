@@ -181,6 +181,7 @@ async function save() {
         {{ t("operations.cancel") }}
       </v-btn>
       <v-btn
+        variant="flat"
         color="primary"
         type="submit"
         :loading="saving"

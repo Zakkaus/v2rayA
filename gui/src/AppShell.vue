@@ -384,10 +384,23 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
     <NavBar v-if="compact" />
 
     <v-main>
-      <div class="page" :class="{ 'page--wide': store.view === 'nodes' }">
-        <h1 v-if="expanded" class="md3-headline-medium page__title">
-          {{ pageTitle }}
-        </h1>
+      <div
+        class="page"
+        :class="{
+          'page--wide': [
+            'dashboard',
+            'proxies',
+            'subscriptions',
+            'nodes',
+          ].includes(store.view),
+        }"
+      >
+        <div v-if="expanded" class="page__header">
+          <h1 class="md3-headline-medium page__title">{{ pageTitle }}</h1>
+          <div class="d-flex align-center">
+            <ShellMenus variant="icons" />
+          </div>
+        </div>
         <BannerHost />
         <NodesView
           v-if="store.loggedIn"
@@ -424,8 +437,15 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
 .page--wide {
   max-width: 1400px;
 }
+.page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 24px;
+}
 .page__title {
-  margin: 8px 0 24px;
+  margin: 0;
 }
 @media (min-width: 600px) {
   .page {

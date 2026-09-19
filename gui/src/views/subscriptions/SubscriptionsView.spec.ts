@@ -107,7 +107,9 @@ test("renders metadata and reloads after update, edit and confirmed deletion", a
   await flushPromises();
   const card = wrapper.get(".v-card");
   expect(card.text()).toContain("Travel");
-  expect(card.text()).toContain(subscription.info);
+  // the quota line becomes a bar: used / total and the expiry
+  expect(card.text()).toContain("1 GiB / 10 GiB");
+  expect(card.text()).toContain("2026-10-01");
   expect(card.text()).toContain("2026-09-19");
   expect(card.text()).toMatch(/Number of Servers:\s*1/);
 
@@ -154,7 +156,7 @@ test("shares with the existing dialog contract and imports from the empty state"
   closeDialog(dialogState.stack[0].id, true);
   await flushPromises();
   expect(wrapper.get(".v-card-title").text()).toBe(subscription.host);
-  expect(wrapper.get(".v-fab button").text()).toBe("Import");
+  expect(wrapper.get(".subscriptions > .d-flex .v-btn").text()).toBe("Import");
   await chooseAction("Share");
   expect(getSharingAddress).toHaveBeenCalledWith({
     id: 2,
@@ -168,7 +170,7 @@ test("shares with the existing dialog contract and imports from the empty state"
     type: "subscription",
   });
   closeDialog(dialogState.stack[0].id);
-  await wrapper.get(".v-fab button").trigger("click");
+  await wrapper.get(".subscriptions > .d-flex .v-btn").trigger("click");
   expect(dialogState.stack[0].component).toBe(ImportDialog);
   closeDialog(dialogState.stack[0].id, false);
   await flushPromises();

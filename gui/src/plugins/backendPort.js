@@ -4,7 +4,9 @@ let ba = localStorage.getItem("backendAddress");
 let currentPrefix = "";
 if (typeof window !== "undefined") {
   let path = window.location.pathname;
-  const match = path.match(/^(.*)\/(?:login|setting|log|server|rule|running)?\/?$/);
+  const match = path.match(
+    /^(.*)\/(?:login|setting|log|server|rule|running)?\/?$/,
+  );
   if (match) {
     currentPrefix = match[1];
   }

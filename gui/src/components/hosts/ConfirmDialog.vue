@@ -78,9 +78,12 @@ function cancel() {
       <v-btn variant="text" @click="cancel">{{
         cancelText || t("operations.cancel")
       }}</v-btn>
-      <v-btn :color="destructive ? 'error' : 'primary'" @click="confirm">{{
-        confirmText || t("operations.confirm")
-      }}</v-btn>
+      <v-btn
+        variant="flat"
+        :color="destructive ? 'error' : 'primary'"
+        @click="confirm"
+        >{{ confirmText || t("operations.confirm") }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>

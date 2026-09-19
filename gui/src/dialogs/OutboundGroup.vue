@@ -82,7 +82,7 @@ async function save() {
       <v-btn variant="text" @click="emit('close')">{{
         t("operations.cancel")
       }}</v-btn>
-      <v-btn color="primary" :loading="saving" @click="save">{{
+      <v-btn variant="flat" color="primary" :loading="saving" @click="save">{{
         t("operations.save")
       }}</v-btn>
     </v-card-actions>

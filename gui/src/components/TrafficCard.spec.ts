@@ -40,20 +40,4 @@ describe("traffic card", () => {
     expect(wrapper.text()).toContain("4.0 GiB");
     expect(chart.get('path[fill="none"]').attributes("d")).not.toBe(path);
   });
-
-  test("stacks below 840 px and uses two columns from 840 px", async () => {
-    window.innerWidth = 400;
-    window.dispatchEvent(new Event("resize"));
-    wrapper = mountWithApp(TrafficCard, { props });
-    await nextTick();
-    expect(wrapper.findAll(".v-col--cols-12")).toHaveLength(2);
-    window.innerWidth = 839;
-    window.dispatchEvent(new Event("resize"));
-    await nextTick();
-    expect(wrapper.findAll(".v-col--cols-12")).toHaveLength(2);
-    window.innerWidth = 840;
-    window.dispatchEvent(new Event("resize"));
-    await nextTick();
-    expect(wrapper.findAll(".v-col--cols-6")).toHaveLength(2);
-  });
 });

@@ -5,6 +5,8 @@ export default {
     total: "累计：{value}",
   },
   proxies: {
+    newGroup: "新建分组",
+    newNode: "新建节点",
     cards: "卡片",
     list: "列表",
     members: "成员：{n}",
@@ -13,6 +15,8 @@ export default {
     chooseManually: "手动选择",
   },
   dashboard: {
+    quick: "快捷设置",
+    connected: "已连接",
     status: "核心状态",
     facts: "实例信息",
     version: "版本",
@@ -220,11 +224,14 @@ export default {
       gfwlist: "该时间是指本地文件最后修改时间，因此可能会领先最新版本",
       transparentProxy:
         "全局代理开启后，无需经过额外设置，任何TCP流量均会经过V2RayA。另外，如需作为网关使得连接本机的其他主机或docker也享受代理，请勾选“开启局域网共享”。",
-      transparentType: "★tproxy: 支持udp，不支持docker。★redirect: docker友好，不支持udp，需要占用本地53端口以应对dns污染。★tun: 由核心打开 TUN 设备并接管默认路由；支持 Linux、Windows、macOS 与 UDP，自动排除 v2rayA 与核心自身，并可按进程名排除其他进程。Windows 与 macOS 上直接查询局域网 DNS 的应用仍会绕过它。",
+      transparentType:
+        "★tproxy: 支持udp，不支持docker。★redirect: docker友好，不支持udp，需要占用本地53端口以应对dns污染。★tun: 由核心打开 TUN 设备并接管默认路由；支持 Linux、Windows、macOS 与 UDP，自动排除 v2rayA 与核心自身，并可按进程名排除其他进程。Windows 与 macOS 上直接查询局域网 DNS 的应用仍会绕过它。",
       tproxyExcludedInterfaces:
         "设置不经过透明代理的网卡前缀。支持通配符 * (iptables模式下会自动转换为 +)。例如: docker*, veth*, wg*, ppp*, br-*。多个前缀用逗号隔开。",
-      tunAutoRoute: "开启时，v2rayA 自行安装路由与 DNS 设置。关闭时，需要提供自定义的启动/停止脚本手动配置路由。",
-      tunExcludeProcesses: "流量直连的进程名，一行一个，例如：chrome.exe、firefox。v2rayA 与核心始终排除。按 socket 属主的可执行文件名识别；查找前已关闭的 socket 或被其他进程复用的端口无法归属。被排除进程的 DNS 查询仍由核心 DNS 模块回答。",
+      tunAutoRoute:
+        "开启时，v2rayA 自行安装路由与 DNS 设置。关闭时，需要提供自定义的启动/停止脚本手动配置路由。",
+      tunExcludeProcesses:
+        "流量直连的进程名，一行一个，例如：chrome.exe、firefox。v2rayA 与核心始终排除。按 socket 属主的可执行文件名识别；查找前已关闭的 socket 或被其他进程复用的端口无法归属。被排除进程的 DNS 查询仍由核心 DNS 模块回答。",
       pacMode:
         "该选项设置规则分流端口所使用的路由模式。默认情况下规则分流端口为20172，HTTP协议。",
       tcpFastOpen:
@@ -448,8 +455,10 @@ export default {
   },
   routingA: {
     messages: ["点击“查看帮助”按钮以获取帮助"],
-    inboundDeprecated: "RoutingA 中定义入站(inbound)的功能已弃用，生成的 JSON 配置将不会包含对应的入站端口。请使用自定义入站设置中的 RoutingA 规则功能替代。",
-    inboundDeprecatedConfirm: "当前 RoutingA 配置包含已弃用的入站定义，生成的配置将不会包含这些入站端口。是否继续保存？",
+    inboundDeprecated:
+      "RoutingA 中定义入站(inbound)的功能已弃用，生成的 JSON 配置将不会包含对应的入站端口。请使用自定义入站设置中的 RoutingA 规则功能替代。",
+    inboundDeprecatedConfirm:
+      "当前 RoutingA 配置包含已弃用的入站定义，生成的配置将不会包含这些入站端口。是否继续保存？",
     savedWithWarning: "RoutingA 已保存，但有警告：{warning}",
     saveFailed: "无法保存 RoutingA：{message}",
   },
@@ -508,27 +517,27 @@ export default {
     tailOnly: "仅显示最近 {count} 行（此屏幕上隐藏了较早的 {skipped} 行）",
     export: "导出",
   },
-  
+
   tproxyWhiteIpGroups: {
     title: "直通白名单IP组",
     messages: [
       "选中的IP组将会不经过XRay/V2Ray核心直接出站（通过Nftables/Iptables直接转发），请确保你的DNS服务器足够可靠无污染能使客户端能解析到正确的IP",
-      "最好系统使用Nftables时使用此功能，Iptables可能在添加大量IP时存在性能问题"
+      "最好系统使用Nftables时使用此功能，Iptables可能在添加大量IP时存在性能问题",
     ],
     formName1: "按住Ctrl可以多选",
     formName2: "自定义IP（一行一个，标准CIDR格式）",
     formPlaceholder2: "172.30.0.0/16\nfd00:dead:beef::/48",
     invalidCustomIps: "自定义 IP 须每行一个 CIDR，例如 10.0.0.0/8",
     saveFailed: "无法保存直通 IP 分组：{message}",
-    cn: '中国大陆',
-    private: '私网网段',
-    us: '美国',
-    cloudflare: 'Cloudflare',
+    cn: "中国大陆",
+    private: "私网网段",
+    us: "美国",
+    cloudflare: "Cloudflare",
   },
   domainsExcluded: {
     title: "排除域名",
     messages: [
-      "一个域名列表，如果流量探测结果在这个列表中时，将 不会 重置目标地址。"
+      "一个域名列表，如果流量探测结果在这个列表中时，将 不会 重置目标地址。",
     ],
     formName: "排除域名列表",
     formPlaceholder: "courier.push.apple.com\nMijia Cloud\ndlg.io.mi.com",
@@ -539,7 +548,7 @@ export default {
     messages: [
       "如果当前环境访问Github困难，你可以从此处（https://github.com/v2rayA/dist-v2ray-rules-dat）手动下载最新GFWList（geosite.dat），上传到你的服务器，然后填写你的服务器链接进行下载",
       "如果不填写自定义下载链接输入框则自动从Github进行下载",
-      "注意：错误的文件可能导致服务启动失败，如果更新后服务器启动失败，你可以点击删除按钮删除下载的GFWList"
+      "注意：错误的文件可能导致服务启动失败，如果更新后服务器启动失败，你可以点击删除按钮删除下载的GFWList",
     ],
     formName: "自定义下载链接",
     wrongCustomLink: "自定义下载链接必须以 http:// 或 https:// 开头",
@@ -550,19 +559,23 @@ export default {
   tun: {
     routeScript: {
       title: "TUN 自定义路由脚本",
-      warning: "警告：错误的脚本可能会破坏您的网络或系统路由。请确保您清楚自己正在做什么再保存。",
+      warning:
+        "警告：错误的脚本可能会破坏您的网络或系统路由。请确保您清楚自己正在做什么再保存。",
       shellType: "Shell 类型",
       customShell: "自定义（在下方指定路径）",
       shellPath: "Shell 路径",
       shellPathPlaceholder: "/usr/bin/bash",
       setupScript: "启动脚本（TUN 就绪后执行）",
-      setupScriptPlaceholder: "# TUN 就绪时配置路由的脚本\n# 例如: ip route add default dev tun0",
+      setupScriptPlaceholder:
+        "# TUN 就绪时配置路由的脚本\n# 例如: ip route add default dev tun0",
       teardownScript: "停止脚本（关闭 TUN 前执行）",
-      teardownScriptPlaceholder: "# 关闭 TUN 前移除路由的脚本\n# 例如: ip route del default dev tun0",
+      teardownScriptPlaceholder:
+        "# 关闭 TUN 前移除路由的脚本\n# 例如: ip route del default dev tun0",
     },
     processExclude: {
       title: "TUN 自定义进程排除",
-      warning: "警告：错误的进程名可能导致流量被意外直通。请仅添加你确认需要排除的进程。",
+      warning:
+        "警告：错误的进程名可能导致流量被意外直通。请仅添加你确认需要排除的进程。",
       listLabel: "排除进程名称",
       placeholder: "v2raya, v2ray, chrome.exe",
       hint: "支持逗号或换行分隔。保存时会自动去重。",
@@ -601,7 +614,8 @@ export default {
     NO_SERVER_SELECTED: "未选择节点，请先连接一个节点。",
     CORE_START_FAILED: "无法启动 v2raya_core：{detail}",
     CORE_NOT_FOUND: "未找到 v2raya_core。",
-    CORE_VERSION_MISMATCH: "v2raya_core 版本 {core} 与 v2rayA 版本 {app} 不一致。",
+    CORE_VERSION_MISMATCH:
+      "v2raya_core 版本 {core} 与 v2rayA 版本 {app} 不一致。",
     PORT_OCCUPIED: "端口 {port} 已被占用。",
     INVALID_PORT: "端口 {port} 无效。",
     PORT_DUPLICATE: "端口 {port} 重复使用。",

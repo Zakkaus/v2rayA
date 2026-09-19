@@ -268,7 +268,9 @@ body.theme-dark {
       border-color: var(--md-outline) !important;
     }
 
-    &:not(.is-primary):not(.is-link):not(.is-info):not(.is-success):not(.is-warning):not(.is-danger):not(.is-delete),
+    &:not(.is-primary):not(.is-link):not(.is-info):not(.is-success):not(
+        .is-warning
+      ):not(.is-danger):not(.is-delete),
     &.is-light,
     &.is-white {
       background-color: #2b2930;
@@ -276,7 +278,9 @@ body.theme-dark {
       color: var(--md-on-surface);
     }
 
-    &:not(.is-primary):not(.is-link):not(.is-info):not(.is-success):not(.is-warning):not(.is-danger):not(.is-delete):hover,
+    &:not(.is-primary):not(.is-link):not(.is-info):not(.is-success):not(
+        .is-warning
+      ):not(.is-danger):not(.is-delete):hover,
     &.is-light:hover,
     &.is-white:hover {
       background-color: #35333a;
@@ -391,25 +395,30 @@ body.theme-dark {
   }
 
   .b-checkbox.checkbox input[type="checkbox"]:checked + .check.is-primary {
-    background:
-      var(--md-primary-container)
+    background: var(--md-primary-container)
       url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3Cpath style='fill:%23eaddff' d='M.04.627.146.52.43.804.323.91zm.177.177L.854.167.96.273.323.91z'/%3E%3C/svg%3E")
       no-repeat 50% !important;
     border-color: var(--md-primary-container) !important;
   }
 
-  .b-checkbox.checkbox input[type="checkbox"]:focus:checked + .check.is-primary {
+  .b-checkbox.checkbox
+    input[type="checkbox"]:focus:checked
+    + .check.is-primary {
     box-shadow: 0 0 0.35em rgba(79, 55, 139, 0.65) !important;
   }
 
-  .b-checkbox.checkbox:hover input[type="checkbox"]:not(:disabled) + .check.is-primary {
+  .b-checkbox.checkbox:hover
+    input[type="checkbox"]:not(:disabled)
+    + .check.is-primary {
     border-color: var(--md-primary-container) !important;
   }
 
   /* Keep primary checkbox border non-yellow in all checked/hover permutations */
   .b-checkbox.checkbox input[type="checkbox"]:checked + .check.is-primary,
   .b-checkbox.checkbox:hover input[type="checkbox"]:checked + .check.is-primary,
-  .b-checkbox.checkbox:hover input[type="checkbox"]:not(:disabled):checked + .check.is-primary {
+  .b-checkbox.checkbox:hover
+    input[type="checkbox"]:not(:disabled):checked
+    + .check.is-primary {
     border-color: var(--md-primary-container) !important;
   }
 

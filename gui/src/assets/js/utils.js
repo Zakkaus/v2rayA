@@ -126,8 +126,8 @@ function parseURL(u) {
     port: a.port
       ? parseInt(a.port)
       : protocol === "https" || protocol === "wss"
-      ? 443
-      : 80,
+        ? 443
+        : 80,
     query: a.search,
     params: (function () {
       var ret = {},

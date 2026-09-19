@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useDisplay } from "vuetify";
-import { mdiChevronRight, mdiPower } from "@mdi/js";
+import { mdiPower } from "@mdi/js";
+import { errorText } from "@/api/errors";
+import { useNotify } from "@/composables";
 import OutboundMenu from "@/components/OutboundMenu.vue";
 import TrafficCard from "@/components/TrafficCard.vue";
 import { useTraffic } from "@/composables/useTraffic";
 import { useDashboard } from "./dashboard/model";
+import { useSettings, type SettingForm } from "./settings/model";
+import { pacModes, transparentModes } from "./settings/options";
 
 defineOptions({ name: "DashboardView" });
 const { t } = useI18n();
@@ -22,13 +26,32 @@ const {
   connectedNodes,
   stateLabel,
   canToggle,
-  transparentMode,
-  rulePortMode,
   toggleRunning,
 } = useDashboard();
 
 // A filled button keeps the requested action distinct from the confirmed core state.
 const traffic = useTraffic();
+const notify = useNotify();
+
+// the quick settings: the same form the settings page saves, three fields of it
+const settings = useSettings();
+const quickBusy = ref(false);
+const transparentItems = computed(() => transparentModes(t));
+const pacItems = computed(() => pacModes(t));
+onMounted(() => settings.load().catch(() => {}));
+async function quick(patch: Partial<SettingForm>) {
+  Object.assign(settings.form, patch);
+  quickBusy.value = true;
+  try {
+    await settings.save();
+    notify.success(t("setting.saved"));
+  } catch (err) {
+    notify.warning(t("setting.saveFailed", { message: errorText(err) }));
+    await settings.load().catch(() => {});
+  } finally {
+    quickBusy.value = false;
+  }
+}
 </script>
 
 <template>
@@ -40,19 +63,37 @@ const traffic = useTraffic();
       class="dashboard-grid"
       :class="{ 'dashboard-grid--expanded': expanded }"
     >
+      <!-- the core -->
       <v-card
         color="surface-container-high"
         rounded="xl"
-        class="dashboard-status pa-4"
+        class="dashboard-status pa-5"
       >
-        <h2 class="md3-title-medium mb-4">{{ t("dashboard.status") }}</h2>
-        <div
-          class="d-flex align-center justify-space-between flex-wrap ga-4 mb-6"
-        >
-          <p class="md3-display-small" role="status">{{ stateLabel }}</p>
+        <div class="d-flex align-center ga-4">
+          <v-avatar
+            :color="
+              store.running === 'running'
+                ? 'primary'
+                : 'surface-container-highest'
+            "
+            size="56"
+          >
+            <v-icon :icon="mdiPower" size="28" />
+          </v-avatar>
+          <div class="flex-grow-1 min-w-0">
+            <p class="md3-headline-small ma-0" role="status">
+              {{ stateLabel }}
+            </p>
+            <p class="md3-body-medium text-on-surface-variant ma-0">
+              {{ t("dashboard.connected") }}: {{ connectedNodes.length }} ·
+              {{ t("proxyGroup.group") }}:
+              {{ store.outboundName.toUpperCase() }}
+            </p>
+          </div>
           <v-btn
             color="primary"
             variant="flat"
+            size="large"
             :prepend-icon="mdiPower"
             :loading="busy"
             :disabled="!canToggle"
@@ -61,31 +102,35 @@ const traffic = useTraffic();
             {{ t(store.running === "running" ? "v2ray.stop" : "v2ray.start") }}
           </v-btn>
         </div>
-        <div class="d-flex align-center flex-wrap ga-4 mb-4">
-          <h3 class="md3-title-medium">{{ t("proxyGroup.group") }}</h3>
+        <v-divider class="my-4" />
+        <div class="d-flex align-center flex-wrap ga-3">
           <OutboundMenu variant="chip" />
+          <v-skeleton-loader
+            v-if="loading"
+            type="chip"
+            class="bg-transparent"
+          />
+          <template v-else-if="connectedNodes.length">
+            <v-chip
+              v-for="{ key, row } in connectedNodes"
+              :key="key"
+              variant="tonal"
+              class="dashboard-node"
+            >
+              <span dir="auto">{{ row.name || row.address }}</span>
+              <span
+                v-if="row.pingLatency"
+                class="ms-2 md3-label-medium"
+                dir="ltr"
+              >
+                {{ row.pingLatency }}
+              </span>
+            </v-chip>
+          </template>
+          <span v-else class="md3-body-medium text-on-surface-variant">
+            {{ t(nodeCount === 0 ? "common.empty" : "proxyGroup.emptyGroup") }}
+          </span>
         </div>
-        <v-skeleton-loader
-          v-if="loading"
-          type="text"
-          color="surface-container-high"
-        />
-        <div v-else-if="connectedNodes.length" class="d-flex flex-wrap ga-2">
-          <v-chip
-            v-for="{ key, row } in connectedNodes"
-            :key="key"
-            variant="outlined"
-            class="dashboard-node"
-          >
-            <span dir="auto">{{ row.name || row.address }}</span>
-            <span class="ms-2" dir="ltr">{{ row.pingLatency || "—" }}</span>
-          </v-chip>
-        </div>
-        <v-empty-state
-          v-else-if="nodeCount !== undefined"
-          :title="t(nodeCount === 0 ? 'common.empty' : 'proxyGroup.emptyGroup')"
-          class="pa-4"
-        />
       </v-card>
 
       <TrafficCard
@@ -98,82 +143,71 @@ const traffic = useTraffic();
         :down-series="traffic.downSeries.value"
       />
 
-      <v-card color="surface-container-high" rounded="xl" class="pa-4">
-        <h2 class="md3-title-medium mb-4">{{ t("common.setting") }}</h2>
-        <v-skeleton-loader
-          v-if="loading"
-          type="list-item-two-line@2"
-          color="surface-container-high"
+      <!-- quick settings -->
+      <v-card color="surface-container-high" rounded="xl" class="pa-5">
+        <h2 class="md3-title-medium mb-4">{{ t("dashboard.quick") }}</h2>
+        <v-select
+          :model-value="settings.form.transparent"
+          :items="transparentItems"
+          :label="t('setting.transparentProxy')"
+          :disabled="!settings.ready.value || quickBusy"
+          hide-details
+          class="mb-3"
+          @update:model-value="(v: string) => quick({ transparent: v })"
         />
-        <v-list v-else bg-color="surface-container-high" class="pa-0">
-          <v-list-item
-            :append-icon="mdiChevronRight"
-            rounded="lg"
-            class="px-0"
-            @click="store.view = 'settings'"
-          >
-            <v-list-item-title class="md3-body-medium text-wrap">
-              {{ t("setting.transparentProxy") }}
-            </v-list-item-title>
-            <p class="md3-body-medium text-on-surface-variant mt-2">
-              {{ transparentMode }}
-            </p>
-          </v-list-item>
-          <v-list-item
-            :append-icon="mdiChevronRight"
-            rounded="lg"
-            class="px-0 mt-2"
-            @click="store.view = 'settings'"
-          >
-            <v-list-item-title class="md3-body-medium text-wrap">
-              {{ t("setting.pacMode") }}
-            </v-list-item-title>
-            <p class="md3-body-medium text-on-surface-variant mt-2">
-              {{ rulePortMode }}
-            </p>
-          </v-list-item>
-        </v-list>
+        <v-select
+          :model-value="settings.form.pacMode"
+          :items="pacItems"
+          :label="t('setting.pacMode')"
+          :disabled="!settings.ready.value || quickBusy"
+          hide-details
+          class="mb-1"
+          @update:model-value="(v: string) => quick({ pacMode: v })"
+        />
+        <v-switch
+          :model-value="settings.form.portSharing"
+          :label="t('setting.portSharingOn')"
+          :disabled="!settings.ready.value || quickBusy"
+          hide-details
+          @update:model-value="
+            (v: boolean | null) => quick({ portSharing: !!v })
+          "
+        />
       </v-card>
 
-      <v-card color="surface-container-high" rounded="xl" class="pa-4">
+      <!-- the instance -->
+      <v-card color="surface-container-high" rounded="xl" class="pa-5">
         <h2 class="md3-title-medium mb-4">{{ t("dashboard.facts") }}</h2>
-        <dl class="d-flex flex-wrap ga-6 mb-4">
+        <div class="dashboard-facts">
           <div>
-            <dt class="md3-label-medium text-on-surface-variant">
+            <p class="md3-label-medium text-on-surface-variant ma-0">
               {{ t("dashboard.version") }}
-            </dt>
-            <dd class="md3-title-medium" dir="ltr">
+            </p>
+            <p class="md3-title-large ma-0" dir="ltr">
               {{ store.version?.version || "—" }}
-            </dd>
+            </p>
           </div>
           <div>
-            <dt class="md3-label-medium text-on-surface-variant">
+            <p class="md3-label-medium text-on-surface-variant ma-0">
               {{ t("dashboard.core") }}
-            </dt>
-            <dd class="md3-title-medium" dir="ltr">
+            </p>
+            <p class="md3-title-large ma-0" dir="ltr">
               {{ store.version?.variant || "—" }}
-            </dd>
+            </p>
           </div>
-        </dl>
-        <v-skeleton-loader
-          v-if="loading"
-          type="text"
-          color="surface-container-high"
-        />
-        <dl v-else class="d-flex flex-wrap ga-6">
           <div>
-            <dt class="md3-label-medium text-on-surface-variant">
+            <p class="md3-label-medium text-on-surface-variant ma-0">
               {{ t("common.nodes") }}
-            </dt>
-            <dd class="md3-display-small">{{ nodeCount ?? "—" }}</dd>
+            </p>
+            <p class="md3-title-large ma-0">{{ nodeCount ?? "—" }}</p>
           </div>
           <div>
-            <dt class="md3-label-medium text-on-surface-variant">
+            <p class="md3-label-medium text-on-surface-variant ma-0">
               {{ t("common.subscriptions") }}
-            </dt>
-            <dd class="md3-display-small">{{ subscriptionCount ?? "—" }}</dd>
+            </p>
+            <p class="md3-title-large ma-0">{{ subscriptionCount ?? "—" }}</p>
           </div>
-        </dl>
+        </div>
       </v-card>
     </div>
   </div>
@@ -184,24 +218,36 @@ const traffic = useTraffic();
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
+  align-items: stretch;
 }
 .dashboard-grid > * {
   min-width: 0;
 }
 .dashboard-grid--expanded {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(12, minmax(0, 1fr));
 }
 .dashboard-grid--expanded .dashboard-status {
-  grid-column: span 2;
+  grid-column: span 8;
 }
-.dashboard-traffic {
-  min-height: 280px;
+.dashboard-grid--expanded .dashboard-traffic {
+  grid-column: span 4;
+}
+.dashboard-grid--expanded > :nth-child(3),
+.dashboard-grid--expanded > :nth-child(4) {
+  grid-column: span 6;
+}
+.dashboard-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
 }
 .dashboard-node {
   height: auto;
   min-height: 32px;
   max-width: 100%;
   white-space: normal;
-  overflow-wrap: anywhere;
+}
+.min-w-0 {
+  min-width: 0;
 }
 </style>

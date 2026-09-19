@@ -27,9 +27,8 @@ function openModalProgrammatic(params) {
 // modalCustomPorts finishes evaluating (TDZ), so the app fails to boot.
 // Import it lazily at the moment the action runs.
 async function openCustomPortsModal() {
-  const { default: modalCustomPorts } = await import(
-    "../components/modalCustomPorts"
-  );
+  const { default: modalCustomPorts } =
+    await import("../components/modalCustomPorts");
   openModalProgrammatic({
     component: modalCustomPorts,
     hasModalCard: true,
@@ -73,7 +72,7 @@ axios.interceptors.request.use(
       duration: 5000,
     });
     return Promise.reject(err);
-  }
+  },
 );
 
 let informed = "";
@@ -127,7 +126,8 @@ axios.interceptors.response.use(
     }
     if (err.response && err.response.status === 401) {
       const reqUrl = (err.config && err.config.url) || "";
-      const isAuthAction = reqUrl.includes("/api/login") || reqUrl.includes("/api/account");
+      const isAuthAction =
+        reqUrl.includes("/api/login") || reqUrl.includes("/api/account");
       if (isAuthAction) {
         // Let login/register request callers handle their own UI state.
         return Promise.reject(err);
@@ -152,7 +152,7 @@ axios.interceptors.response.use(
       let msg = i18n.global.t("axios.messages.cannotCommunicate.0");
       if (host === "localhost" || host === "local" || host === "127.0.0.1") {
         if (browser.versions.webKit) {
-          // Chrome and other WebKit browsers allow access to http://localhost, 
+          // Chrome and other WebKit browsers allow access to http://localhost,
           // failures are likely due to backend service not being started.
           informNotRunning(u.source.replace(u.relative, ""));
           return Promise.reject(err);
@@ -207,7 +207,7 @@ axios.interceptors.response.use(
       });
     }
     return Promise.reject(err);
-  }
+  },
 );
 
 export function install(app) {

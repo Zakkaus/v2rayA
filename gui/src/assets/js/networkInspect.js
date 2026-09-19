@@ -35,14 +35,15 @@ function waitingConnected(promise, interval, cancel, timeout) {
             ) {
               buefy().toast.open({
                 message: i18n.global.t("connection.checkFailed", {
-                  message: backendMessage(i18nVm, res) || i18n.global.t("common.fail"),
+                  message:
+                    backendMessage(i18nVm, res) || i18n.global.t("common.fail"),
                 }),
                 type: "is-warning",
                 position: "is-top",
                 duration: 5000,
               });
             }
-          }
+          },
         );
       })
       .catch((err) => {

@@ -88,7 +88,7 @@ async function remove() {
       <v-btn variant="text" @click="emit('close')">{{
         t("operations.cancel")
       }}</v-btn>
-      <v-btn color="primary" :loading="busy" @click="update">{{
+      <v-btn variant="flat" color="primary" :loading="busy" @click="update">{{
         t("operations.update")
       }}</v-btn>
     </v-card-actions>

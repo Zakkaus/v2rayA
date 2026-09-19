@@ -63,11 +63,12 @@ const control = () =>
     .getComponent(".dashboard-status")
     .findAll("button")
     .find((b) => /Start|Stop/.test(b.text()))!;
+// the instance card's tiles: version, core, nodes, subscriptions
 const counts = () =>
   wrapper
-    .findAll("dd")
+    .findAll(".dashboard-facts .md3-title-large")
     .slice(-2)
-    .map((dd) => dd.text());
+    .map((el) => el.text());
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -114,8 +115,8 @@ describe("dashboard", () => {
     expect(wrapper.findAll(".dashboard-node").map((c) => c.text())).toEqual([
       "Subscribed24ms",
     ]);
-    await wrapper.get(".v-list-item").trigger("click");
-    expect(useAppStore().view).toBe("settings");
+    // the quick settings render the current modes
+    expect(wrapper.findAll(".v-select").length).toBe(2);
   });
 
   test("keeps the confirmed state while starting and prevents duplicate requests", async () => {

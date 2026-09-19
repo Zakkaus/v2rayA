@@ -180,25 +180,25 @@ describe("outbound group cards", () => {
     const wrapper = mountPage();
     await flushPromises();
     const media = wrapper.get('[data-group="media"]');
-    expect(media.findAll(".v-chip").map((chip) => chip.text())).toEqual([
+    expect(media.findAll(".node-chip").map((chip) => chip.text())).toEqual([
       "North",
       "West",
     ]);
-    await media.get(".v-chip").trigger("click");
+    await media.get(".node-chip").trigger("click");
     await flushPromises();
-    expect(media.findAll(".v-chip").map((chip) => chip.text())).toEqual([
+    expect(media.findAll(".node-chip").map((chip) => chip.text())).toEqual([
       "West",
     ]);
     expect(wrapper.get('[data-group="proxy"]').text()).toContain("East");
     await wrapper.get("input").setValue("VLESS");
-    expect(media.findAll(".v-chip").map((chip) => chip.text())).toEqual([
+    expect(media.findAll(".node-chip").map((chip) => chip.text())).toEqual([
       "West",
     ]);
     await wrapper.get(".v-expansion-panel-title").trigger("click");
     await flushPromises();
-    expect(wrapper.get(".v-expansion-panel-text").findAll(".v-chip")).toEqual(
-      [],
-    );
+    expect(
+      wrapper.get(".v-expansion-panel-text").findAll(".node-chip"),
+    ).toEqual([]);
     const listButton = wrapper
       .findAll("button")
       .find((button) => button.text() === "List")!;

@@ -1,11 +1,10 @@
 <script setup lang="ts">
 // The standard navigation drawer for expanded windows (≥ 840 dp): the
-// brand, the destinations, and the theme, language and account menus at
-// the bottom. There is no top app bar at this width; the page titles
-// itself, and the core's state lives on the dashboard.
+// brand, the destinations, the version at the bottom. There is no top
+// app bar at this width: the page titles itself and carries the theme,
+// language and account menus; the core's state lives on the dashboard.
 import { useI18n } from "vue-i18n";
 import { destinations } from "./destinations";
-import ShellMenus from "./ShellMenus.vue";
 import { useAppStore } from "@/stores/app";
 import logo from "@/assets/img/v2raya-icon.svg";
 
@@ -32,10 +31,9 @@ const store = useAppStore();
       />
     </v-list>
     <template #append>
-      <v-divider class="mx-7" />
-      <v-list nav density="default" class="px-3 py-2">
-        <ShellMenus variant="list" />
-      </v-list>
+      <p class="drawer__version md3-label-medium text-on-surface-variant">
+        v2rayA {{ store.version?.version ?? "" }}
+      </p>
     </template>
   </v-navigation-drawer>
 </template>
@@ -46,6 +44,10 @@ const store = useAppStore();
   align-items: center;
   gap: 12px;
   padding: 28px 28px 20px;
+}
+.drawer__version {
+  padding: 16px 28px 20px;
+  margin: 0;
 }
 .drawer__logo {
   width: 28px;

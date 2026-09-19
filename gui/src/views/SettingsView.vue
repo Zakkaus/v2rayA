@@ -18,6 +18,10 @@ import TunRouteScriptDialog, {
 } from "@/dialogs/settings/TunRouteScript.vue";
 import { useAppStore } from "@/stores/app";
 import { useSettings } from "./settings/model";
+import {
+  pacModes as pacModeItems,
+  transparentModes as transparentModeItems,
+} from "./settings/options";
 import AboutDialog from "./settings/AboutDialog.vue";
 import SettingChoice from "./settings/SettingChoice.vue";
 import SettingRow from "./settings/SettingRow.vue";
@@ -45,14 +49,7 @@ onMounted(() => {
 
 // ---- the choices -------------------------------------------------------------
 
-const on = (label: string) => `${t("setting.options.on")}: ${label}`;
-const transparentModes = computed(() => [
-  { value: "close", title: t("setting.options.off") },
-  { value: "proxy", title: on(t("setting.options.global")) },
-  { value: "whitelist", title: on(t("setting.options.whitelistCn")) },
-  { value: "gfwlist", title: on(t("setting.options.gfwlist")) },
-  { value: "pac", title: on(t("setting.options.sameAsPacMode")) },
-]);
+const transparentModes = computed(() => transparentModeItems(t));
 const transparentTypes = computed(() => {
   const items: {
     value: string;
@@ -80,11 +77,7 @@ const transparentTypes = computed(() => {
     });
   return items;
 });
-const pacModes = computed(() => [
-  { value: "whitelist", title: t("setting.options.whitelistCn") },
-  { value: "gfwlist", title: t("setting.options.gfwlist") },
-  { value: "routingA", title: "RoutingA" },
-]);
+const pacModes = computed(() => pacModeItems(t));
 const onOffDefault = computed(() => [
   { value: "default", title: t("setting.options.default") },
   { value: "yes", title: t("setting.options.on") },

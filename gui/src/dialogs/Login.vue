@@ -104,6 +104,7 @@ function openAddress() {
       </v-btn>
       <v-spacer />
       <v-btn
+        variant="flat"
         color="primary"
         :loading="submitting"
         :disabled="submitting"

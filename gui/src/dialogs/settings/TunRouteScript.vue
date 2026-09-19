@@ -98,7 +98,9 @@ function save() {
       <v-btn variant="text" @click="emit('close')">{{
         t("operations.cancel")
       }}</v-btn>
-      <v-btn color="primary" @click="save">{{ t("operations.save") }}</v-btn>
+      <v-btn variant="flat" color="primary" @click="save">{{
+        t("operations.save")
+      }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>

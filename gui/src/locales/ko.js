@@ -5,6 +5,8 @@ export default {
     total: "합계: {value}",
   },
   proxies: {
+    newGroup: "새 그룹",
+    newNode: "새 노드",
     cards: "카드",
     list: "목록",
     members: "구성원: {n}",
@@ -13,6 +15,8 @@ export default {
     chooseManually: "직접 선택",
   },
   dashboard: {
+    quick: "빠른 설정",
+    connected: "연결됨",
     status: "코어 상태",
     facts: "인스턴스 정보",
     version: "버전",
@@ -222,11 +226,14 @@ export default {
         "파일의 수정 시각을 기준으로 하므로 온라인 최신 버전보다 이후일 수 있습니다.",
       transparentProxy:
         "투명 프록시를 켜면 추가 설정 없이 모든 TCP 트래픽이 v2rayA를 통과합니다. 다른 컴퓨터와 Docker에 게이트웨이로 프록시 서비스를 제공하려면 'LAN에서 공유' 옵션을 켜세요.",
-      transparentType: "★tproxy: UDP를 지원하지만 Docker는 지원하지 않습니다. ★redirect: Docker에 적합하지만 UDP를 지원하지 않으며 DNS 오염 방지를 위해 로컬 포트 53을 사용합니다. ★tun: 코어가 TUN 장치를 열고 기본 라우트를 가져갑니다. Linux, Windows, macOS와 UDP를 지원하며 v2rayA와 코어를 자동으로 제외하고 다른 프로세스를 이름으로 제외할 수 있습니다. Windows와 macOS에서는 LAN DNS에 직접 질의하는 애플리케이션이 여전히 우회합니다.",
+      transparentType:
+        "★tproxy: UDP를 지원하지만 Docker는 지원하지 않습니다. ★redirect: Docker에 적합하지만 UDP를 지원하지 않으며 DNS 오염 방지를 위해 로컬 포트 53을 사용합니다. ★tun: 코어가 TUN 장치를 열고 기본 라우트를 가져갑니다. Linux, Windows, macOS와 UDP를 지원하며 v2rayA와 코어를 자동으로 제외하고 다른 프로세스를 이름으로 제외할 수 있습니다. Windows와 macOS에서는 LAN DNS에 직접 질의하는 애플리케이션이 여전히 우회합니다.",
       tproxyExcludedInterfaces:
         "투명 프록시를 거치지 않을 네트워크 인터페이스 접두사를 설정합니다. 와일드카드 *를 지원합니다(iptables 모드에서는 자동으로 +로 변환). 예: docker*, veth*, wg*, ppp*, br-*. 여러 접두사는 쉼표로 구분하세요.",
-      tunAutoRoute: "활성화하면 v2rayA가 라우트와 DNS 설정을 직접 설치합니다. 비활성화하면 라우팅을 직접 구성할 시작/종료 스크립트를 제공해야 합니다.",
-      tunExcludeProcesses: "트래픽이 프록시를 우회할 프로세스 이름을 한 줄에 하나씩 입력합니다. 예: chrome.exe 또는 firefox. v2rayA와 코어는 항상 제외됩니다. 소켓 소유자의 실행 파일 이름으로 식별하므로, 조회 전에 닫힌 소켓이나 다른 프로세스가 재사용한 포트는 식별할 수 없습니다. 제외된 프로세스의 DNS 질의는 여전히 코어의 DNS 모듈이 응답합니다.",
+      tunAutoRoute:
+        "활성화하면 v2rayA가 라우트와 DNS 설정을 직접 설치합니다. 비활성화하면 라우팅을 직접 구성할 시작/종료 스크립트를 제공해야 합니다.",
+      tunExcludeProcesses:
+        "트래픽이 프록시를 우회할 프로세스 이름을 한 줄에 하나씩 입력합니다. 예: chrome.exe 또는 firefox. v2rayA와 코어는 항상 제외됩니다. 소켓 소유자의 실행 파일 이름으로 식별하므로, 조회 전에 닫힌 소켓이나 다른 프로세스가 재사용한 포트는 식별할 수 없습니다. 제외된 프로세스의 DNS 질의는 여전히 코어의 DNS 모듈이 응답합니다.",
       pacMode: `여기에서 규칙 포트의 트래픽 분할 규칙을 설정할 수 있습니다. 기본적으로 "트래픽 분할 규칙" 포트는 20172이며 HTTP 프로토콜입니다.`,
       tcpFastOpen:
         "TCP 핸드셰이크를 단순화하여 연결 수립을 빠르게 합니다. 패킷 특성이 강조될 위험이 있으며 시스템이 지원하지 않으면 연결에 실패할 수 있습니다.",
@@ -277,7 +284,8 @@ export default {
       0: "v2rayA는 <b>{V2RayLocationAsset}</b>의 모든 SiteDat 파일을 인식합니다",
       1: 'SiteDat 파일을 직접 만들려면: <a href="https://github.com/ToutyRater/V2Ray-SiteDAT">ToutyRater/V2Ray-SiteDAT</a>',
       2: "다중 선택을 지원합니다.",
-      noSiteDatFileFound: "{V2RayLocationAsset}에서 siteDat 파일을 찾을 수 없습니다",
+      noSiteDatFileFound:
+        "{V2RayLocationAsset}에서 siteDat 파일을 찾을 수 없습니다",
       emptyRuleNotPermitted: "모든 규칙에서 하나 이상의 태그를 선택해야 합니다",
     },
   },
@@ -398,7 +406,8 @@ export default {
     serverMessage: "서버 링크를 입력하세요:",
     subscriptionMessage: "구독 주소를 입력하세요:",
     batchMessage: "한 줄에 서버 링크 하나:",
-    qrcodeError: "이미지에서 QR 코드를 찾을 수 없습니다. 더 선명한 이미지를 사용해 보세요",
+    qrcodeError:
+      "이미지에서 QR 코드를 찾을 수 없습니다. 더 선명한 이미지를 사용해 보세요",
     notImage: "이미지 파일을 선택하세요",
     success: "가져오기 성공",
     failed: "가져오기 실패: {message}",
@@ -406,7 +415,8 @@ export default {
   },
   delete: {
     title: "선택한 항목 삭제",
-    message: "선택한 서버 또는 구독 {n}개를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+    message:
+      "선택한 서버 또는 구독 {n}개를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
     failed: "삭제 실패: {message}",
   },
   latency: {
@@ -428,7 +438,7 @@ export default {
       service: "v2rayA 서비스 포트",
       socks: "SOCKS 프로토콜",
       http: "HTTP 프로토콜",
-      httpRules: "\"트래픽 분할 규칙\"이 있는 HTTP 프로토콜",
+      httpRules: '"트래픽 분할 규칙"이 있는 HTTP 프로토콜',
       tproxy: "tproxy, 투명 프록시에 필요",
     },
     local: "모든 데이터는 클라우드가 아닌 로컬에 저장됩니다.",
@@ -511,7 +521,8 @@ export default {
     sources: {
       all: "전체",
     },
-    tailOnly: "최근 {count}줄만 표시합니다(이 화면에서는 이전 {skipped}줄이 숨겨짐)",
+    tailOnly:
+      "최근 {count}줄만 표시합니다(이 화면에서는 이전 {skipped}줄이 숨겨짐)",
     export: "내보내기",
   },
   tproxyWhiteIpGroups: {
@@ -523,7 +534,8 @@ export default {
     formName1: "Ctrl을 누른 채 여러 항목을 선택할 수 있습니다.",
     formName2: "사용자 지정 IP (한 줄에 하나, 표준 CIDR 형식)",
     formPlaceholder2: "172.30.0.0/16\nfd00:aaaa:bbbb::/48",
-    invalidCustomIps: "사용자 지정 IP는 한 줄에 하나의 CIDR이어야 합니다. 예: 10.0.0.0/8",
+    invalidCustomIps:
+      "사용자 지정 IP는 한 줄에 하나의 CIDR이어야 합니다. 예: 10.0.0.0/8",
     saveFailed: "직접 연결 IP 그룹 저장 실패: {message}",
     cn: "중국 본토",
     private: "사설 네트워크",
@@ -547,7 +559,8 @@ export default {
       "주의: 잘못된 파일은 서비스 시작 실패를 일으킬 수 있습니다. 다운로드 후 서비스를 시작할 수 없으면 GFWList 삭제 버튼을 클릭하세요",
     ],
     formName: "사용자 지정 다운로드 링크",
-    wrongCustomLink: "사용자 지정 다운로드 링크는 http:// 또는 https://로 시작해야 합니다",
+    wrongCustomLink:
+      "사용자 지정 다운로드 링크는 http:// 또는 https://로 시작해야 합니다",
     updated: "GFWList 업데이트됨",
     saveFailed: "GFWList 업데이트 실패: {message}",
     alreadyUpToDate: "GFWList는 이미 최신 버전입니다({version})",
@@ -555,19 +568,23 @@ export default {
   tun: {
     routeScript: {
       title: "TUN 사용자 지정 라우트 스크립트",
-      warning: "경고: 잘못된 스크립트는 네트워크나 시스템 라우팅을 망가뜨릴 수 있습니다. 내용을 이해한 뒤에만 저장하세요.",
+      warning:
+        "경고: 잘못된 스크립트는 네트워크나 시스템 라우팅을 망가뜨릴 수 있습니다. 내용을 이해한 뒤에만 저장하세요.",
       shellType: "셸 유형",
       customShell: "사용자 지정 (아래에 경로 지정)",
       shellPath: "셸 경로",
       shellPathPlaceholder: "/usr/bin/bash",
       setupScript: "설정 스크립트 (TUN 준비 후 실행)",
-      setupScriptPlaceholder: "# TUN 준비 시 라우트를 구성하는 스크립트\n# 예: ip route add default dev tun0",
+      setupScriptPlaceholder:
+        "# TUN 준비 시 라우트를 구성하는 스크립트\n# 예: ip route add default dev tun0",
       teardownScript: "해제 스크립트 (TUN 종료 전 실행)",
-      teardownScriptPlaceholder: "# TUN 종료 전 라우트를 제거하는 스크립트\n# 예: ip route del default dev tun0",
+      teardownScriptPlaceholder:
+        "# TUN 종료 전 라우트를 제거하는 스크립트\n# 예: ip route del default dev tun0",
     },
     processExclude: {
       title: "TUN 사용자 지정 프로세스 제외",
-      warning: "경고: 잘못된 프로세스 이름은 트래픽이 예기치 않게 우회될 수 있습니다. 신뢰할 수 있는 프로세스 이름만 추가하세요.",
+      warning:
+        "경고: 잘못된 프로세스 이름은 트래픽이 예기치 않게 우회될 수 있습니다. 신뢰할 수 있는 프로세스 이름만 추가하세요.",
       listLabel: "제외할 프로세스 이름",
       placeholder: "v2raya, v2ray, chrome.exe",
       hint: "쉼표 또는 줄바꿈으로 구분합니다. 저장 시 중복이 제거됩니다.",
@@ -615,11 +632,9 @@ export default {
     LINK_NO_SCHEME: "서버 링크에 스킴 없음.",
     LINK_UNSUPPORTED_SCHEME: "지원되지 않는 링크 스킴: {scheme}",
     LINK_MALFORMED: "잘못된 {protocol} 링크: {detail}",
-    SUBSCRIPTION_FETCH_FAILED:
-      "{host}에서 구독 가져오기 실패: {detail}",
+    SUBSCRIPTION_FETCH_FAILED: "{host}에서 구독 가져오기 실패: {detail}",
     SUBSCRIPTION_EMPTY: "구독에 서버 없음.",
-    SUBSCRIPTION_NOT_FOUND:
-      "구독 #{id} 없음. 페이지를 새로 고치세요.",
+    SUBSCRIPTION_NOT_FOUND: "구독 #{id} 없음. 페이지를 새로 고치세요.",
     SERVER_NOT_FOUND:
       "서버 #{id} 없음 (서버 {count}개). 페이지를 새로 고치세요.",
     SUBSCRIPTION_SERVER_NOT_FOUND:
@@ -637,10 +652,8 @@ export default {
     GFWLIST_MISSING: "GFWList가 {dir}에 없음.",
     INVALID_CONFIG: "invalid config: {detail}",
     ASSET_UNREACHABLE: "{host}에 연결할 수 없습니다: {detail}",
-    ASSET_DOWNLOAD_FAILED:
-      "{host}에서 자산 다운로드 실패 (HTTP {status}).",
-    TRANSPARENT_SETUP_FAILED:
-      "투명 프록시 {mode} 설정 실패: {detail}",
+    ASSET_DOWNLOAD_FAILED: "{host}에서 자산 다운로드 실패 (HTTP {status}).",
+    TRANSPARENT_SETUP_FAILED: "투명 프록시 {mode} 설정 실패: {detail}",
     MUX_RANGE: "잘못된 MUX 동시성 값: {value}",
     CUSTOM_INBOUND_INVALID: "잘못된 사용자 지정 인바운드 {field}: {value}",
   },

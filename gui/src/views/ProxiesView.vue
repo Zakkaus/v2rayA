@@ -5,12 +5,16 @@ import { useDisplay } from "vuetify";
 import {
   mdiChevronDown,
   mdiMagnify,
+  mdiPlus,
   mdiSpeedometer,
+  mdiTrayArrowDown,
   mdiViewGridOutline,
   mdiViewListOutline,
 } from "@mdi/js";
 import { errorText } from "@/api/errors";
-import { useNotify } from "@/composables";
+import { useDialog, useNotify, useOutboundGroups } from "@/composables";
+import ImportDialog from "@/dialogs/Import.vue";
+import ServerDialog from "@/dialogs/Server/index.vue";
 import NodesView from "./NodesView.vue";
 import NodeChips from "./proxies/NodeChips.vue";
 import { useProxies } from "./proxies/model";
@@ -20,7 +24,6 @@ defineOptions({ name: "ProxiesView" });
 const { t } = useI18n();
 const notify = useNotify();
 const { width } = useDisplay();
-const compact = computed(() => width.value < 600);
 const expanded = computed(() => width.value >= 840);
 const proxies = useProxies();
 const {
@@ -38,6 +41,24 @@ const {
   loadError,
 } = proxies;
 const list = ref<InstanceType<typeof NodesView> | null>(null);
+const { open } = useDialog();
+const outboundGroups = useOutboundGroups();
+
+async function newGroup() {
+  if (await outboundGroups.add()) await sync();
+}
+async function newNode() {
+  const saved = await open<boolean>(
+    ServerDialog,
+    { which: null },
+    { width: 560 },
+  ).result;
+  if (saved) await sync();
+}
+async function importNodes() {
+  const imported = await open<boolean>(ImportDialog, {}, { width: 480 }).result;
+  if (imported) await sync();
+}
 
 async function run(
   action: () => Promise<unknown>,
@@ -71,40 +92,68 @@ watch(view, (value) => {
 </script>
 
 <template>
-  <div class="d-flex flex-column ga-6">
-    <v-btn-toggle
-      v-model="view"
-      mandatory
-      divided
-      variant="outlined"
-      color="primary"
+  <div class="proxies">
+    <div class="proxies__bar">
+      <v-btn-toggle
+        v-model="view"
+        mandatory
+        divided
+        variant="outlined"
+        rounded="xl"
+        density="comfortable"
+        selected-class="bg-secondary-container text-on-secondary-container"
+        :aria-label="t('operations.view')"
+      >
+        <v-btn
+          value="cards"
+          :prepend-icon="mdiViewGridOutline"
+          class="text-none"
+        >
+          {{ t("proxies.cards") }}
+        </v-btn>
+        <v-btn
+          value="list"
+          :prepend-icon="mdiViewListOutline"
+          class="text-none"
+        >
+          {{ t("proxies.list") }}
+        </v-btn>
+      </v-btn-toggle>
+      <v-spacer />
+      <v-btn variant="text" :prepend-icon="mdiPlus" @click="newGroup">
+        {{ t("proxies.newGroup") }}
+      </v-btn>
+      <v-btn variant="outlined" :prepend-icon="mdiPlus" @click="newNode">
+        {{ t("proxies.newNode") }}
+      </v-btn>
+      <v-btn
+        color="primary"
+        variant="flat"
+        :prepend-icon="mdiTrayArrowDown"
+        @click="importNodes"
+      >
+        {{ t("operations.import") }}
+      </v-btn>
+    </div>
+    <v-text-field
+      v-if="view === 'cards'"
+      v-model="query"
+      :placeholder="t('proxyGroup.searchNodes')"
+      :prepend-inner-icon="mdiMagnify"
+      variant="solo-filled"
+      bg-color="surface-container-high"
       rounded="pill"
-      class="align-self-start"
-      :aria-label="t('operations.view')"
-    >
-      <v-btn value="cards" :prepend-icon="mdiViewGridOutline">{{
-        t("proxies.cards")
-      }}</v-btn>
-      <v-btn value="list" :prepend-icon="mdiViewListOutline">{{
-        t("proxies.list")
-      }}</v-btn>
-    </v-btn-toggle>
+      density="comfortable"
+      flat
+      hide-details
+      clearable
+      class="proxies__search mb-5"
+      @click:clear="query = ''"
+    />
 
     <NodesView v-if="view === 'list'" ref="list" />
     <template v-else>
-      <v-text-field
-        v-model="query"
-        :label="t('proxyGroup.searchNodes')"
-        :prepend-inner-icon="mdiMagnify"
-        variant="solo-filled"
-        bg-color="surface-container-high"
-        rounded="pill"
-        flat
-        hide-details
-        clearable
-        @click:clear="query = ''"
-      />
-      <v-alert v-if="loadError" type="error" variant="tonal">
+      <v-alert v-if="loadError" type="error" variant="tonal" class="mb-4">
         {{ t("server.refreshFailed", { message: errorText(loadError) }) }}
         <template #append>
           <v-btn variant="text" @click="sync">{{
@@ -112,72 +161,79 @@ watch(view, (value) => {
           }}</v-btn>
         </template>
       </v-alert>
-      <v-skeleton-loader v-else-if="loading" type="card, list-item-two-line" />
+      <v-skeleton-loader
+        v-else-if="loading"
+        type="card, card"
+        class="bg-transparent"
+      />
       <template v-else>
-        <v-row>
-          <v-col
+        <div
+          class="proxies__groups"
+          :class="{ 'proxies__groups--wide': expanded }"
+        >
+          <v-card
             v-for="group in groups"
             :key="group.name"
-            :cols="expanded ? 6 : 12"
+            color="surface-container-high"
+            rounded="xl"
+            class="pa-5"
+            :data-group="group.name"
           >
-            <v-card
-              color="surface-container-low"
-              rounded="lg"
-              class="h-100 pa-4"
-              :data-group="group.name"
-            >
-              <div class="d-flex flex-wrap align-center ga-2 mb-4">
-                <h2 class="md3-title-medium proxies__name">{{ group.name }}</h2>
-                <span class="md3-body-small text-on-surface-variant">{{
-                  t("proxies.members", { n: group.members.length })
-                }}</span>
-                <v-spacer />
-                <v-btn
-                  variant="tonal"
-                  :prepend-icon="mdiSpeedometer"
-                  :disabled="pending !== null || !group.members.length"
-                  :loading="pending === group.name"
-                  @click="
-                    run(
-                      () => proxies.testGroup(group.name, t('latency.testing')),
-                      'latency.failed',
-                    )
-                  "
-                  >{{ t("proxies.testLatency") }}</v-btn
-                >
-              </div>
-              <v-btn-group
-                v-if="tested.has(group.name)"
-                color="primary"
+            <div class="d-flex align-center ga-3 mb-4">
+              <h2 class="md3-title-large proxies__name">
+                {{ group.name.toUpperCase() }}
+              </h2>
+              <v-chip size="small" variant="tonal">
+                {{ t("proxies.members", { n: group.members.length }) }}
+              </v-chip>
+              <v-spacer />
+              <v-btn
+                v-if="!tested.has(group.name)"
                 variant="tonal"
-                rounded="pill"
+                :prepend-icon="mdiSpeedometer"
+                :disabled="pending !== null || !group.members.length"
+                :loading="pending === group.name"
+                @click="
+                  run(
+                    () => proxies.testGroup(group.name, t('latency.testing')),
+                    'latency.failed',
+                  )
+                "
+              >
+                {{ t("proxies.testLatency") }}
+              </v-btn>
+              <v-btn-group
+                v-else
+                color="primary"
+                variant="flat"
+                rounded="xl"
                 divided
-                class="mb-4 proxies__split"
               >
                 <v-btn
-                  :disabled="pending !== null || !group.members.length"
+                  :disabled="pending !== null"
                   @click="connect(group.name)"
-                  >{{ t("proxies.connectFastest") }}</v-btn
                 >
+                  {{ t("proxies.connectFastest") }}
+                </v-btn>
                 <v-menu>
                   <template #activator="{ props }">
                     <v-btn
                       v-bind="props"
                       :disabled="pending !== null"
+                      :icon="mdiChevronDown"
                       :aria-label="t('common.menu')"
-                      width="48"
-                      min-width="48"
-                    >
-                      <v-icon :icon="mdiChevronDown" size="18" />
-                      <v-tooltip activator="parent">{{
-                        t("common.menu")
-                      }}</v-tooltip>
-                    </v-btn>
+                    />
                   </template>
-                  <v-list>
+                  <v-list density="compact">
                     <v-list-item
-                      :title="t('proxies.connectFastest')"
-                      @click="connect(group.name)"
+                      :title="t('proxies.testLatency')"
+                      @click="
+                        run(
+                          () =>
+                            proxies.testGroup(group.name, t('latency.testing')),
+                          'latency.failed',
+                        )
+                      "
                     />
                     <v-list-item
                       :title="t('proxies.chooseManually')"
@@ -186,55 +242,65 @@ watch(view, (value) => {
                   </v-list>
                 </v-menu>
               </v-btn-group>
-              <NodeChips
-                :rows="group.visible"
-                :is-selected="(row) => nodes.inGroup(row, group.name)"
-                :disabled="pending !== null"
-                @toggle="toggle($event, group.name)"
-              />
-              <v-empty-state
-                v-if="!group.visible.length"
-                :title="
-                  t(
-                    group.members.length
-                      ? 'proxyGroup.noMatch'
-                      : 'proxyGroup.emptyGroup',
-                  )
-                "
-                class="pa-4"
-              />
-            </v-card>
-          </v-col>
-        </v-row>
+            </div>
+            <NodeChips
+              :rows="group.visible"
+              :is-selected="(row) => nodes.inGroup(row, group.name)"
+              :disabled="pending !== null"
+              @toggle="toggle($event, group.name)"
+            />
+            <p
+              v-if="!group.visible.length"
+              class="md3-body-medium text-on-surface-variant ma-0"
+            >
+              {{
+                t(
+                  group.members.length
+                    ? "proxyGroup.noMatch"
+                    : "proxyGroup.emptyGroup",
+                )
+              }}
+            </p>
+          </v-card>
+        </div>
 
-        <v-sheet
-          color="surface-container-low"
-          rounded="xl"
-          :class="compact ? 'pa-4' : 'pa-6'"
-        >
-          <h2 class="md3-title-medium mb-4">{{ t("common.nodes") }}</h2>
-          <v-select
-            v-model="store.outboundName"
-            :items="store.outbounds"
-            :label="t('proxyGroup.group')"
-            :disabled="pending !== null"
-            class="mb-4"
-            hide-details
-          />
-          <v-expansion-panels multiple variant="accordion">
+        <section class="mt-8">
+          <div class="d-flex flex-wrap align-center ga-3 mb-3">
+            <h2 class="md3-title-medium">{{ t("common.nodes") }}</h2>
+            <span class="md3-body-medium text-on-surface-variant">
+              {{ t("operations.addTo") }}
+            </span>
+            <v-chip-group
+              :model-value="store.outboundName"
+              mandatory
+              :disabled="pending !== null"
+              @update:model-value="(v: string) => (store.outboundName = v)"
+            >
+              <v-chip
+                v-for="g in store.outbounds"
+                :key="g"
+                :value="g"
+                variant="outlined"
+                filter
+              >
+                {{ g.toUpperCase() }}
+              </v-chip>
+            </v-chip-group>
+          </div>
+          <v-expansion-panels multiple variant="accordion" rounded="lg">
             <v-expansion-panel
               v-for="source in sources"
               :key="source.key"
               :value="source.key"
               bg-color="surface-container-low"
             >
-              <v-expansion-panel-title>
+              <v-expansion-panel-title class="md3-title-small">
                 <span class="proxies__name">{{
                   source.name || t("server.server")
                 }}</span>
-                <span class="ms-2 md3-body-small text-on-surface-variant">{{
+                <v-chip size="x-small" variant="tonal" class="ms-3">{{
                   source.rows.length
-                }}</span>
+                }}</v-chip>
               </v-expansion-panel-title>
               <v-expansion-panel-text>
                 <NodeChips
@@ -243,15 +309,16 @@ watch(view, (value) => {
                   :disabled="pending !== null"
                   @toggle="toggle($event, store.outboundName)"
                 />
-                <v-empty-state
+                <p
                   v-if="!source.rows.length"
-                  :title="t(query ? 'proxyGroup.noMatch' : 'common.empty')"
-                  class="pa-4"
-                />
+                  class="md3-body-medium text-on-surface-variant ma-0"
+                >
+                  {{ t(query ? "proxyGroup.noMatch" : "common.empty") }}
+                </p>
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
-        </v-sheet>
+        </section>
       </template>
     </template>
 
@@ -300,15 +367,26 @@ watch(view, (value) => {
 </template>
 
 <style scoped>
+.proxies__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.proxies__search {
+  max-width: 480px;
+}
+.proxies__groups {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+.proxies__groups--wide {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .proxies__name {
   overflow-wrap: anywhere;
-  white-space: normal;
-}
-.proxies__split {
-  max-width: 100%;
-  height: auto;
-}
-.proxies__split :deep(.v-btn__content) {
   white-space: normal;
 }
 </style>

@@ -114,6 +114,7 @@ function onImage(event: Event) {
         t("operations.cancel")
       }}</v-btn>
       <v-btn
+        variant="flat"
         color="primary"
         :loading="importing"
         :disabled="!text.trim()"

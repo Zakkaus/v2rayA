@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useDisplay } from "vuetify";
 import { formatBytes, formatRate } from "@/lib/format";
 
 const props = defineProps<{
@@ -13,71 +12,92 @@ const props = defineProps<{
   downSeries: number[];
 }>();
 const { t } = useI18n();
-const { width } = useDisplay();
-const expanded = computed(() => width.value >= 840);
 const downGradient = [
   "rgb(var(--v-theme-primary))",
   "rgb(var(--v-theme-primary-container))",
 ];
-const upGradient = [
-  "rgb(var(--v-theme-tertiary))",
-  "rgb(var(--v-theme-tertiary-container))",
-];
 </script>
 
 <template>
-  <v-card color="surface-container-high" rounded="xl" class="pa-4">
-    <v-row dense>
-      <v-col :cols="expanded ? 6 : 12">
-        <v-card-subtitle class="md3-label-medium pa-0">
+  <v-card color="surface-container-high" rounded="xl" class="pa-5 traffic">
+    <div class="traffic__rates">
+      <div>
+        <p class="md3-label-medium text-on-surface-variant ma-0">
           {{ t("traffic.download") }}
-        </v-card-subtitle>
-        <v-card-text class="md3-display-small pa-0" dir="ltr">
+        </p>
+        <p class="md3-headline-small traffic__value ma-0" dir="ltr">
           {{ formatRate(props.down) }}
-        </v-card-text>
-        <v-card-text class="md3-body-small text-on-surface-variant pa-0 mt-2">
+        </p>
+        <p class="md3-body-small text-on-surface-variant ma-0" dir="ltr">
           {{ t("traffic.total", { value: formatBytes(props.downTotal) }) }}
-        </v-card-text>
-        <v-sparkline
-          :model-value="props.downSeries"
-          type="trend"
-          smooth
-          fill
-          :min="0"
-          color="rgb(var(--v-theme-primary))"
-          :gradient="downGradient"
-          auto-draw="once"
-          animation
-          class="mt-4"
-          role="img"
-          :aria-label="t('traffic.download')"
-        />
-      </v-col>
-      <v-col :cols="expanded ? 6 : 12">
-        <v-card-subtitle class="md3-label-medium pa-0">
+        </p>
+      </div>
+      <div>
+        <p class="md3-label-medium text-on-surface-variant ma-0">
           {{ t("traffic.upload") }}
-        </v-card-subtitle>
-        <v-card-text class="md3-display-small pa-0" dir="ltr">
+        </p>
+        <p class="md3-headline-small traffic__value ma-0" dir="ltr">
           {{ formatRate(props.up) }}
-        </v-card-text>
-        <v-card-text class="md3-body-small text-on-surface-variant pa-0 mt-2">
+        </p>
+        <p class="md3-body-small text-on-surface-variant ma-0" dir="ltr">
           {{ t("traffic.total", { value: formatBytes(props.upTotal) }) }}
-        </v-card-text>
-        <v-sparkline
-          :model-value="props.upSeries"
-          type="trend"
-          smooth
-          fill
-          :min="0"
-          color="rgb(var(--v-theme-tertiary))"
-          :gradient="upGradient"
-          auto-draw="once"
-          animation
-          class="mt-4"
-          role="img"
-          :aria-label="t('traffic.upload')"
-        />
-      </v-col>
-    </v-row>
+        </p>
+      </div>
+    </div>
+    <div class="traffic__chart mt-4">
+      <v-sparkline
+        :model-value="props.downSeries"
+        type="trend"
+        smooth
+        fill
+        :min="0"
+        :line-width="2"
+        :padding="4"
+        color="rgb(var(--v-theme-primary))"
+        :gradient="downGradient"
+        auto-draw="once"
+        animation
+        role="img"
+        :aria-label="t('traffic.download')"
+        class="traffic__down"
+      />
+      <v-sparkline
+        :model-value="props.upSeries"
+        type="trend"
+        smooth
+        :min="0"
+        :line-width="2"
+        :padding="4"
+        color="rgb(var(--v-theme-tertiary))"
+        auto-draw="once"
+        animation
+        role="img"
+        :aria-label="t('traffic.upload')"
+        class="traffic__up"
+      />
+    </div>
   </v-card>
 </template>
+
+<style scoped>
+.traffic__rates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.traffic__value {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+/* the two lines share one plot: download filled below, upload as a line above */
+.traffic__chart {
+  position: relative;
+  height: 96px;
+}
+.traffic__chart :deep(svg) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+</style>

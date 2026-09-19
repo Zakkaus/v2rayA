@@ -35,7 +35,7 @@
   $danger: rgba(255, 69, 58, 0.73),
   $link: hsl(44, 100%, 77%),
   $custom-colors: (
-    "twitter": #4099FF,
+    "twitter": #4099ff,
     "green": hsl(141, 53%, 53%),
     "delete": #cd8a7a,
     "lightblue": #acd1f0,
@@ -76,7 +76,6 @@
   @include setup.setup-theme;
 }
 
-
 // Bulma 1 decomposes palette colours into h/s/l and drops alpha; the legacy
 // $danger carried 0.73 alpha, so restore it for direct `var(--bulma-danger)`
 // consumers. It also derives `-invert` text from the colour scale's soft-white
@@ -96,7 +95,10 @@
   --bulma-success-invert-l: 100%;
   --bulma-warning-invert-l: 100%;
   --bulma-danger-invert-l: 100%;
-  --bulma-family-primary: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  --bulma-family-primary:
+    BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica",
+    "Arial", sans-serif;
   --bulma-radius: 4px;
   --bulma-radius-small: 2px;
 }
