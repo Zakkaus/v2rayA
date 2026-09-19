@@ -117,6 +117,37 @@ describe("the client sends what the old components sent", () => {
     expect(err.body?.errorCode).toBe("NODE_NOT_FOUND");
   });
 
+  test("a busy backend is asked again for a read, not for a write", async () => {
+    vi.useFakeTimers();
+    let calls = 0;
+    reply = async () => {
+      calls++;
+      return calls < 3
+        ? {
+            status: 200,
+            data: {
+              code: "FAIL",
+              message: "busy",
+              errorCode: "REQUEST_IN_PROGRESS",
+              data: null,
+            },
+          }
+        : { status: 200, data: { code: "SUCCESS", data: { ok: true } } };
+    };
+    const read = call<{ ok: boolean }>({ url: "touch", method: "get" });
+    await vi.advanceTimersByTimeAsync(400);
+    await vi.advanceTimersByTimeAsync(800);
+    expect(await read).toEqual({ ok: true });
+    expect(calls).toBe(3);
+    calls = 0;
+    const err = (await call({ url: "v2ray", method: "post" }).catch(
+      (e) => e,
+    )) as ApiError;
+    expect(err.body?.errorCode).toBe("REQUEST_IN_PROGRESS");
+    expect(calls).toBe(1);
+    vi.useRealTimers();
+  });
+
   test("401 outside login and account calls the hook", async () => {
     const onUnauthorized = vi.fn();
     setClientHooks({ onUnauthorized });

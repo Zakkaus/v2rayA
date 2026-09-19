@@ -198,30 +198,43 @@ const activity = reactive({ inFlight: 0 });
 export const requestActivity = readonly(activity);
 
 /** call performs one backend operation and unwraps the envelope; a FAIL envelope is an ApiError of kind http with status 200. */
+// The backend serves one state-changing request at a time and answers
+// REQUEST_IN_PROGRESS to a read that arrives meanwhile (a touch during a
+// latency test, say). A read waits and asks again a few times before the
+// page hears of it.
+const busyRetries = [400, 800, 1600];
+
 export async function call<T>(
   config: AxiosRequestConfig & { url: string },
 ): Promise<T> {
-  activity.inFlight++;
-  let res;
-  try {
-    res = await client.request<ApiEnvelope<T>>({
-      ...config,
-      url:
-        config.url.startsWith("http") || config.url.startsWith("/")
-          ? config.url
-          : `${apiRoot()}/${config.url}`,
-    });
-  } finally {
-    activity.inFlight--;
-  }
-  const body = res.data;
-  if (!body || body.code !== "SUCCESS") {
+  const url =
+    config.url.startsWith("http") || config.url.startsWith("/")
+      ? config.url
+      : `${apiRoot()}/${config.url}`;
+  const isRead = (config.method ?? "get").toLowerCase() === "get";
+  for (let attempt = 0; ; attempt++) {
+    activity.inFlight++;
+    let res;
+    try {
+      res = await client.request<ApiEnvelope<T>>({ ...config, url });
+    } finally {
+      activity.inFlight--;
+    }
+    const body = res.data;
+    if (body?.code === "SUCCESS") return body.data;
+    if (
+      isRead &&
+      body?.errorCode === "REQUEST_IN_PROGRESS" &&
+      attempt < busyRetries.length
+    ) {
+      await new Promise((r) => setTimeout(r, busyRetries[attempt]));
+      continue;
+    }
     throw new ApiError("http", body?.message ?? "request failed", config.url, {
       status: res.status,
       body,
     });
   }
-  return body.data;
 }
 
 /** probe asks another backend for its version without credentials; the address dialog uses it. */
