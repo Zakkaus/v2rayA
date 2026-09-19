@@ -308,6 +308,15 @@ function switchNode() {
           >
         </template>
       </v-card>
+      <v-expand-transition>
+        <div
+          v-if="showSettings"
+          id="dashboard-proxy-settings"
+          class="dashboard-full"
+        >
+          <ProxySettings />
+        </div>
+      </v-expand-transition>
 
       <v-card
         color="surface-container-low"
@@ -605,13 +614,7 @@ function switchNode() {
           }}</v-btn
         >
       </v-card>
-
     </div>
-    <v-expand-transition>
-      <div v-if="showSettings" id="dashboard-proxy-settings" class="mt-4">
-        <ProxySettings />
-      </div>
-    </v-expand-transition>
   </div>
 </template>
 
