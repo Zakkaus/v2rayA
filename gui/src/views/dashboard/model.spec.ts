@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { flushPromises } from "@vue/test-utils";
+import { DOMWrapper, flushPromises } from "@vue/test-utils";
 import type { VueWrapper } from "@vue/test-utils";
 import type * as api from "@/api";
 import {
@@ -304,20 +304,22 @@ describe("dashboard", () => {
     vi.mocked(putOutboundSelection)
       .mockResolvedValueOnce(pinned)
       .mockResolvedValueOnce(response());
-    const picker = () =>
-      wrapper.getComponent(".dashboard-connection .v-select") as VueWrapper;
-    const memberKey = (
-      picker().props() as { items: { value: string; title: string }[] }
-    ).items.find((item) => item.value !== "auto")!.value;
-    picker().vm.$emit("update:modelValue", memberKey);
-    await flushPromises();
+    const menuItem = async (index: number) => {
+      await wrapper
+        .get(".dashboard-connection .dashboard-node-name")
+        .trigger("click");
+      await flushPromises();
+      const items = [...document.querySelectorAll('[role="menuitemradio"]')];
+      await new DOMWrapper(items[index]).trigger("click");
+      await flushPromises();
+    };
+    await menuItem(1);
     expect(putOutboundSelection).toHaveBeenNthCalledWith(1, {
       outbound: "proxy",
       which: { _type: "server", id: 1 },
     });
     expect(wrapper.get(".dashboard-connection").text()).toContain("Pinned");
-    picker().vm.$emit("update:modelValue", "auto");
-    await flushPromises();
+    await menuItem(0);
     expect(putOutboundSelection).toHaveBeenNthCalledWith(2, {
       outbound: "proxy",
       which: null,

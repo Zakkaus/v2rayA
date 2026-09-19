@@ -6,6 +6,7 @@ import {
   mdiPower,
   mdiSpeedometer,
   mdiServerNetwork,
+  mdiChevronDown,
   mdiDotsVertical,
   mdiPlus,
   mdiShieldOutline,
@@ -81,11 +82,11 @@ const selectionValue = computed(
   () => members.value.find((m) => m.which.selected)?.key ?? "auto",
 );
 const selectionItems = computed(() => [
-  { value: "auto", title: t("dashboard.autoFastest") },
+  { value: "auto", title: t("dashboard.autoFastest"), subtitle: "" },
   ...members.value.map((m) => ({
     value: m.key,
     title: m.row.name || m.row.address,
-    props: { subtitle: `${m.row.net} · ${m.latency}` },
+    subtitle: `${m.row.net} · ${m.latency}`,
   })),
 ]);
 function pick(value: string) {
@@ -204,39 +205,51 @@ function pick(value: string) {
           class="bg-transparent"
         />
         <template v-else-if="members.length">
-          <template v-if="nodeInUse">
-            <p class="md3-title-medium mb-2 dashboard-wrap" dir="auto">
-              {{ nodeInUse.row.name || nodeInUse.row.address }}
-            </p>
-            <p class="md3-body-medium text-on-surface-variant mb-3" dir="ltr">
-              {{ nodeInUse.row.net }} · {{ nodeInUse.latency }}
+          <v-menu>
+            <template #activator="{ props: menu }">
+              <v-btn
+                v-bind="menu"
+                variant="text"
+                class="dashboard-node-name text-none px-2 ms-n2 mb-1"
+                :append-icon="mdiChevronDown"
+                :disabled="selecting"
+                :aria-label="t('dashboard.switchNode')"
+              >
+                <span class="md3-title-medium dashboard-wrap" dir="auto">{{
+                  nodeInUse
+                    ? nodeInUse.row.name || nodeInUse.row.address
+                    : t("dashboard.autoFastest")
+                }}</span>
+              </v-btn>
+            </template>
+            <v-list density="compact" min-width="280">
+              <v-list-item
+                v-for="item in selectionItems"
+                :key="item.value"
+                :title="item.title"
+                :subtitle="item.subtitle || undefined"
+                :active="item.value === selectionValue"
+                role="menuitemradio"
+                :aria-checked="item.value === selectionValue"
+                @click="pick(item.value)"
+              />
+            </v-list>
+          </v-menu>
+          <p class="md3-body-medium text-on-surface-variant mb-3" dir="ltr">
+            <template v-if="nodeInUse"
+              >{{ nodeInUse.row.net }} · {{ nodeInUse.latency }}
               <template v-if="nodeInUse.which.selected">
                 · {{ t("dashboard.pinned") }}</template
               >
               <template v-else-if="members.length >= 2">
                 · {{ t("dashboard.balanced", { n: members.length }) }}</template
-              >
-            </p>
-          </template>
-          <p v-else class="md3-body-medium text-on-surface-variant mb-3">
-            {{ t("dashboard.balanced", { n: members.length }) }}
-          </p>
-          <div class="d-flex align-center ga-2">
-            <v-select
-              :model-value="selectionValue"
-              :items="selectionItems"
-              :label="t('dashboard.switchNode')"
-              variant="outlined"
-              density="compact"
-              hide-details
-              :disabled="selecting"
-              class="flex-grow-1"
-              @update:model-value="pick"
+              ></template
             >
-              <template #item="{ props: item }">
-                <v-list-item v-bind="item" />
-              </template>
-            </v-select>
+            <template v-else>{{
+              t("dashboard.balanced", { n: members.length })
+            }}</template>
+          </p>
+          <div class="d-flex justify-end">
             <v-btn variant="text" @click="editGroup">{{
               t("dashboard.editGroup")
             }}</v-btn>
@@ -561,6 +574,14 @@ function pick(value: string) {
 }
 .dashboard-wrap {
   overflow-wrap: anywhere;
+}
+/* the node's name is the switch: a text button that wraps like a title */
+.dashboard-node-name {
+  height: auto;
+  min-height: 40px;
+  max-width: 100%;
+  white-space: normal;
+  text-align: start;
 }
 /* the core's state at a glance: a 12 dp dot, grey until the core runs */
 .dashboard-state-dot {
