@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { describe, expect, test } from "vitest";
 import { mountWithApp } from "@/test/mount";
-import About from "./About.vue";
+import About from "./AboutView.vue";
 
 describe("the about dialog", () => {
   test("lists the ports and links the discussions", () => {

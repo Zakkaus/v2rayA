@@ -1,5 +1,6 @@
 export default {
   common: {
+    nodes: "Nós",
     menu: "Menu",
     outboundSetting: "Configuração do grupo de proxy",
     setting: "Configurações",
@@ -26,6 +27,9 @@ export default {
     expand: "Mostrar o estado da conexão",
   },
   theme: {
+    auto: "Automático",
+    light: "Claro",
+    dark: "Escuro",
     title: "Tema",
     appearance: "Aparência",
     color: "Cor do tema",

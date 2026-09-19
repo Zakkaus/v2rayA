@@ -1,5 +1,13 @@
 <template>
-  <div class="modal-card dns-setting-modal" style="width: auto; min-width: min(680px, 95vw); max-width: 95vw; margin: auto">
+  <div
+    class="modal-card dns-setting-modal"
+    style="
+      width: auto;
+      min-width: min(680px, 95vw);
+      max-width: 95vw;
+      margin: auto;
+    "
+  >
     <header class="modal-card-head">
       <p class="modal-card-title">{{ $t("dns.title") }}</p>
       <a
@@ -12,7 +20,12 @@
         <b-icon icon="circle-help" size="is-small" />
         {{ $t("dns.help") }}
       </a>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <!-- DNS rules table -->
@@ -52,11 +65,9 @@
           <div class="col-outbound">
             <b-select v-model="rule.outbound" size="is-small" expanded>
               <option value="direct">direct</option>
-              <option
-                v-for="out in outbounds"
-                :key="out"
-                :value="out"
-              >{{ out }}</option>
+              <option v-for="out in outbounds" :key="out" :value="out">
+                {{ out }}
+              </option>
             </b-select>
           </div>
           <div class="col-actions">
@@ -71,16 +82,15 @@
       </div>
 
       <div class="dns-add-row">
-        <b-button
-          size="is-small"
-          type="is-primary"
-          @click="addRule"
-        >+ {{ $t("dns.addRule") }}</b-button>
+        <b-button size="is-small" type="is-primary" @click="addRule"
+          >+ {{ $t("dns.addRule") }}</b-button
+        >
         <b-button
           size="is-small"
           @click="resetDefault"
           style="margin-left: 8px"
-        >{{ $t("dns.resetDefault") }}</b-button>
+          >{{ $t("dns.resetDefault") }}</b-button
+        >
       </div>
     </section>
     <footer class="modal-card-foot flex-end">
@@ -120,7 +130,11 @@ export default {
     // Load current DNS rules
     this.$axios({ url: apiRoot + "/dnsRules" }).then((res) => {
       handleResponse(res, this, () => {
-        if (res.data.data && res.data.data.rules && res.data.data.rules.length > 0) {
+        if (
+          res.data.data &&
+          res.data.data.rules &&
+          res.data.data.rules.length > 0
+        ) {
           this.rules = res.data.data.rules.map((r) => ({
             server: r.server || "",
             domains: r.domains || "",
@@ -155,9 +169,15 @@ export default {
         method: "put",
         data: validRules,
       }).then((res) => {
-        handleResponse(res, this, () => {
-          this.$emit("close");
-        }, null, "dns.saveFailed");
+        handleResponse(
+          res,
+          this,
+          () => {
+            this.$emit("close");
+          },
+          null,
+          "dns.saveFailed",
+        );
       });
     },
   },

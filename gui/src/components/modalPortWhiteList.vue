@@ -4,7 +4,12 @@
       <p class="modal-card-title">
         {{ $t("egressPortWhitelist.title") }}
       </p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <b-message type="is-info" class="after-line-dot5">
@@ -19,18 +24,10 @@
         <p>{{ $t("egressPortWhitelist.messages.4") }}</p>
       </b-message>
       <b-field :label="$t('egressPortWhitelist.tcpPortWhitelist')">
-        <b-taginput
-          v-model="tcp"
-          :before-adding="beforeAdding"
-          icon="tag"
-        >
+        <b-taginput v-model="tcp" :before-adding="beforeAdding" icon="tag">
         </b-taginput> </b-field
       ><b-field :label="$t('egressPortWhitelist.udpPortWhitelist')">
-        <b-taginput
-          v-model="udp"
-          :before-adding="beforeAdding"
-          icon="tag"
-        >
+        <b-taginput v-model="udp" :before-adding="beforeAdding" icon="tag">
         </b-taginput>
       </b-field>
     </section>
@@ -88,9 +85,15 @@ export default {
           udp: this.udp,
         },
       }).then((res) => {
-        handleResponse(res, this, () => {
-          this.$emit("close");
-        }, null, "egressPortWhitelist.saveFailed");
+        handleResponse(
+          res,
+          this,
+          () => {
+            this.$emit("close");
+          },
+          null,
+          "egressPortWhitelist.saveFailed",
+        );
       });
     },
     beforeAdding(tag) {

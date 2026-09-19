@@ -1,5 +1,6 @@
 export default {
   common: {
+    nodes: "노드",
     menu: "메뉴",
     outboundSetting: "프록시 그룹 설정",
     setting: "설정",
@@ -26,6 +27,9 @@ export default {
     expand: "연결 상태 표시",
   },
   theme: {
+    auto: "자동",
+    light: "라이트",
+    dark: "다크",
     title: "테마",
     appearance: "모양",
     color: "테마 색상",

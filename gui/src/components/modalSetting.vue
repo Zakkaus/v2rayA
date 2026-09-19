@@ -2,29 +2,72 @@
   <div class="modal-card modal-setting" style="max-width: 800px; margin: auto">
     <header class="modal-card-head">
       <p class="modal-card-title">{{ $t("common.setting") }}</p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body rules">
-      <b-field label="GFWList" horizontal custom-class="modal-setting-label" style="position: relative"><span>{{
-        $t("common.latest") }}:</span>
-        <a href="https://github.com/v2rayA/dist-v2ray-rules-dat/releases" target="_blank" class="is-link">{{
-          remoteGFWListVersion }}</a><span>{{ $t("common.local") }}:</span>
-        <b-tooltip v-if="dayjs(localGFWListVersion).isAfter(dayjs(remoteGFWListVersion))"
-          :label="$t('setting.messages.gfwlist')" position="is-bottom" type="is-danger" dashed multilined animated>
+      <b-field
+        label="GFWList"
+        horizontal
+        custom-class="modal-setting-label"
+        style="position: relative"
+        ><span>{{ $t("common.latest") }}:</span>
+        <a
+          href="https://github.com/v2rayA/dist-v2ray-rules-dat/releases"
+          target="_blank"
+          class="is-link"
+          >{{ remoteGFWListVersion }}</a
+        ><span>{{ $t("common.local") }}:</span>
+        <b-tooltip
+          v-if="dayjs(localGFWListVersion).isAfter(dayjs(remoteGFWListVersion))"
+          :label="$t('setting.messages.gfwlist')"
+          position="is-bottom"
+          type="is-danger"
+          dashed
+          multilined
+          animated
+        >
           {{ localGFWListVersion ? localGFWListVersion : $t("common.none") }}
         </b-tooltip>
-        <span v-else>{{ localGFWListVersion ? localGFWListVersion : $t("common.none") }}</span>
-        <b-button size="is-small" style="position: relative; top: -2px; text-decoration: none; font-weight: bold"
-          @click="handleClickUpdateGFWList">{{ $t("operations.update") }}
+        <span v-else>{{
+          localGFWListVersion ? localGFWListVersion : $t("common.none")
+        }}</span>
+        <b-button
+          size="is-small"
+          style="
+            position: relative;
+            top: -2px;
+            text-decoration: none;
+            font-weight: bold;
+          "
+          @click="handleClickUpdateGFWList"
+          >{{ $t("operations.update") }}
         </b-button>
       </b-field>
       <hr class="dropdown-divider" style="margin: 1.25rem 0 1.25rem" />
       <b-field label-position="on-border" class="with-icon-alert">
         <template #label>
           {{ $t("setting.transparentProxy") }}
-          <b-tooltip type="is-dark" :label="$t('setting.messages.transparentProxy')" multilined position="is-right">
-            <b-icon size="is-small" icon="circle-help"
-              style="position: relative; top: 2px; right: 3px; font-weight: normal" />
+          <b-tooltip
+            type="is-dark"
+            :label="$t('setting.messages.transparentProxy')"
+            multilined
+            position="is-right"
+          >
+            <b-icon
+              size="is-small"
+              icon="circle-help"
+              style="
+                position: relative;
+                top: 2px;
+                right: 3px;
+                font-weight: normal;
+              "
+            />
           </b-tooltip>
         </template>
         <b-select v-model="transparent" expanded>
@@ -44,96 +87,204 @@
             {{ $t("setting.options.sameAsPacMode") }}
           </option>
         </b-select>
-        <b-checkbox-button v-show="!lite" v-model="ipforward" :native-value="true"
-          style="position: relative; left: -1px">{{
-            $t("setting.ipForwardOn") }}
+        <b-checkbox-button
+          v-show="!lite"
+          v-model="ipforward"
+          :native-value="true"
+          style="position: relative; left: -1px"
+          >{{ $t("setting.ipForwardOn") }}
         </b-checkbox-button>
-        <b-checkbox-button v-model="portSharing" :native-value="true" style="position: relative; left: -1px">{{
-          $t("setting.portSharingOn") }}
+        <b-checkbox-button
+          v-model="portSharing"
+          :native-value="true"
+          style="position: relative; left: -1px"
+          >{{ $t("setting.portSharingOn") }}
         </b-checkbox-button>
       </b-field>
 
       <b-field v-show="transparent !== 'close'" label-position="on-border">
         <template #label>
           {{ $t("setting.transparentType") }}
-          <b-tooltip type="is-dark" multilined :label="$t('setting.messages.transparentType')" position="is-right">
-            <b-icon size="is-small" icon="circle-help"
-              style="position: relative; top: 2px; right: 3px; font-weight: normal" />
+          <b-tooltip
+            type="is-dark"
+            multilined
+            :label="$t('setting.messages.transparentType')"
+            position="is-right"
+          >
+            <b-icon
+              size="is-small"
+              icon="circle-help"
+              style="
+                position: relative;
+                top: 2px;
+                right: 3px;
+                font-weight: normal;
+              "
+            />
           </b-tooltip>
         </template>
         <b-select v-model="transparentType" expanded>
-          <option v-show="!lite && os === 'linux'" value="redirect">redirect</option>
-          <option v-show="!lite && os === 'linux'" value="tproxy">tproxy</option>
-          <option v-show="!lite" value="tun" :disabled="!tunSupported">
-            tun{{ !tunSupported ? ' — ' + $t("setting.options.tunUnsupported") : '' }}
+          <option v-show="!lite && os === 'linux'" value="redirect">
+            redirect
           </option>
-          <option v-show="!(isRoot && (os === 'linux' || os === 'darwin'))" value="system_proxy">{{ $t("setting.options.systemProxy") }}</option>
+          <option v-show="!lite && os === 'linux'" value="tproxy">
+            tproxy
+          </option>
+          <option v-show="!lite" value="tun" :disabled="!tunSupported">
+            tun{{
+              !tunSupported ? " — " + $t("setting.options.tunUnsupported") : ""
+            }}
+          </option>
+          <option
+            v-show="!(isRoot && (os === 'linux' || os === 'darwin'))"
+            value="system_proxy"
+          >
+            {{ $t("setting.options.systemProxy") }}
+          </option>
         </b-select>
 
         <template v-if="transparentType == 'tproxy'">
-          <b-button style="
+          <b-button
+            style="
               margin-left: 0;
               border-bottom-left-radius: 0;
               border-top-left-radius: 0;
               color: rgba(0, 0, 0, 0.75);
-            " outlined @click="handleClickTproxyWhiteIpGroups">{{ $t("operations.tproxyWhiteIpGroups") }}
+            "
+            outlined
+            @click="handleClickTproxyWhiteIpGroups"
+            >{{ $t("operations.tproxyWhiteIpGroups") }}
           </b-button>
         </template>
 
         <template v-if="transparentType === 'tun' && tunSupported">
-          <b-tooltip type="is-dark" multilined :label="$t('setting.messages.tunAutoRoute')" position="is-top">
-            <b-checkbox-button v-model="tunAutoRoute" :native-value="true" style="position: relative; left: -1px">
+          <b-tooltip
+            type="is-dark"
+            multilined
+            :label="$t('setting.messages.tunAutoRoute')"
+            position="is-top"
+          >
+            <b-checkbox-button
+              v-model="tunAutoRoute"
+              :native-value="true"
+              style="position: relative; left: -1px"
+            >
               {{ $t("setting.tunAutoRoute") }}
             </b-checkbox-button>
           </b-tooltip>
-          <b-button v-if="!tunAutoRoute" style="
+          <b-button
+            v-if="!tunAutoRoute"
+            style="
               margin-left: 0;
               border-bottom-left-radius: 0;
               border-top-left-radius: 0;
               color: rgba(0, 0, 0, 0.75);
-            " outlined @click="handleClickTunRouteScript">{{ $t("operations.configureTunRouteScript") }}
+            "
+            outlined
+            @click="handleClickTunRouteScript"
+            >{{ $t("operations.configureTunRouteScript") }}
           </b-button>
         </template>
       </b-field>
 
-      <b-field v-show="transparent !== 'close' && (transparentType === 'tproxy' || transparentType === 'redirect')"
-        label-position="on-border">
+      <b-field
+        v-show="
+          transparent !== 'close' &&
+          (transparentType === 'tproxy' || transparentType === 'redirect')
+        "
+        label-position="on-border"
+      >
         <template #label>
           {{ $t("setting.tproxyExcludedInterfaces") }}
-          <b-tooltip type="is-dark" multilined :label="$t('setting.messages.tproxyExcludedInterfaces')" position="is-right">
-            <b-icon size="is-small" icon="circle-help"
-              style="position: relative; top: 2px; right: 3px; font-weight: normal" />
+          <b-tooltip
+            type="is-dark"
+            multilined
+            :label="$t('setting.messages.tproxyExcludedInterfaces')"
+            position="is-right"
+          >
+            <b-icon
+              size="is-small"
+              icon="circle-help"
+              style="
+                position: relative;
+                top: 2px;
+                right: 3px;
+                font-weight: normal;
+              "
+            />
           </b-tooltip>
         </template>
-        <b-input v-model="tproxyExcludedInterfaces" expanded :placeholder="$t('setting.tproxyExcludedInterfacesPlaceholder')" />
+        <b-input
+          v-model="tproxyExcludedInterfaces"
+          expanded
+          :placeholder="$t('setting.tproxyExcludedInterfacesPlaceholder')"
+        />
       </b-field>
 
-      <b-field v-show="transparent !== 'close' && transparentType === 'tun' && tunSupported"
-        label-position="on-border">
+      <b-field
+        v-show="
+          transparent !== 'close' && transparentType === 'tun' && tunSupported
+        "
+        label-position="on-border"
+      >
         <template #label>
           {{ $t("setting.tunExcludeProcesses") }}
-          <b-tooltip type="is-dark" multilined :label="$t('setting.messages.tunExcludeProcesses')" position="is-right">
-            <b-icon size="is-small" icon="circle-help"
-              style="position: relative; top: 2px; right: 3px; font-weight: normal" />
+          <b-tooltip
+            type="is-dark"
+            multilined
+            :label="$t('setting.messages.tunExcludeProcesses')"
+            position="is-right"
+          >
+            <b-icon
+              size="is-small"
+              icon="circle-help"
+              style="
+                position: relative;
+                top: 2px;
+                right: 3px;
+                font-weight: normal;
+              "
+            />
           </b-tooltip>
         </template>
-        <b-input :value="tunExcludeProcesses" readonly expanded
-          :placeholder="$t('tun.processExclude.placeholder')" />
-        <b-button style="
+        <b-input
+          :value="tunExcludeProcesses"
+          readonly
+          expanded
+          :placeholder="$t('tun.processExclude.placeholder')"
+        />
+        <b-button
+          style="
             margin-left: 0;
             border-bottom-left-radius: 0;
             border-top-left-radius: 0;
             color: rgba(0, 0, 0, 0.75);
-          " outlined @click="handleClickTunExcludeProcesses">{{ $t("operations.configure") }}
+          "
+          outlined
+          @click="handleClickTunExcludeProcesses"
+          >{{ $t("operations.configure") }}
         </b-button>
       </b-field>
 
       <b-field label-position="on-border">
         <template #label>
           {{ $t("setting.pacMode") }}
-          <b-tooltip type="is-dark" :label="$t('setting.messages.pacMode')" multilined position="is-right">
-            <b-icon size="is-small" icon="circle-help"
-              style="position: relative; top: 2px; right: 3px; font-weight: normal" />
+          <b-tooltip
+            type="is-dark"
+            :label="$t('setting.messages.pacMode')"
+            multilined
+            position="is-right"
+          >
+            <b-icon
+              size="is-small"
+              icon="circle-help"
+              style="
+                position: relative;
+                top: 2px;
+                right: 3px;
+                font-weight: normal;
+              "
+            />
           </b-tooltip>
         </template>
         <b-select v-model="pacMode" expanded style="flex-shrink: 0">
@@ -144,21 +295,30 @@
           <option value="routingA">RoutingA</option>
         </b-select>
         <template v-if="pacMode === 'custom'">
-          <b-button type="is-primary" style="
+          <b-button
+            type="is-primary"
+            style="
               margin-left: 0;
               border-bottom-left-radius: 0;
               border-top-left-radius: 0;
               color: rgba(0, 0, 0, 0.75);
-            " outlined @click="handleClickConfigurePac">{{ $t("operations.configure") }}
+            "
+            outlined
+            @click="handleClickConfigurePac"
+            >{{ $t("operations.configure") }}
           </b-button>
         </template>
         <template v-if="pacMode === 'routingA'">
-          <b-button style="
+          <b-button
+            style="
               margin-left: 0;
               border-bottom-left-radius: 0;
               border-top-left-radius: 0;
               color: rgba(0, 0, 0, 0.75);
-            " outlined @click="handleClickConfigureRoutingA">{{ $t("operations.configure") }}
+            "
+            outlined
+            @click="handleClickConfigureRoutingA"
+            >{{ $t("operations.configure") }}
           </b-button>
         </template>
         <p></p>
@@ -167,9 +327,22 @@
       <b-field label-position="on-border">
         <template #label>
           {{ $t("setting.tcpFastOpen") }}
-          <b-tooltip type="is-dark" :label="$t('setting.messages.tcpFastOpen')" multilined position="is-right">
-            <b-icon size="is-small" icon="circle-help"
-              style="position: relative; top: 2px; right: 3px; font-weight: normal" />
+          <b-tooltip
+            type="is-dark"
+            :label="$t('setting.messages.tcpFastOpen')"
+            multilined
+            position="is-right"
+          >
+            <b-icon
+              size="is-small"
+              icon="circle-help"
+              style="
+                position: relative;
+                top: 2px;
+                right: 3px;
+                font-weight: normal;
+              "
+            />
           </b-tooltip>
         </template>
         <b-select v-model="tcpFastOpen" expanded>
@@ -195,9 +368,22 @@
       <b-field label-position="on-border">
         <template #label>
           {{ $t("setting.inboundSniffing") }}
-          <b-tooltip type="is-dark" :label="$t('setting.messages.inboundSniffing')" multilined position="is-right">
-            <b-icon size="is-small" icon="circle-help"
-              style="position: relative; top: 2px; right: 3px; font-weight: normal" />
+          <b-tooltip
+            type="is-dark"
+            :label="$t('setting.messages.inboundSniffing')"
+            multilined
+            position="is-right"
+          >
+            <b-icon
+              size="is-small"
+              icon="circle-help"
+              style="
+                position: relative;
+                top: 2px;
+                right: 3px;
+                font-weight: normal;
+              "
+            />
           </b-tooltip>
         </template>
         <b-select v-model="inboundSniffing" expanded>
@@ -206,13 +392,21 @@
           <option value="http,tls,quic">Http + TLS + Quic</option>
         </b-select>
         <template v-if="inboundSniffing != 'disable'">
-          <b-button style="
+          <b-button
+            style="
               margin-left: 0;
               border-radius: 0px;
               color: rgba(0, 0, 0, 0.75);
-            " outlined @click="handleClickDomainsExcluded">{{ $t("operations.domainsExcluded") }}
+            "
+            outlined
+            @click="handleClickDomainsExcluded"
+            >{{ $t("operations.domainsExcluded") }}
           </b-button>
-          <b-checkbox-button v-model="routeOnly" :native-value="true" style="position: relative; left: -1px;">
+          <b-checkbox-button
+            v-model="routeOnly"
+            :native-value="true"
+            style="position: relative; left: -1px"
+          >
             RouteOnly
           </b-checkbox-button>
         </template>
@@ -221,23 +415,46 @@
       <b-field label-position="on-border" class="with-icon-alert">
         <template #label>
           {{ $t("setting.mux") }}
-          <b-tooltip type="is-dark" :label="$t('setting.messages.mux')" multilined position="is-right">
-            <b-icon size="is-small" icon="circle-help"
-              style="position: relative; top: 2px; right: 3px; font-weight: normal" />
+          <b-tooltip
+            type="is-dark"
+            :label="$t('setting.messages.mux')"
+            multilined
+            position="is-right"
+          >
+            <b-icon
+              size="is-small"
+              icon="circle-help"
+              style="
+                position: relative;
+                top: 2px;
+                right: 3px;
+                font-weight: normal;
+              "
+            />
           </b-tooltip>
         </template>
         <b-select v-model="muxOn" expanded style="flex: 1">
           <option value="no">{{ $t("setting.options.off") }}</option>
           <option value="yes">{{ $t("setting.options.on") }}</option>
         </b-select>
-        <b-input v-if="muxOn === 'yes'" ref="muxinput" v-model="mux" :placeholder="$t('setting.concurrency')"
-          custom-class="no-shadow" type="number" min="1" max="1024"
-          style="flex: 1" />
+        <b-input
+          v-if="muxOn === 'yes'"
+          ref="muxinput"
+          v-model="mux"
+          :placeholder="$t('setting.concurrency')"
+          custom-class="no-shadow"
+          type="number"
+          min="1"
+          max="1024"
+          style="flex: 1"
+        />
       </b-field>
 
-
-      <b-field v-show="pacMode === 'gfwlist' || transparent === 'gfwlist'" :label="$t('setting.autoUpdateGfwlist')"
-        label-position="on-border">
+      <b-field
+        v-show="pacMode === 'gfwlist' || transparent === 'gfwlist'"
+        :label="$t('setting.autoUpdateGfwlist')"
+        label-position="on-border"
+      >
         <b-select v-model="pacAutoUpdateMode" expanded>
           <option value="none">{{ $t("setting.options.off") }}</option>
           <option value="auto_update">
@@ -247,9 +464,15 @@
             {{ $t("setting.options.updateGfwlistAtIntervals") }}
           </option>
         </b-select>
-        <b-input v-if="pacAutoUpdateMode === 'auto_update_at_intervals'" ref="autoUpdatePacInput"
-          v-model="pacAutoUpdateIntervalHour" custom-class="no-shadow" type="number" min="1"
-          style="flex: 1" />
+        <b-input
+          v-if="pacAutoUpdateMode === 'auto_update_at_intervals'"
+          ref="autoUpdatePacInput"
+          v-model="pacAutoUpdateIntervalHour"
+          custom-class="no-shadow"
+          type="number"
+          min="1"
+          style="flex: 1"
+        />
       </b-field>
       <b-field :label="$t('setting.autoUpdateSub')" label-position="on-border">
         <b-select v-model="subscriptionAutoUpdateMode" expanded>
@@ -261,11 +484,20 @@
             {{ $t("setting.options.updateSubAtIntervals") }}
           </option>
         </b-select>
-        <b-input v-if="subscriptionAutoUpdateMode === 'auto_update_at_intervals'" ref="autoUpdateSubInput"
-          v-model="subscriptionAutoUpdateIntervalHour" custom-class="no-shadow" type="number" min="1"
-          style="flex: 1" />
+        <b-input
+          v-if="subscriptionAutoUpdateMode === 'auto_update_at_intervals'"
+          ref="autoUpdateSubInput"
+          v-model="subscriptionAutoUpdateIntervalHour"
+          custom-class="no-shadow"
+          type="number"
+          min="1"
+          style="flex: 1"
+        />
       </b-field>
-      <b-field :label="$t('setting.preferModeWhenUpdate')" label-position="on-border">
+      <b-field
+        :label="$t('setting.preferModeWhenUpdate')"
+        label-position="on-border"
+      >
         <b-select v-model="proxyModeWhenSubscribe" expanded>
           <option value="direct">
             {{
@@ -280,7 +512,7 @@
       </b-field>
     </section>
     <footer class="modal-card-foot flex-end">
-      <div class="footer-absolute-left" style="display: flex; gap: 8px;">
+      <div class="footer-absolute-left" style="display: flex; gap: 8px">
         <button class="button" type="button" @click="$emit('clickPorts')">
           {{ $t("customAddressPort.title") }}
         </button>
@@ -358,7 +590,9 @@ export default {
   }),
   computed: {
     lite() {
-      return window.localStorage["lite"] && parseInt(window.localStorage["lite"]) > 0;
+      return (
+        window.localStorage["lite"] && parseInt(window.localStorage["lite"]) > 0
+      );
     },
     dockerMode() {
       return window.localStorage["docker"] === "true";
@@ -367,7 +601,8 @@ export default {
       let U = parseURL(apiRoot);
       let port = U.port;
       if (!port) {
-        port = U.protocol === "http" ? "80" : U.protocol === "https" ? "443" : "";
+        port =
+          U.protocol === "http" ? "80" : U.protocol === "https" ? "443" : "";
       }
       return toInt(port);
     },
@@ -394,7 +629,9 @@ export default {
           Object.assign(this, res.data.data.setting);
           delete res.data.data["setting"];
           Object.assign(this, res.data.data);
-          this.subscriptionAutoUpdateTime = new Date(this.subscriptionAutoUpdateTime);
+          this.subscriptionAutoUpdateTime = new Date(
+            this.subscriptionAutoUpdateTime,
+          );
           this.pacAutoUpdateTime = new Date(this.pacAutoUpdateTime);
           // Get OS and isRoot info from version API
           this.$axios({
@@ -425,7 +662,7 @@ export default {
             pacAutoUpdateIntervalHour: parseInt(this.pacAutoUpdateIntervalHour),
             subscriptionAutoUpdateMode: this.subscriptionAutoUpdateMode,
             subscriptionAutoUpdateIntervalHour: parseInt(
-              this.subscriptionAutoUpdateIntervalHour
+              this.subscriptionAutoUpdateIntervalHour,
             ),
             pacMode: this.pacMode,
             tcpFastOpen: this.tcpFastOpen,
@@ -449,30 +686,38 @@ export default {
           cancelToken: new axios.CancelToken(function executor(c) {
             cancel = c;
           }),
-        }).then((res) => {
-          handleResponse(res, this, () => {
-            this.$buefy.toast.open({
-              message: this.$t("setting.saved"),
-              type: "is-primary",
-              position: "is-top",
-            });
-            this.$emit("close");
-          }, null, "setting.saveFailed");
-          if (
-            res.data.code !== "SUCCESS" &&
-            (res.data.errorCode === "INVALID_CONFIG" ||
-              res.data.message.indexOf("invalid config") >= 0)
-          ) {
-            // FIXME: tricky
-            this.$store.commit("RUNNING", this.$t("common.notRunning"));
-          }
-        }).finally(() => {
-          // waitingConnected cancels this request once the core reports
-          // connected; the spinner must close on that path too
-          loading.close();
-        }),
+        })
+          .then((res) => {
+            handleResponse(
+              res,
+              this,
+              () => {
+                this.$buefy.toast.open({
+                  message: this.$t("setting.saved"),
+                  type: "is-primary",
+                  position: "is-top",
+                });
+                this.$emit("close");
+              },
+              null,
+              "setting.saveFailed",
+            );
+            if (
+              res.data.code !== "SUCCESS" &&
+              (res.data.errorCode === "INVALID_CONFIG" ||
+                res.data.message.indexOf("invalid config") >= 0)
+            ) {
+              // FIXME: tricky
+              this.$store.commit("RUNNING", this.$t("common.notRunning"));
+            }
+          })
+          .finally(() => {
+            // waitingConnected cancels this request once the core reports
+            // connected; the spinner must close on that path too
+            loading.close();
+          }),
         3 * 1000,
-        cancel
+        cancel,
       );
     },
     handleClickSubmit() {

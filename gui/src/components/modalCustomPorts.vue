@@ -4,7 +4,12 @@
       <p class="modal-card-title">
         {{ $t("customAddressPort.title") }}
       </p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <b-field
@@ -143,14 +148,23 @@
       </template>
     </section>
     <footer class="modal-card-foot" style="justify-content: space-between">
-      <b-button outlined type="is-info" icon-left="plus" @click="showCustomInbound = true">
+      <b-button
+        outlined
+        type="is-info"
+        icon-left="plus"
+        @click="showCustomInbound = true"
+      >
         {{ $t("customInbound.title") }}
       </b-button>
       <div>
         <button class="button" @click="$emit('close')">
           {{ $t("operations.cancel") }}
         </button>
-        <button class="button is-primary" style="margin-left: 0.5rem" @click="handleClickSubmit">
+        <button
+          class="button is-primary"
+          style="margin-left: 0.5rem"
+          @click="handleClickSubmit"
+        >
           {{ $t("operations.confirm") }}
         </button>
       </div>
@@ -267,22 +281,28 @@ export default {
             },
           },
         }).then((res) => {
-          handleResponse(res, this, () => {
-            if (res.data.data?.vmessLink) {
-              openModal(this, {
-                width: 500,
-                component: ModalSharing,
-                props: {
-                  title: this.$t("customAddressPort.portVmessLink"),
-                  sharingAddress: res.data.data.vmessLink,
-                  shortDesc: "VMess | v2rayA",
-                  type: CONST.ServerType,
-                },
-              });
-            }
-            localStorage["backendAddress"] = backendAddress;
-            this.$emit("close");
-          }, null, "customAddressPort.saveFailed");
+          handleResponse(
+            res,
+            this,
+            () => {
+              if (res.data.data?.vmessLink) {
+                openModal(this, {
+                  width: 500,
+                  component: ModalSharing,
+                  props: {
+                    title: this.$t("customAddressPort.portVmessLink"),
+                    sharingAddress: res.data.data.vmessLink,
+                    shortDesc: "VMess | v2rayA",
+                    type: CONST.ServerType,
+                  },
+                });
+              }
+              localStorage["backendAddress"] = backendAddress;
+              this.$emit("close");
+            },
+            null,
+            "customAddressPort.saveFailed",
+          );
         });
       } else {
         this.$axios({
@@ -298,5 +318,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

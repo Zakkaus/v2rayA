@@ -1,5 +1,6 @@
 export default {
   common: {
+    nodes: "Узлы",
     menu: "Меню",
     outboundSetting: "Настройка группы прокси",
     setting: "Настройки",
@@ -26,6 +27,9 @@ export default {
     expand: "Показать состояние подключения",
   },
   theme: {
+    auto: "Авто",
+    light: "Светлая",
+    dark: "Тёмная",
     title: "Тема",
     appearance: "Оформление",
     color: "Цвет темы",

@@ -4,7 +4,12 @@
       <p class="modal-card-title">
         {{ $t("gfwList.title") }}
       </p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <b-message type="is-info" class="after-line-dot5">
@@ -37,7 +42,9 @@
       </button>
       <button class="button is-primary" @click="handleClickSubmit">
         {{
-          downloadLink == "" ? $t("operations.autoUpdate") : $t("operations.manualUpdate")
+          downloadLink == ""
+            ? $t("operations.autoUpdate")
+            : $t("operations.manualUpdate")
         }}
       </button>
     </footer>
@@ -69,9 +76,15 @@ export default {
         url: apiRoot + "/gfwList",
         method: "delete",
       }).then((res) => {
-        handleResponse(res, this, () => {
-          this.$emit("close");
-        }, null, "delete.failed");
+        handleResponse(
+          res,
+          this,
+          () => {
+            this.$emit("close");
+          },
+          null,
+          "delete.failed",
+        );
       });
     },
     handleClickSubmit() {
@@ -92,27 +105,35 @@ export default {
         data: {
           downloadLink: this.downloadLink,
         },
-      }).then((res) => {
-        loading.close();
-        handleResponse(res, this, () => {
-          this.$emit("close");
-          // "Already the latest" is a result, not a failure: the backend used
-          // to report it as an error and the dialog said "could not update".
-          const upToDate = res.data.data && res.data.data.alreadyUpToDate;
-          this.$buefy.toast.open({
-            message: upToDate
-              ? this.$t("gfwList.alreadyUpToDate", {
-                  version: res.data.data.localGFWListVersion,
-                })
-              : this.$t("gfwList.updated"),
-            type: upToDate ? "is-info" : "is-success",
-            position: "is-top",
-            duration: 5000,
-          });
-        }, null, "gfwList.saveFailed");
-      }).catch(() => {
-        loading.close();
-      });
+      })
+        .then((res) => {
+          loading.close();
+          handleResponse(
+            res,
+            this,
+            () => {
+              this.$emit("close");
+              // "Already the latest" is a result, not a failure: the backend used
+              // to report it as an error and the dialog said "could not update".
+              const upToDate = res.data.data && res.data.data.alreadyUpToDate;
+              this.$buefy.toast.open({
+                message: upToDate
+                  ? this.$t("gfwList.alreadyUpToDate", {
+                      version: res.data.data.localGFWListVersion,
+                    })
+                  : this.$t("gfwList.updated"),
+                type: upToDate ? "is-info" : "is-success",
+                position: "is-top",
+                duration: 5000,
+              });
+            },
+            null,
+            "gfwList.saveFailed",
+          );
+        })
+        .catch(() => {
+          loading.close();
+        });
     },
   },
 };

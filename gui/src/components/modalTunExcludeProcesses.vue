@@ -2,14 +2,22 @@
   <div class="modal-card" style="width: 680px; max-width: 100%; margin: auto">
     <header class="modal-card-head">
       <p class="modal-card-title">{{ $t("tun.processExclude.title") }}</p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <b-message type="is-warning" has-icon>
         {{ $t("tun.processExclude.warning") }}
       </b-message>
 
-      <b-field :label="$t('tun.processExclude.listLabel')" label-position="on-border">
+      <b-field
+        :label="$t('tun.processExclude.listLabel')"
+        label-position="on-border"
+      >
         <b-input
           v-model="localExcludeProcessesText"
           type="textarea"
@@ -44,7 +52,9 @@ export default {
   },
   data() {
     return {
-      localExcludeProcessesText: this.formatExcludeProcesses(this.excludeProcesses),
+      localExcludeProcessesText: this.formatExcludeProcesses(
+        this.excludeProcesses,
+      ),
     };
   },
   methods: {

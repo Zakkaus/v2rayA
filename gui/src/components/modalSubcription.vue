@@ -2,7 +2,12 @@
   <div class="modal-card" style="max-width: 400px; margin: auto">
     <header class="modal-card-head">
       <p class="modal-card-title">{{ $t("configureSubscription.title") }}</p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <b-field :label="$t('subscription.subscription')">
@@ -19,10 +24,9 @@
         />
       </b-field>
       <b-field :label="$t('subscription.autoSelectLabel')">
-        <b-checkbox
-	  v-model="which.autoSelect"
-	  >{{ $t("subscription.autoSelect") }}
-	</b-checkbox>
+        <b-checkbox v-model="which.autoSelect"
+          >{{ $t("subscription.autoSelect") }}
+        </b-checkbox>
       </b-field>
     </section>
     <footer class="modal-card-foot flex-end">

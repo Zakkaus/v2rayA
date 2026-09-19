@@ -4,7 +4,12 @@
       <p class="modal-card-title">
         {{ $t("log.logModalTitle") }}
       </p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section ref="section" :class="{ 'modal-card-body': true }">
       <div class="log-title">{{ $t("log.logsLabel") }}</div>
@@ -52,7 +57,10 @@
           <div class="log-footer-item">
             <div class="log-footer-label">{{ $t("log.refreshInterval") }}</div>
             <div class="log-footer-control">
-              <b-select v-model="intervalTime" @update:model-value="changeInterval">
+              <b-select
+                v-model="intervalTime"
+                @update:model-value="changeInterval"
+              >
                 <option
                   v-for="candidate in intervalCandidate"
                   :key="candidate"

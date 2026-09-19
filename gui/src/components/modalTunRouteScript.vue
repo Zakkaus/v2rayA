@@ -2,7 +2,12 @@
   <div class="modal-card" style="width: 680px; max-width: 100%; margin: auto">
     <header class="modal-card-head">
       <p class="modal-card-title">{{ $t("tun.routeScript.title") }}</p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <!-- Warning -->
@@ -11,8 +16,15 @@
       </b-message>
 
       <!-- Shell type selector -->
-      <b-field :label="$t('tun.routeScript.shellType')" label-position="on-border">
-        <b-select v-model="localShellType" expanded @update:model-value="onShellTypeChange">
+      <b-field
+        :label="$t('tun.routeScript.shellType')"
+        label-position="on-border"
+      >
+        <b-select
+          v-model="localShellType"
+          expanded
+          @update:model-value="onShellTypeChange"
+        >
           <template v-if="isWindows">
             <option value="windows_powershell">Windows PowerShell</option>
             <option value="pwsh">PowerShell Core (pwsh)</option>
@@ -25,28 +37,61 @@
             <option value="sh">POSIX sh</option>
             <option value="fish">fish</option>
           </template>
-          <option value="custom">{{ $t("tun.routeScript.customShell") }}</option>
+          <option value="custom">
+            {{ $t("tun.routeScript.customShell") }}
+          </option>
         </b-select>
       </b-field>
 
       <!-- Custom shell path (shown when shell type is "custom" or has a custom path) -->
-      <b-field :label="$t('tun.routeScript.shellPath')" label-position="on-border"
-        v-if="localShellType === 'custom'">
-        <b-input v-model="localShellPath" :placeholder="$t('tun.routeScript.shellPathPlaceholder')" expanded />
+      <b-field
+        :label="$t('tun.routeScript.shellPath')"
+        label-position="on-border"
+        v-if="localShellType === 'custom'"
+      >
+        <b-input
+          v-model="localShellPath"
+          :placeholder="$t('tun.routeScript.shellPathPlaceholder')"
+          expanded
+        />
       </b-field>
 
       <!-- Setup script -->
-      <b-field :label="$t('tun.routeScript.setupScript')" label-position="on-border" style="margin-top: 1rem">
-        <b-input v-model="localSetupScript" type="textarea" rows="6"
-          :placeholder="$t('tun.routeScript.setupScriptPlaceholder')" custom-class="code-font horizon-scroll"
-          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <b-field
+        :label="$t('tun.routeScript.setupScript')"
+        label-position="on-border"
+        style="margin-top: 1rem"
+      >
+        <b-input
+          v-model="localSetupScript"
+          type="textarea"
+          rows="6"
+          :placeholder="$t('tun.routeScript.setupScriptPlaceholder')"
+          custom-class="code-font horizon-scroll"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+        />
       </b-field>
 
       <!-- Teardown script -->
-      <b-field :label="$t('tun.routeScript.teardownScript')" label-position="on-border" style="margin-top: 1rem">
-        <b-input v-model="localTeardownScript" type="textarea" rows="6"
-          :placeholder="$t('tun.routeScript.teardownScriptPlaceholder')" custom-class="code-font horizon-scroll"
-          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <b-field
+        :label="$t('tun.routeScript.teardownScript')"
+        label-position="on-border"
+        style="margin-top: 1rem"
+      >
+        <b-input
+          v-model="localTeardownScript"
+          type="textarea"
+          rows="6"
+          :placeholder="$t('tun.routeScript.teardownScriptPlaceholder')"
+          custom-class="code-font horizon-scroll"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+        />
       </b-field>
     </section>
     <footer class="modal-card-foot" style="justify-content: flex-end">

@@ -2,7 +2,12 @@
   <div class="modal-card" style="max-width: 420px; margin: auto">
     <header class="modal-card-head">
       <p class="modal-card-title">{{ $t("proxyGroup.pickTitle") }}</p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <b-field :label="$t('proxyGroup.group')" label-position="on-border">
@@ -16,7 +21,9 @@
     </section>
     <footer class="modal-card-foot flex-end">
       <b-button @click="$emit('close')">{{ $t("operations.cancel") }}</b-button>
-      <b-button type="is-primary" @click="handleClickConfirm">{{ $t("operations.confirm") }}</b-button>
+      <b-button type="is-primary" @click="handleClickConfirm">{{
+        $t("operations.confirm")
+      }}</b-button>
     </footer>
   </div>
 </template>

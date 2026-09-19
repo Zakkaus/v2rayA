@@ -6,7 +6,12 @@
   >
     <header class="modal-card-head">
       <p class="modal-card-title">RoutingA</p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body rules">
       <!-- Deprecation warning for inbound definitions -->
@@ -79,7 +84,7 @@ export default {
           },
           () => {
             this.$emit("close");
-          }
+          },
         );
       })
       .catch(() => {
@@ -96,7 +101,7 @@ export default {
       if (e) {
         e.className = e.className.replace(
           "animation-content",
-          "routinga-animation-content"
+          "routinga-animation-content",
         );
       }
     },
@@ -105,7 +110,8 @@ export default {
       const lines = (this.routingA || "").split("\n");
       this.hasInboundDef = lines.some(
         (line) =>
-          line.trim().startsWith("inbound(") || line.trim().startsWith("inbound (")
+          line.trim().startsWith("inbound(") ||
+          line.trim().startsWith("inbound ("),
       );
     },
     handleClickManual() {
@@ -135,20 +141,26 @@ export default {
           routingA: this.routingA,
         },
       }).then((res) => {
-        handleResponse(res, this, () => {
-          // Show warning from server if any
-          if (res.data.data && res.data.data.warning) {
-            this.$buefy.toast.open({
-              message: this.$t("routingA.savedWithWarning", {
-                warning: res.data.data.warning,
-              }),
-              type: "is-warning",
-              position: "is-top",
-              duration: 8000,
-            });
-          }
-          this.$emit("close");
-        }, null, "routingA.saveFailed");
+        handleResponse(
+          res,
+          this,
+          () => {
+            // Show warning from server if any
+            if (res.data.data && res.data.data.warning) {
+              this.$buefy.toast.open({
+                message: this.$t("routingA.savedWithWarning", {
+                  warning: res.data.data.warning,
+                }),
+                type: "is-warning",
+                position: "is-top",
+                duration: 8000,
+              });
+            }
+            this.$emit("close");
+          },
+          null,
+          "routingA.saveFailed",
+        );
       });
     },
   },

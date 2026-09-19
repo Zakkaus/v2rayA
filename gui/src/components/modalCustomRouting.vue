@@ -5,7 +5,12 @@
   >
     <header class="modal-card-head">
       <p class="modal-card-title">{{ $t("customRouting.title") }}</p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body rules">
       <b-message type="is-info" class="after-line-dot5">
@@ -29,17 +34,15 @@
       </b-message>
       <b-collapse class="card">
         <template #trigger="props">
-        <div
-          class="card-header"
-          role="button"
-        >
-          <p class="card-header-title">
-            {{ $t("customRouting.defaultRoutingRule") }}
-          </p>
-          <a class="card-header-icon">
-            <b-icon :icon="props.open ? 'chevron-down' : 'chevron-up'"> </b-icon>
-          </a>
-        </div>
+          <div class="card-header" role="button">
+            <p class="card-header-title">
+              {{ $t("customRouting.defaultRoutingRule") }}
+            </p>
+            <a class="card-header-icon">
+              <b-icon :icon="props.open ? 'chevron-down' : 'chevron-up'">
+              </b-icon>
+            </a>
+          </div>
         </template>
         <div class="card-content">
           <b-field
@@ -60,24 +63,23 @@
         class="card"
       >
         <template #trigger="props">
-        <div
-          class="card-header"
-          role="button"
-        >
-          <p class="card-header-title" style="position: relative">
-            <span>{{ `${$t("customRouting.rule")}${index + 1}` }}</span>
-            <b-button
-              type="is-text"
-              size="is-small"
-              style="position: absolute; right: 0"
-              @click="handleClickDeleteRule(...arguments, index)"
-              >{{ $t("operations.delete") }}</b-button
-            >
-          </p>
-          <a class="card-header-icon">
-            <b-icon :icon="props.open ? 'chevron-down' : 'chevron-up'"></b-icon>
-          </a>
-        </div>
+          <div class="card-header" role="button">
+            <p class="card-header-title" style="position: relative">
+              <span>{{ `${$t("customRouting.rule")}${index + 1}` }}</span>
+              <b-button
+                type="is-text"
+                size="is-small"
+                style="position: absolute; right: 0"
+                @click="handleClickDeleteRule(...arguments, index)"
+                >{{ $t("operations.delete") }}</b-button
+              >
+            </p>
+            <a class="card-header-icon">
+              <b-icon
+                :icon="props.open ? 'chevron-down' : 'chevron-up'"
+              ></b-icon>
+            </a>
+          </div>
         </template>
         <div class="card-content">
           <b-field
@@ -271,9 +273,15 @@ export default {
           customPac: this.customPac,
         },
       }).then((res) => {
-        handleResponse(res, this, () => {
-          this.$emit("close");
-        }, null, "customRouting.saveFailed");
+        handleResponse(
+          res,
+          this,
+          () => {
+            this.$emit("close");
+          },
+          null,
+          "customRouting.saveFailed",
+        );
       });
     },
   },

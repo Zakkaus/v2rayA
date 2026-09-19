@@ -26,6 +26,11 @@ export default {
 
 <style scoped>
 .log {
-  font-family: Consolas, monospace, Monaco, Menlo, Courier New;
+  font-family:
+    Consolas,
+    monospace,
+    Monaco,
+    Menlo,
+    Courier New;
 }
 </style>

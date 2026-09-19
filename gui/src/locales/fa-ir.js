@@ -1,5 +1,6 @@
 export default {
   common: {
+    nodes: "گره‌ها",
     menu: "منو",
     outboundSetting: "تنظیمات گروه پروکسی",
     setting: "تنظیمات",
@@ -26,6 +27,9 @@ export default {
     expand: "نمایش وضعیت اتصال",
   },
   theme: {
+    auto: "خودکار",
+    light: "روشن",
+    dark: "تیره",
     title: "پوسته",
     appearance: "ظاهر",
     color: "رنگ پوسته",

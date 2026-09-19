@@ -1,5 +1,6 @@
 export default {
   common: {
+    nodes: "Nodes",
     menu: "Menu",
     outboundSetting: "Proxy Group Setting",
     setting: "Setting",
@@ -26,6 +27,9 @@ export default {
     expand: "Show the connection status",
   },
   theme: {
+    auto: "Auto",
+    light: "Light",
+    dark: "Dark",
     title: "Theme",
     appearance: "Appearance",
     color: "Theme color",

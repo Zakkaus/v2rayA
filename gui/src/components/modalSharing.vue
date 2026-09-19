@@ -2,7 +2,12 @@
   <div class="modal-card" style="max-width: 500px; margin: auto">
     <header class="modal-card-head">
       <p class="modal-card-title has-text-centered">{{ title }}</p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body lazy" style="text-align: center">
       <div><canvas id="canvas" class="qrcode"></canvas></div>
@@ -30,7 +35,6 @@
         </span>
       </div>
     </section>
-
   </div>
 </template>
 
@@ -76,7 +80,7 @@ export default {
       function (error) {
         if (error) console.error(error);
         // console.log("QRCode has been generated successfully!");
-      }
+      },
     );
     let targets = document.querySelectorAll(".sharingAddressTag");
     let covers = document.querySelectorAll(".tag-cover");

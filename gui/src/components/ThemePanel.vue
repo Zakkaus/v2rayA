@@ -1,16 +1,10 @@
 <script setup lang="ts">
 // The theme choices, as list content: the appearance (auto, light, dark)
-// and the seed colour the palettes derive from — six presets and a
-// custom one from the browser's colour picker. Rendered inside the app
-// bar's menu and the phone drawer's group.
+// and the seed colour the palettes derive from, as the colour picker's
+// swatches. Rendered inside the app bar's menu and the drawer's menu.
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-import {
-  mdiCheck,
-  mdiPalette,
-  mdiThemeLightDark,
-  mdiWeatherNight,
-  mdiWeatherSunny,
-} from "@mdi/js";
+import { mdiThemeLightDark, mdiWeatherNight, mdiWeatherSunny } from "@mdi/js";
 import { useAppStore, type ThemePreference } from "@/stores/app";
 import { presetSeeds } from "@/theme/scheme";
 
@@ -18,90 +12,72 @@ const { t } = useI18n();
 const store = useAppStore();
 
 const modes: { value: ThemePreference; icon: string; key: string }[] = [
-  { value: "auto", icon: mdiThemeLightDark, key: "common.autoTheme" },
-  { value: "light", icon: mdiWeatherSunny, key: "common.lightTheme" },
-  { value: "dark", icon: mdiWeatherNight, key: "common.darkTheme" },
+  { value: "auto", icon: mdiThemeLightDark, key: "theme.auto" },
+  { value: "light", icon: mdiWeatherSunny, key: "theme.light" },
+  { value: "dark", icon: mdiWeatherNight, key: "theme.dark" },
 ];
-
-function pick(event: Event) {
-  store.setThemeSeed((event.target as HTMLInputElement).value);
-}
+// the picker lays swatches out by column: one colour per column is one row
+const swatches = presetSeeds.map((p) => [p.seed]);
+const seed = computed({
+  get: () => store.themeSeed,
+  set: (v: string) => store.setThemeSeed(v),
+});
 </script>
 
 <template>
-  <v-list-subheader>{{ t("theme.appearance") }}</v-list-subheader>
-  <v-list-item
-    v-for="m in modes"
-    :key="m.value"
-    :active="store.themePreference === m.value"
-    :prepend-icon="m.icon"
-    :title="t(m.key)"
-    @click="store.setTheme(m.value)"
-  />
-  <v-divider class="my-1" />
-  <v-list-subheader>{{ t("theme.color") }}</v-list-subheader>
-  <div class="swatches px-4 pb-3">
-    <button
-      v-for="p in presetSeeds"
-      :key="p.seed"
-      type="button"
-      class="swatch"
-      :class="{ 'swatch--active': store.themeSeed === p.seed }"
-      :style="{ background: p.seed }"
-      :aria-label="p.seed"
-      :aria-pressed="store.themeSeed === p.seed"
-      @click="store.setThemeSeed(p.seed)"
+  <v-card-text class="pb-2">
+    <p class="md3-label-large text-on-surface-variant mb-2">
+      {{ t("theme.appearance") }}
+    </p>
+    <v-btn-toggle
+      :model-value="store.themePreference"
+      mandatory
+      divided
+      variant="outlined"
+      rounded="xl"
+      density="comfortable"
+      selected-class="bg-secondary-container text-on-secondary-container"
+      class="w-100"
+      @update:model-value="(v: ThemePreference) => store.setTheme(v)"
     >
-      <v-icon v-if="store.themeSeed === p.seed" :icon="mdiCheck" size="18" />
-    </button>
-    <label
-      class="swatch swatch--custom"
-      :class="{
-        'swatch--active': !presetSeeds.some((p) => p.seed === store.themeSeed),
-      }"
-      :style="{ background: store.themeSeed }"
-      :title="t('theme.custom')"
-    >
-      <input
-        type="color"
-        :value="store.themeSeed"
-        :aria-label="t('theme.custom')"
-        @input="pick"
-      />
-      <v-icon :icon="mdiPalette" size="18" />
-    </label>
-  </div>
+      <v-btn
+        v-for="m in modes"
+        :key="m.value"
+        :value="m.value"
+        :prepend-icon="m.icon"
+        class="flex-grow-1 text-none"
+      >
+        {{ t(m.key) }}
+      </v-btn>
+    </v-btn-toggle>
+    <p class="md3-label-large text-on-surface-variant mt-5 mb-1">
+      {{ t("theme.color") }}
+    </p>
+    <v-color-picker
+      v-model="seed"
+      mode="hex"
+      :swatches="swatches"
+      show-swatches
+      hide-canvas
+      hide-sliders
+      hide-inputs
+      swatches-max-height="72"
+      elevation="0"
+      class="bg-transparent swatches"
+      width="100%"
+    />
+  </v-card-text>
 </template>
 
 <style scoped>
-.swatches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.swatch {
+.swatches :deep(.v-color-picker-swatches__color) {
   width: 32px;
   height: 32px;
+  max-height: 32px;
   border-radius: 50%;
-  border: 2px solid transparent;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: rgba(0, 0, 0, 0.7);
-  padding: 0;
+  margin: 4px;
 }
-.swatch--active {
-  border-color: rgb(var(--v-theme-on-surface));
-}
-.swatch--custom {
-  position: relative;
-  overflow: hidden;
-}
-.swatch--custom input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
+.swatches :deep(.v-color-picker-swatches > div) {
+  padding: 4px 0;
 }
 </style>

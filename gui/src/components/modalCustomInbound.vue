@@ -2,7 +2,12 @@
   <div class="modal-card" style="max-width: 640px; margin: auto">
     <header class="modal-card-head">
       <p class="modal-card-title">{{ $t("customInbound.title") }}</p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <!-- Existing custom inbounds list -->
@@ -13,11 +18,22 @@
         narrowed
         style="margin-bottom: 1rem"
       >
-        <b-table-column v-slot="props" :label="$t('customInbound.tag')" width="120">
+        <b-table-column
+          v-slot="props"
+          :label="$t('customInbound.tag')"
+          width="120"
+        >
           <code>{{ props.row.tag }}</code>
         </b-table-column>
-        <b-table-column v-slot="props" :label="$t('customInbound.protocol')" width="70">
-          <b-tag :type="props.row.protocol === 'socks' ? 'is-info' : 'is-success'" size="is-small">
+        <b-table-column
+          v-slot="props"
+          :label="$t('customInbound.protocol')"
+          width="70"
+        >
+          <b-tag
+            :type="props.row.protocol === 'socks' ? 'is-info' : 'is-success'"
+            size="is-small"
+          >
             {{ props.row.protocol.toUpperCase() }}
           </b-tag>
           <i
@@ -26,17 +42,36 @@
             :title="$t('customInbound.authEnabled')"
           />
         </b-table-column>
-        <b-table-column v-slot="props" :label="$t('customInbound.port')" width="70">
+        <b-table-column
+          v-slot="props"
+          :label="$t('customInbound.port')"
+          width="70"
+        >
           {{ props.row.port }}
         </b-table-column>
-        <b-table-column v-slot="props" :label="$t('customInbound.outbound')" width="140">
+        <b-table-column
+          v-slot="props"
+          :label="$t('customInbound.outbound')"
+          width="140"
+        >
           <span v-if="props.row.outbound">
-            <b-tag size="is-small" type="is-warning">{{ props.row.outbound }}</b-tag>
-            <span v-if="props.row.outboundType === 'routingA'" class="is-size-7 has-text-grey"> (RoutingA)</span>
+            <b-tag size="is-small" type="is-warning">{{
+              props.row.outbound
+            }}</b-tag>
+            <span
+              v-if="props.row.outboundType === 'routingA'"
+              class="is-size-7 has-text-grey"
+            >
+              (RoutingA)</span
+            >
           </span>
           <span v-else class="is-size-7 has-text-grey">—</span>
         </b-table-column>
-        <b-table-column v-slot="props" :label="$t('operations.name')" width="60">
+        <b-table-column
+          v-slot="props"
+          :label="$t('operations.name')"
+          width="60"
+        >
           <b-button
             size="is-small"
             type="is-danger"
@@ -53,23 +88,38 @@
 
       <!-- Add new inbound form -->
       <div class="box" style="padding: 0.75rem">
-        <p class="is-size-6 has-text-weight-semibold" style="margin-bottom: 0.5rem">
+        <p
+          class="is-size-6 has-text-weight-semibold"
+          style="margin-bottom: 0.5rem"
+        >
           {{ $t("customInbound.addNew") }}
         </p>
         <div class="inbound-form">
-          <b-field :label="$t('customInbound.tag')" label-position="on-border" class="inbound-form__tag">
+          <b-field
+            :label="$t('customInbound.tag')"
+            label-position="on-border"
+            class="inbound-form__tag"
+          >
             <b-input
               v-model="form.tag"
               :placeholder="$t('customInbound.tagPlaceholder')"
             ></b-input>
           </b-field>
-          <b-field :label="$t('customInbound.protocol')" label-position="on-border" class="inbound-form__protocol">
+          <b-field
+            :label="$t('customInbound.protocol')"
+            label-position="on-border"
+            class="inbound-form__protocol"
+          >
             <b-select v-model="form.protocol" expanded>
               <option value="socks">SOCKS</option>
               <option value="http">HTTP</option>
             </b-select>
           </b-field>
-          <b-field :label="$t('customInbound.port')" label-position="on-border" class="inbound-form__port">
+          <b-field
+            :label="$t('customInbound.port')"
+            label-position="on-border"
+            class="inbound-form__port"
+          >
             <b-input
               v-model.number="form.port"
               type="number"
@@ -78,29 +128,47 @@
               :placeholder="$t('customInbound.portPlaceholder')"
             ></b-input>
           </b-field>
-          <b-field :label="$t('customInbound.outbound')" label-position="on-border" class="inbound-form__outbound">
+          <b-field
+            :label="$t('customInbound.outbound')"
+            label-position="on-border"
+            class="inbound-form__outbound"
+          >
             <b-select v-model="form.outbound" expanded>
-              <option
-                v-for="ob in outbounds"
-                :key="ob"
-                :value="ob"
-              >{{ ob }}</option>
+              <option v-for="ob in outbounds" :key="ob" :value="ob">
+                {{ ob }}
+              </option>
             </b-select>
           </b-field>
-          <b-field :label="$t('customInbound.outboundType')" label-position="on-border" class="inbound-form__mode">
+          <b-field
+            :label="$t('customInbound.outboundType')"
+            label-position="on-border"
+            class="inbound-form__mode"
+          >
             <b-select v-model="form.outboundType" expanded>
-              <option value="direct">{{ $t("customInbound.outboundTypeDirect") }}</option>
-              <option value="routingA">{{ $t("customInbound.outboundTypeRoutingA") }}</option>
+              <option value="direct">
+                {{ $t("customInbound.outboundTypeDirect") }}
+              </option>
+              <option value="routingA">
+                {{ $t("customInbound.outboundTypeRoutingA") }}
+              </option>
             </b-select>
           </b-field>
-          <b-field :label="$t('customInbound.username')" label-position="on-border" class="inbound-form__user">
+          <b-field
+            :label="$t('customInbound.username')"
+            label-position="on-border"
+            class="inbound-form__user"
+          >
             <b-input
               v-model="form.username"
               :placeholder="$t('customInbound.authOptional')"
               autocomplete="off"
             ></b-input>
           </b-field>
-          <b-field :label="$t('customInbound.password')" label-position="on-border" class="inbound-form__pass">
+          <b-field
+            :label="$t('customInbound.password')"
+            label-position="on-border"
+            class="inbound-form__pass"
+          >
             <b-input
               v-model="form.password"
               type="password"
@@ -110,14 +178,23 @@
             ></b-input>
           </b-field>
           <div class="inbound-form__add">
-            <b-button type="is-primary" expanded :loading="adding" @click="handleAdd">
+            <b-button
+              type="is-primary"
+              expanded
+              :loading="adding"
+              @click="handleAdd"
+            >
               {{ $t("operations.add") }}
             </b-button>
           </div>
         </div>
 
         <!-- RoutingA rules editor (shown when outboundType is routingA) -->
-        <b-field v-if="form.outboundType === 'routingA'" :label="$t('customInbound.routingARules')" label-position="on-border">
+        <b-field
+          v-if="form.outboundType === 'routingA'"
+          :label="$t('customInbound.routingARules')"
+          label-position="on-border"
+        >
           <b-input
             v-model="form.routingARules"
             type="textarea"
@@ -211,25 +288,34 @@ export default {
           port: Number(this.form.port),
           outbound: this.form.outbound,
           outboundType: this.form.outboundType,
-          routingARules: this.form.outboundType === "routingA" ? this.form.routingARules : "",
+          routingARules:
+            this.form.outboundType === "routingA"
+              ? this.form.routingARules
+              : "",
           username: this.form.username.trim(),
           password: this.form.password,
         },
       })
         .then((res) => {
-          handleResponse(res, this, () => {
-            this.inbounds = res.data.data.inbounds || [];
-            this.form = {
-              tag: "",
-              protocol: "socks",
-              port: "",
-              outbound: this.outbounds[0] || "",
-              outboundType: "direct",
-              routingARules: "",
-              username: "",
-              password: "",
-            };
-          }, null, "customInbound.saveFailed");
+          handleResponse(
+            res,
+            this,
+            () => {
+              this.inbounds = res.data.data.inbounds || [];
+              this.form = {
+                tag: "",
+                protocol: "socks",
+                port: "",
+                outbound: this.outbounds[0] || "",
+                outboundType: "direct",
+                routingARules: "",
+                username: "",
+                password: "",
+              };
+            },
+            null,
+            "customInbound.saveFailed",
+          );
         })
         .finally(() => {
           this.adding = false;
@@ -247,9 +333,15 @@ export default {
             method: "delete",
             data: { tag },
           }).then((res) => {
-            handleResponse(res, this, () => {
-              this.inbounds = res.data.data.inbounds || [];
-            }, null, "customInbound.deleteFailed");
+            handleResponse(
+              res,
+              this,
+              () => {
+                this.inbounds = res.data.data.inbounds || [];
+              },
+              null,
+              "customInbound.deleteFailed",
+            );
           });
         },
       });

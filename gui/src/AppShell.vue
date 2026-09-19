@@ -1,13 +1,14 @@
 <script setup lang="ts">
-// The page: top app bar (brand, the core's state, the outbound groups,
-// the actions), a drawer for the actions on phones, the node list, and
-// the hosts for notices, dialogs and the loading overlay. The shell also
-// runs the session: it is the starter resetSession() calls.
+// The page, laid out the Material 3 way: a navigation rail from 600 dp
+// (a bottom navigation bar below), a top app bar with the page's title,
+// the core's state chip and the account, theme and language menus, and
+// the current page's pane under v-main; the hosts for notices, dialogs
+// and the loading overlay. The shell also runs the session: it is the
+// starter resetSession() calls.
 //
-// Coexistence period: the node list and the settings, log and address
-// dialogs are still the old Buefy ones; they open through openLegacy and
-// report the core's state as translated text, which the bridge below
-// turns into the store's enum.
+// Coexistence period: the node list and the address dialog are still the
+// old Buefy ones; the node list reports the core's state as translated
+// text, which the bridge below turns into the store's enum.
 import {
   computed,
   onBeforeUnmount,
@@ -19,23 +20,12 @@ import {
 import { useI18n } from "vue-i18n";
 import { useDisplay, useLocale, useTheme } from "vuetify";
 import dayjs from "dayjs";
-import {
-  mdiAccountCircleOutline,
-  mdiChevronDown,
-  mdiCogOutline,
-  mdiHeartOutline,
-  mdiLogout,
-  mdiMenu,
-  mdiPalette,
-  mdiScriptTextOutline,
-  mdiTranslate,
-} from "@mdi/js";
+import { mdiPower, mdiSitemapOutline } from "@mdi/js";
 import {
   deleteV2ray,
   getAccount,
   getOutbounds,
   getVersion,
-  postOutbound,
   postV2ray,
 } from "@/api";
 import { ApiError, currentSession } from "@/api/client";
@@ -53,13 +43,16 @@ import {
   openDialog,
   openLoading,
   useNotify,
-  usePrompt,
 } from "@/composables";
 import DialogHost from "@/components/hosts/DialogHost.vue";
 import LoadingHost from "@/components/hosts/LoadingHost.vue";
 import NoticeHost from "@/components/hosts/NoticeHost.vue";
-import ThemePanel from "@/components/ThemePanel.vue";
-import AboutDialog from "@/dialogs/About.vue";
+import NavBar from "@/components/NavBar.vue";
+import NavDrawer from "@/components/NavDrawer.vue";
+import NavRail from "@/components/NavRail.vue";
+import ShellMenus from "@/components/ShellMenus.vue";
+import { destinations } from "@/components/destinations";
+import { languages } from "@/components/languages";
 import LoginDialog from "@/dialogs/Login.vue";
 import ServerDialog from "@/dialogs/Server/index.vue";
 import { closeProgrammatic, openLegacy } from "@/plugins/session";
@@ -70,20 +63,25 @@ import { schemeColors } from "@/theme/scheme";
 import logo from "@/assets/img/v2raya-icon.svg";
 // the old page's pieces, replaced view by view
 import NodeList from "@/node.vue";
-import OutboundGroupPanel from "@/components/outboundGroupPanel.vue";
-import ModalSetting from "@/components/modalSetting.vue";
-import ModalLog from "@/components/modalLog.vue";
+import OutboundMenu from "@/components/OutboundMenu.vue";
 import ModalCustomPorts from "@/components/modalCustomPorts.vue";
+import AboutView from "@/views/AboutView.vue";
+import LogsView from "@/views/LogsView.vue";
+import SettingsView from "@/views/SettingsView.vue";
 import vuex from "@/store";
 
 const store = useAppStore();
 const { t, locale } = useI18n();
 const notify = useNotify();
-const prompt = usePrompt();
 const theme = useTheme();
 const vuetifyLocale = useLocale();
-const { mdAndDown } = useDisplay();
-const drawer = ref(false);
+// Material's window size classes: compact < 600, medium < 840, expanded
+const { width } = useDisplay();
+const compact = computed(() => width.value < 600);
+const expanded = computed(() => width.value >= 840);
+const pageTitle = computed(() =>
+  t(destinations.find((d) => d.view === store.view)?.label ?? "common.nodes"),
+);
 
 // ---- the old node list -------------------------------------------------------
 
@@ -317,41 +315,8 @@ async function toggleRunning() {
   }
 }
 
-// ---- outbound groups ----------------------------------------------------------
+// ---- the address dialog (still the old one) ------------------------------------
 
-async function addOutbound() {
-  const outbound = await prompt({
-    message: t("outbound.addMessage"),
-    input: { maxlength: 10 },
-  });
-  if (outbound === null) return;
-  const control = new AbortController();
-  try {
-    const res = await watchConnected(
-      postOutbound({ outbound }, { signal: control.signal }),
-      () => control.abort(),
-    );
-    if (res) {
-      notify.success(t("outbound.added"));
-      store.setOutbounds((res as { outbounds: unknown }).outbounds);
-    } else {
-      store.setOutbounds((await getOutbounds()).outbounds);
-    }
-  } catch (err) {
-    notify.warning(t("outbound.addFailed", { message: errorText(err) }));
-  }
-}
-
-// ---- the actions -----------------------------------------------------------------
-
-function openSettings() {
-  openLegacy({
-    component: ModalSetting,
-    hasModalCard: true,
-    canCancel: true,
-    events: { clickPorts: openPorts },
-  });
-}
 function openPorts() {
   openLegacy({
     component: ModalCustomPorts,
@@ -359,15 +324,8 @@ function openPorts() {
     customClass: "modal-custom-ports",
   });
 }
-function openLogs() {
-  openLegacy({ component: ModalLog, hasModalCard: true, canCancel: true });
-}
-function openAbout() {
-  openDialog(AboutDialog, {}, { width: 560 });
-}
-function logout() {
-  void resetSession({ token: "" });
-}
+
+// ---- theme and language ---------------------------------------------------------
 
 watchEffect(() => {
   // both palettes follow the seed, so switching appearance later is instant
@@ -381,29 +339,11 @@ watchEffect(() => {
   document.body.classList.toggle("theme-dark", store.isDark);
 });
 
-const langs = [
-  { code: "zh_CN", label: "中文-中国", flag: "zh", dayjs: "zh-cn" },
-  { code: "en_US", label: "English-US", flag: "en", dayjs: "en" },
-  { code: "fa_IR", label: "فارسی", flag: "fa", dayjs: "fa" },
-  { code: "ru_RU", label: "Русский", flag: "ru", dayjs: "ru" },
-  { code: "pt_BR", label: "Português-Brasil", flag: "pt", dayjs: "pt-br" },
-  { code: "ko_KR", label: "한국어-대한민국", flag: "ko", dayjs: "ko" },
-];
-const currentLang = computed(
-  () => langs.find((l) => l.flag === locale.value)?.label ?? locale.value,
-);
-function setLanguage(flag: string) {
-  const lang = langs.find((l) => l.flag === flag);
-  if (!lang) return;
-  store.setLanguage(flag);
-  locale.value = flag;
-  drawer.value = false;
-}
 watch(
   locale,
   (flag) => {
     vuetifyLocale.current.value = vuetifyLocales[flag] ?? "en";
-    dayjs.locale(langs.find((l) => l.flag === flag)?.dayjs ?? flag);
+    dayjs.locale(languages.find((l) => l.flag === flag)?.dayjs ?? flag);
     document.documentElement.lang = flag;
     document.documentElement.dir = vuetifyLocale.isRtl.value ? "rtl" : "ltr";
     // the old node list keeps the state as text of the language it was
@@ -425,25 +365,85 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
 
 <template>
   <v-app>
-    <v-app-bar :height="64" flat color="surface" scroll-behavior="elevate">
-      <template #prepend>
-        <v-app-bar-nav-icon
-          v-if="mdAndDown"
-          :icon="mdiMenu"
-          :aria-label="t('common.menu')"
-          @click="drawer = !drawer"
-        />
-        <a href="/" class="brand no-select">
-          <img :src="logo" alt="" class="brand__icon" />
-          <span class="brand__name md3-title-large">v2rayA</span>
-        </a>
+    <NavDrawer v-if="expanded && !store.navCollapsed">
+      <template #core>
+        <v-list-item
+          :prepend-icon="mdiPower"
+          :title="labelOf(store.running)"
+          :subtitle="
+            store.running === 'running' ? t('v2ray.stop') : t('v2ray.start')
+          "
+          rounded="xl"
+          @click="toggleRunning"
+        >
+          <template #append>
+            <v-switch
+              :model-value="store.running === 'running'"
+              :loading="store.running === 'checking'"
+              :color="statusColor"
+              hide-details
+              density="compact"
+              tabindex="-1"
+              @click.stop="toggleRunning"
+            />
+          </template>
+        </v-list-item>
       </template>
+      <template #groups>
+        <OutboundMenu
+          variant="list"
+          @changed="nodeRef?.syncLatestNodeOverview()"
+        />
+      </template>
+    </NavDrawer>
+    <NavRail v-else-if="!compact" :collapsible="expanded">
+      <template #core>
+        <v-tooltip :text="labelOf(store.running)" location="end">
+          <template #activator="{ props: tip }">
+            <v-btn
+              v-bind="tip"
+              :icon="mdiPower"
+              :color="statusColor"
+              variant="tonal"
+              :aria-label="labelOf(store.running)"
+              @click="toggleRunning"
+            />
+          </template>
+        </v-tooltip>
+        <v-tooltip
+          :text="`${t('common.proxyGroups')}: ${store.outboundName.toUpperCase()}`"
+          location="end"
+        >
+          <template #activator="{ props: tip }">
+            <v-btn
+              v-bind="tip"
+              :icon="mdiSitemapOutline"
+              variant="tonal"
+              color="tertiary"
+              :aria-label="t('common.proxyGroups')"
+              @click="store.setNavCollapsed(false)"
+            />
+          </template>
+        </v-tooltip>
+      </template>
+    </NavRail>
 
+    <v-app-bar
+      v-if="!expanded"
+      :height="64"
+      flat
+      color="surface"
+      scroll-behavior="elevate"
+    >
+      <template v-if="compact" #prepend>
+        <img :src="logo" alt="v2rayA" class="bar__logo ms-2" />
+      </template>
+      <v-app-bar-title class="md3-title-large">{{ pageTitle }}</v-app-bar-title>
       <v-chip
         :color="statusColor"
         variant="tonal"
         size="large"
-        class="status-chip md3-label-large ms-2"
+        class="status-chip md3-label-large me-2"
         role="button"
         tabindex="0"
         @mouseenter="hovering = true"
@@ -454,190 +454,42 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
       >
         {{ statusText }}
       </v-chip>
-      <div class="ms-2">
-        <OutboundGroupPanel
-          :outbounds="store.outbounds"
-          :current-outbound="store.outboundName"
-          :is-mobile="mdAndDown"
-          @select="store.outboundName = $event"
-          @add-outbound="addOutbound"
-          @changed="nodeRef?.syncLatestNodeOverview()"
-          @group-deleted="store.setOutbounds($event)"
-        />
-      </div>
-
-      <template v-if="!mdAndDown" #append>
-        <v-btn
-          variant="text"
-          :prepend-icon="mdiCogOutline"
-          @click="openSettings"
-        >
-          {{ t("common.setting") }}
-        </v-btn>
-        <v-btn
-          variant="text"
-          :prepend-icon="mdiHeartOutline"
-          @click="openAbout"
-        >
-          {{ t("common.about") }}
-        </v-btn>
-        <v-btn
-          variant="text"
-          :prepend-icon="mdiScriptTextOutline"
-          @click="openLogs"
-        >
-          {{ t("common.log") }}
-        </v-btn>
-        <v-menu :close-on-content-click="false">
-          <template #activator="{ props: menu }">
-            <v-btn
-              v-bind="menu"
-              variant="text"
-              :prepend-icon="mdiPalette"
-              :append-icon="mdiChevronDown"
-            >
-              {{ t("theme.title") }}
-            </v-btn>
-          </template>
-          <v-list density="compact" min-width="260">
-            <ThemePanel />
-          </v-list>
-        </v-menu>
-        <v-menu>
-          <template #activator="{ props: menu }">
-            <v-btn
-              v-bind="menu"
-              variant="text"
-              :prepend-icon="mdiTranslate"
-              :append-icon="mdiChevronDown"
-            >
-              {{ currentLang }}
-            </v-btn>
-          </template>
-          <v-list density="compact" min-width="220">
-            <v-list-item
-              v-for="lang in langs"
-              :key="lang.code"
-              :active="lang.flag === locale"
-              :title="lang.label"
-              :subtitle="lang.code"
-              @click="setLanguage(lang.flag)"
-            />
-          </v-list>
-        </v-menu>
-        <v-menu>
-          <template #activator="{ props: menu }">
-            <v-btn
-              v-bind="menu"
-              variant="text"
-              :prepend-icon="mdiAccountCircleOutline"
-              :append-icon="mdiChevronDown"
-              class="me-2"
-            >
-              {{ store.username || t("common.notLogin") }}
-            </v-btn>
-          </template>
-          <v-list density="compact" min-width="220">
-            <v-list-item disabled>
-              <v-list-item-title class="md3-body-medium">
-                <i18n-t keypath="common.loggedAs" tag="span" scope="global">
-                  <template #username>
-                    <b>{{ store.username || t("common.notLogin") }}</b>
-                  </template>
-                </i18n-t>
-              </v-list-item-title>
-            </v-list-item>
-            <v-divider />
-            <v-list-item
-              :prepend-icon="mdiLogout"
-              :title="t('operations.logout')"
-              @click="logout"
-            />
-          </v-list>
-        </v-menu>
+      <OutboundMenu
+        v-if="!compact"
+        class="me-3"
+        @changed="nodeRef?.syncLatestNodeOverview()"
+      />
+      <template #append>
+        <ShellMenus variant="icons" />
       </template>
     </v-app-bar>
 
-    <v-navigation-drawer
-      v-if="mdAndDown"
-      v-model="drawer"
-      temporary
-      :width="300"
-      location="start"
-    >
-      <v-list nav>
-        <v-list-subheader class="md3-title-small">
-          <i18n-t keypath="common.loggedAs" tag="span" scope="global">
-            <template #username>
-              <b>{{ store.username || t("common.notLogin") }}</b>
-            </template>
-          </i18n-t>
-        </v-list-subheader>
-        <v-list-item
-          :prepend-icon="mdiCogOutline"
-          :title="t('common.setting')"
-          @click="openSettings"
-        />
-        <v-list-item
-          :prepend-icon="mdiHeartOutline"
-          :title="t('common.about')"
-          @click="openAbout"
-        />
-        <v-list-item
-          :prepend-icon="mdiScriptTextOutline"
-          :title="t('common.log')"
-          @click="openLogs"
-        />
-        <v-list-group>
-          <template #activator="{ props: group }">
-            <v-list-item
-              v-bind="group"
-              :prepend-icon="mdiPalette"
-              :title="t('theme.title')"
-            />
-          </template>
-          <ThemePanel />
-        </v-list-group>
-        <v-list-group>
-          <template #activator="{ props: group }">
-            <v-list-item
-              v-bind="group"
-              :prepend-icon="mdiTranslate"
-              :title="currentLang"
-            />
-          </template>
-          <v-list-item
-            v-for="lang in langs"
-            :key="lang.code"
-            :active="lang.flag === locale"
-            :title="lang.label"
-            :subtitle="lang.code"
-            @click="setLanguage(lang.flag)"
-          />
-        </v-list-group>
-        <v-divider class="my-2" />
-        <v-list-item
-          :prepend-icon="mdiLogout"
-          :title="t('operations.logout')"
-          @click="logout"
-        />
-      </v-list>
-    </v-navigation-drawer>
-
     <v-main>
-      <NodeList
-        v-if="store.loggedIn"
-        ref="nodeRef"
-        :key="sessionSerial"
-        :outbound="store.outboundName"
-        :outbounds="store.outbounds"
-        :observatory="store.observatory ?? undefined"
-        :load-balance-valid="store.loadBalanceValid"
-        :core-version-valid="store.coreVersionValid"
-        :core-version-err="store.coreVersionErr"
-        @input="onNodeState"
-      />
+      <div class="page" :class="{ 'page--wide': store.view === 'nodes' }">
+        <h1 v-if="expanded" class="md3-headline-medium page__title">
+          {{ pageTitle }}
+        </h1>
+        <div v-show="store.view === 'nodes'">
+          <NodeList
+            v-if="store.loggedIn"
+            ref="nodeRef"
+            :key="sessionSerial"
+            :outbound="store.outboundName"
+            :outbounds="store.outbounds"
+            :observatory="store.observatory ?? undefined"
+            :load-balance-valid="store.loadBalanceValid"
+            :core-version-valid="store.coreVersionValid"
+            :core-version-err="store.coreVersionErr"
+            @input="onNodeState"
+          />
+        </div>
+        <SettingsView v-if="store.view === 'settings'" />
+        <LogsView v-else-if="store.view === 'logs'" />
+        <AboutView v-else-if="store.view === 'about'" />
+      </div>
     </v-main>
+
+    <NavBar v-if="compact" />
 
     <NoticeHost />
     <DialogHost />
@@ -646,15 +498,7 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
 </template>
 
 <style scoped>
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 12px 0 4px;
-  color: rgb(var(--v-theme-on-surface));
-  text-decoration: none;
-}
-.brand__icon {
+.bar__logo {
   width: 32px;
   height: 32px;
 }
@@ -663,12 +507,21 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
   min-width: 5em;
   justify-content: center;
 }
-.no-select {
-  user-select: none;
+/* Material's margins: 16 dp on compact, 24 dp from medium; readable width */
+.page {
+  padding: 16px;
+  margin: 0 auto;
+  max-width: 1040px;
 }
-@media (max-width: 400px) {
-  .brand__name {
-    display: none;
+.page--wide {
+  max-width: 1400px;
+}
+.page__title {
+  margin: 8px 0 24px;
+}
+@media (min-width: 600px) {
+  .page {
+    padding: 24px;
   }
 }
 </style>

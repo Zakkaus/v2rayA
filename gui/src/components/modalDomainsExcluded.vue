@@ -4,7 +4,12 @@
       <p class="modal-card-title">
         {{ $t("domainsExcluded.title") }}
       </p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <b-message type="is-info" class="after-line-dot5">
@@ -58,9 +63,15 @@ export default {
           domains: this.domains,
         },
       }).then((res) => {
-        handleResponse(res, this, () => {
-          this.$emit("close");
-        }, null, "domainsExcluded.saveFailed");
+        handleResponse(
+          res,
+          this,
+          () => {
+            this.$emit("close");
+          },
+          null,
+          "domainsExcluded.saveFailed",
+        );
       });
     },
   },

@@ -4,7 +4,12 @@
       <p class="modal-card-title">
         {{ outbound }} - {{ $t("common.outboundSetting") }}
       </p>
-      <button type="button" class="delete" aria-label="close" @click="$emit('close')"></button>
+      <button
+        type="button"
+        class="delete"
+        aria-label="close"
+        @click="$emit('close')"
+      ></button>
     </header>
     <section class="modal-card-body">
       <b-field :label="$t('outbound.probeUrl')" label-position="on-border">
@@ -129,14 +134,20 @@ export default {
           setting: this.setting,
         },
       }).then((res) => {
-        handleResponse(res, this, () => {
-          this.$buefy.toast.open({
-            message: this.$t("outbound.settingSaved"),
-            type: "is-primary",
-            position: "is-top",
-          });
-          this.$emit("close");
-        }, null, "outbound.settingSaveFailed");
+        handleResponse(
+          res,
+          this,
+          () => {
+            this.$buefy.toast.open({
+              message: this.$t("outbound.settingSaved"),
+              type: "is-primary",
+              position: "is-top",
+            });
+            this.$emit("close");
+          },
+          null,
+          "outbound.settingSaveFailed",
+        );
         if (
           res.data.code !== "SUCCESS" &&
           (res.data.errorCode === "INVALID_CONFIG" ||
@@ -151,5 +162,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

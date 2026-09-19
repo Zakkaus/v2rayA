@@ -1,5 +1,6 @@
 export default {
   common: {
+    nodes: "节点",
     menu: "菜单",
     outboundSetting: "代理分组设置",
     setting: "设置",
@@ -26,6 +27,9 @@ export default {
     expand: "显示连接状态",
   },
   theme: {
+    auto: "自动",
+    light: "浅色",
+    dark: "深色",
     title: "主题",
     appearance: "外观",
     color: "主题色",
