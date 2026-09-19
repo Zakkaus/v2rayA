@@ -16,7 +16,7 @@ import {
 import { useI18n } from "vue-i18n";
 import { useDisplay, useLocale, useTheme } from "vuetify";
 import dayjs from "dayjs";
-import { mdiPower } from "@mdi/js";
+import { mdiDotsVertical, mdiPower } from "@mdi/js";
 import {
   deleteV2ray,
   getAccount,
@@ -244,9 +244,9 @@ const hovering = ref(false);
 const statusColor = computed(
   () =>
     ({
-      running: "success",
-      stopped: "error",
-      paused: "warning",
+      running: "primary",
+      stopped: "surface-variant",
+      paused: "tertiary",
       checking: "surface-variant",
     })[store.running],
 );
@@ -367,7 +367,21 @@ onBeforeUnmount(() => darkQuery.removeEventListener("change", onSystemTheme));
         @changed="pageRef?.sync?.()"
       />
       <template #append>
-        <ShellMenus variant="icons" />
+        <ShellMenus v-if="!compact" variant="icons" />
+        <v-menu v-else :close-on-content-click="false">
+          <template #activator="{ props: menu }">
+            <v-btn
+              v-bind="menu"
+              :icon="mdiDotsVertical"
+              variant="text"
+              class="me-1"
+              :aria-label="t('common.menu')"
+            />
+          </template>
+          <v-list density="compact" min-width="240" class="pa-2">
+            <ShellMenus variant="list" />
+          </v-list>
+        </v-menu>
       </template>
     </v-app-bar>
 

@@ -22,7 +22,7 @@ const { t } = useI18n();
   <v-card
     rounded="lg"
     :color="member ? 'secondary-container' : 'surface-container-low'"
-    class="node-card pa-4"
+    class="node-card ps-4 pe-2 py-2"
     role="button"
     :tabindex="disabled ? -1 : 0"
     :aria-pressed="member"
@@ -31,20 +31,14 @@ const { t } = useI18n();
     @keydown.enter.self.prevent="!disabled && emit('toggle')"
     @keydown.space.self.prevent="!disabled && emit('toggle')"
   >
-    <div class="d-flex align-start ga-2">
-      <v-icon v-if="member" :icon="mdiCheck" size="20" />
+    <div class="d-flex align-center ga-2">
+      <v-icon v-if="member" :icon="mdiCheck" size="20" class="flex-shrink-0" />
       <h3 class="node-card__name md3-title-small" dir="auto">{{ row.name }}</h3>
       <v-chip v-if="inUse" size="small" variant="tonal" class="flex-shrink-0">{{
         t("proxies.inUse")
       }}</v-chip>
-    </div>
-    <p class="md3-body-small text-on-surface-variant mt-2 node-card__source">
-      {{ row.net }} · {{ source }}
-    </p>
-    <div class="d-flex align-center ga-2 mt-2">
-      <NodeLatency :latency="row.pingLatency" />
-      <v-spacer />
       <NodeMenu
+        class="node-card__menu"
         :member="member"
         :selected="selected"
         :local="row._type === 'server'"
@@ -52,6 +46,13 @@ const { t } = useI18n();
         :testing="testing"
         @action="emit('action', $event)"
       />
+    </div>
+    <div class="d-flex align-center ga-2 mt-1">
+      <p class="md3-body-small text-on-surface-variant node-card__source ma-0">
+        {{ row.net }} · {{ source }}
+      </p>
+      <v-spacer />
+      <NodeLatency :latency="row.pingLatency" />
     </div>
   </v-card>
 </template>
@@ -62,6 +63,9 @@ const { t } = useI18n();
 .node-card:focus-visible {
   outline: 2px solid rgb(var(--v-theme-primary));
   outline-offset: 2px;
+}
+.node-card__menu {
+  margin-inline-start: auto;
 }
 .node-card__name {
   display: -webkit-box;
@@ -74,5 +78,6 @@ const { t } = useI18n();
 }
 .node-card__source {
   overflow-wrap: anywhere;
+  min-width: 0;
 }
 </style>
