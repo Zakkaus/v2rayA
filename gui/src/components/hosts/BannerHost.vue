@@ -17,9 +17,10 @@ const icons = {
   warning: mdiAlertOutline,
   error: mdiAlertCircleOutline,
 };
+// a warning is something going wrong too: the scheme keeps one colour for that
 const colors = {
   info: "secondary-container",
-  warning: "tertiary-container",
+  warning: "error-container",
   error: "error-container",
 };
 </script>
