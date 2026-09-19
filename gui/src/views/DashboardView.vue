@@ -13,13 +13,11 @@ import {
   mdiChartLine,
   mdiRss,
 } from "@mdi/js";
-import { useDialog } from "@/composables";
 import OutboundMenu from "@/components/OutboundMenu.vue";
 import TrafficChart from "@/components/TrafficChart.vue";
 import { useTraffic } from "@/composables/useTraffic";
 import { formatBytes, formatRate } from "@/lib/format";
 import { useDashboard } from "./dashboard/model";
-import NodeSelection from "./dashboard/NodeSelection.vue";
 import type { SubscriptionAction } from "./proxies/model";
 import { transparentModes, pacModes } from "./settings/options";
 
@@ -34,7 +32,6 @@ const actionKeys: Record<string, string> = {
 };
 const { width } = useDisplay();
 const wide = computed(() => width.value >= 600);
-const { open } = useDialog();
 const {
   store,
   loading,
@@ -78,17 +75,22 @@ const slowest = computed(() =>
   Math.max(1, ...members.value.map((member) => member.ms ?? 0)),
 );
 
-function switchNode() {
+// the node picker: "auto" or one member's key; picking calls selectNode
+const selectionValue = computed(
+  () => members.value.find((m) => m.which.selected)?.key ?? "auto",
+);
+const selectionItems = computed(() => [
+  { value: "auto", title: t("dashboard.autoFastest") },
+  ...members.value.map((m) => ({
+    value: m.key,
+    title: m.row.name || m.row.address,
+    props: { subtitle: `${m.row.net} · ${m.latency}` },
+  })),
+]);
+function pick(value: string) {
   const outbound = store.outboundName;
-  open(
-    NodeSelection,
-    {
-      members: members.value,
-      select: (which: Parameters<typeof selectNode>[0]) =>
-        selectNode(which, outbound),
-    },
-    { width: 480 },
-  );
+  const member = members.value.find((m) => m.key === value);
+  void selectNode(member ? member.which : null, outbound);
 }
 </script>
 
@@ -226,11 +228,20 @@ function switchNode() {
           <p v-else class="md3-body-medium text-on-surface-variant mb-4">
             {{ t("dashboard.balanced", { n: members.length }) }}
           </p>
-          <div class="d-flex align-center justify-end ga-2">
-            <v-btn variant="text" :disabled="selecting" @click="switchNode">{{
-              t("dashboard.switchNode")
-            }}</v-btn>
-          </div>
+          <v-select
+            :model-value="selectionValue"
+            :items="selectionItems"
+            :label="t('dashboard.switchNode')"
+            variant="outlined"
+            density="compact"
+            hide-details
+            :disabled="selecting"
+            @update:model-value="pick"
+          >
+            <template #item="{ props: item }">
+              <v-list-item v-bind="item" />
+            </template>
+          </v-select>
         </template>
         <template v-else>
           <p class="md3-body-medium mb-4">{{ t("dashboard.emptyGroup") }}</p>

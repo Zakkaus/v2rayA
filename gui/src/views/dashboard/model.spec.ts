@@ -18,9 +18,7 @@ import { watchConnected } from "@/api/connect";
 import type { TouchResponse, TouchServer } from "@/api/types";
 import { loadingState } from "@/composables/useLoading";
 import { closeAllNotices, noticeState } from "@/composables/useNotify";
-import { closeAllDialogs, dialogState } from "@/composables/useDialog";
-import DialogHost from "@/components/hosts/DialogHost.vue";
-import NodeSelection from "./NodeSelection.vue";
+import { closeAllDialogs } from "@/composables/useDialog";
 import { useAppStore } from "@/stores/app";
 import { mountWithApp } from "@/test/mount";
 import DashboardView from "../DashboardView.vue";
@@ -76,7 +74,6 @@ function response(running = false): TouchResponse {
 }
 
 let wrapper: VueWrapper;
-let dialogs: VueWrapper;
 const button = (text: string) =>
   wrapper.findAll("button").find((item) => item.text() === text)!;
 const control = () =>
@@ -118,7 +115,6 @@ beforeEach(() => {
 });
 afterEach(() => {
   wrapper?.unmount();
-  dialogs?.unmount();
   closeAllDialogs();
 });
 
@@ -282,8 +278,7 @@ describe("dashboard", () => {
     expect(connection()).toContain("17ms");
   });
 
-  test("chooses a member and returns to automatic routing through the dialog", async () => {
-    dialogs = mountWithApp(DialogHost);
+  test("chooses a member and returns to automatic routing through the picker", async () => {
     wrapper = mountWithApp(DashboardView);
     await flushPromises();
     const pinned = response();
@@ -291,31 +286,26 @@ describe("dashboard", () => {
     vi.mocked(putOutboundSelection)
       .mockResolvedValueOnce(pinned)
       .mockResolvedValueOnce(response());
-    await button("Switch").trigger("click");
-    await flushPromises();
-    await dialogs
-      .getComponent(NodeSelection)
-      .findAll('input[type="radio"]')[1]
-      .setValue(true);
+    const picker = () =>
+      wrapper.getComponent(".dashboard-connection .v-select") as VueWrapper<{
+        $emit: (event: string, value: string) => void;
+      }>;
+    const memberKey = (
+      picker().props("items") as { value: string; title: string }[]
+    ).find((item) => item.value !== "auto")!.value;
+    picker().vm.$emit("update:modelValue", memberKey);
     await flushPromises();
     expect(putOutboundSelection).toHaveBeenNthCalledWith(1, {
       outbound: "proxy",
       which: { _type: "server", id: 1 },
     });
-    expect(dialogState.stack).toHaveLength(0);
     expect(wrapper.get(".dashboard-connection").text()).toContain("Pinned");
-    await button("Switch").trigger("click");
-    await flushPromises();
-    await dialogs
-      .getComponent(NodeSelection)
-      .findAll('input[type="radio"]')[0]
-      .setValue(true);
+    picker().vm.$emit("update:modelValue", "auto");
     await flushPromises();
     expect(putOutboundSelection).toHaveBeenNthCalledWith(2, {
       outbound: "proxy",
       which: null,
     });
-    expect(dialogState.stack).toHaveLength(0);
     expect(wrapper.get(".dashboard-connection").text()).not.toContain("Pinned");
   });
 

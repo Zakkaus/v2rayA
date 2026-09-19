@@ -60,7 +60,7 @@ export default {
     inUse: "当前节点",
     pinned: "已指定",
     balanced: "自动 · {n} 个成员",
-    switchNode: "切换",
+    switchNode: "选择节点",
     autoFastest: "自动（延迟最低）",
     manageNodes: "管理节点",
     emptyGroup: "此分组没有节点",
