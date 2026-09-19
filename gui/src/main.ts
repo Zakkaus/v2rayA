@@ -1,3 +1,4 @@
+import "@/pwa";
 import "@/plugins/apiRoot";
 import "@/plugins/buefy";
 import "@/plugins/axios";

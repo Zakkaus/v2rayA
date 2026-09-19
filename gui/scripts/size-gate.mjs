@@ -37,6 +37,7 @@ for (const file of walk(dist)) {
   const ext = extname(file);
   if (ext !== ".js" && ext !== ".css") continue;
   const rel = relative(dist, file);
+  if (/^(?:sw|workbox-[^/]+|registerSW)\.js$/.test(rel)) continue;
   rows.push({
     file: rel,
     ext,
