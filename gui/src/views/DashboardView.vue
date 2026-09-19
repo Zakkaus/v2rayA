@@ -49,6 +49,7 @@ const {
   quickSaving,
   quickDisabled,
   editPorts,
+  editRoutingA,
   importNodes,
   subscriptions,
   selecting,
@@ -319,6 +320,7 @@ function switchNode() {
           />
         </v-radio-group>
         <div class="d-flex flex-wrap ga-2 mt-3">
+          <v-btn variant="text" @click="editRoutingA">RoutingA</v-btn>
           <v-btn variant="text" @click="editPorts">{{
             t("customAddressPort.title")
           }}</v-btn>

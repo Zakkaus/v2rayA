@@ -24,6 +24,7 @@ import ImportDialog from "@/dialogs/Import.vue";
 import SharingDialog from "@/dialogs/Sharing.vue";
 import SubscriptionDialog from "@/dialogs/Subscription.vue";
 import PortsDialog from "@/dialogs/settings/Ports.vue";
+import RoutingADialog from "@/dialogs/settings/RoutingA.vue";
 import { useAppStore } from "@/stores/app";
 import { locate, runningOf, sameWhich } from "@/views/nodes/model";
 import { useSettings, type SettingForm } from "@/views/settings/model";
@@ -206,6 +207,10 @@ export function useDashboard() {
     const imported = await openDialog<boolean>(ImportDialog, {}, { width: 480 })
       .result;
     if (imported) await getTouch().then(apply).catch(report);
+  }
+  /** editRoutingA opens the RoutingA editor. */
+  function editRoutingA() {
+    openDialog(RoutingADialog, {}, { width: 720 });
   }
   /** editPorts opens the address dialog. */
   function editPorts() {
@@ -404,6 +409,7 @@ export function useDashboard() {
     members,
     nodeInUse,
     editPorts,
+    editRoutingA,
     importNodes,
     subscriptions,
     quick: settings.form,
