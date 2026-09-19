@@ -161,7 +161,7 @@ async function openGfwList() {
   if (changed) settings.load().catch(() => {});
 }
 const openDomains = () => open(DomainsExcludedDialog, {}, { width: 520 });
-const openRoutingA = () => open(RoutingADialog, {}, { width: 720 });
+const openRoutingA = () => open(RoutingADialog, {}, { width: 960 });
 const openDns = () => open(DnsDialog, {}, { width: 640 });
 const openPorts = () => open(PortsDialog, {}, { width: 520 });
 const openInbounds = () => open(CustomInboundDialog, {}, { width: 640 });

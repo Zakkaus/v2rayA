@@ -239,7 +239,7 @@ export function useDashboard() {
   }
   /** editRoutingA opens the RoutingA editor. */
   function editRoutingA() {
-    openDialog(RoutingADialog, {}, { width: 720 });
+    openDialog(RoutingADialog, {}, { width: 960 });
   }
   /** editPorts opens the address dialog. */
   function editPorts() {
