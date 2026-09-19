@@ -1,15 +1,94 @@
 <script setup lang="ts">
-// The juicity tab of the node editor. Contract: the model comes in by
-// v-model and is edited in place; `readonly` shows a subscription node's
-// values without editing; fields hidden by their conditions are not
-// validated. Replace this placeholder with the form.
+import { useI18n } from "vue-i18n";
 import type { JuicityModel } from "../models";
-import PendingForm from "../PendingForm.vue";
+import { required } from "./parts/rules";
 
-defineModel<JuicityModel>({ required: true });
+const model = defineModel<JuicityModel>({ required: true });
 defineProps<{ readonly?: boolean }>();
+const { t } = useI18n();
 </script>
 
 <template>
-  <PendingForm protocol="juicity" />
+  <v-row dense>
+    <v-col cols="12">
+      <v-text-field
+        v-model="model.name"
+        :label="t('configureServer.servername')"
+        :readonly="readonly"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.server"
+        :label="t('configureServer.host')"
+        :rules="[required]"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.port"
+        type="number"
+        :label="t('configureServer.port')"
+        :rules="[required]"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.uuid"
+        label="UUID"
+        :rules="[required]"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.password"
+        :label="t('configureServer.password')"
+        :rules="[required]"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+  </v-row>
+  <v-row dense>
+    <v-col cols="12" sm="6">
+      <v-select
+        v-model="model.cc"
+        :items="['bbr']"
+        :label="t('configureServer.congestionControl')"
+        :rules="[required]"
+        :readonly="readonly"
+      />
+    </v-col>
+  </v-row>
+  <v-row dense>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.sni"
+        label="SNI"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-text-field
+        v-model="model.pinnedCertchainSha256"
+        :label="t('configureServer.pinnedCertchainSha256')"
+        :readonly="readonly"
+        dir="ltr"
+      />
+    </v-col>
+    <v-col cols="12" sm="6">
+      <v-switch
+        v-model="model.allowInsecure"
+        :label="t('configureServer.allowInsecure')"
+        :readonly="readonly"
+      />
+    </v-col>
+  </v-row>
 </template>
