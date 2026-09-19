@@ -270,20 +270,15 @@ onMounted(sync);
             divided
             variant="outlined"
             rounded="xl"
-            density="comfortable"
             selected-class="bg-secondary-container text-on-secondary-container"
             :aria-label="t('operations.view')"
           >
-            <v-btn
-              value="cards"
-              :icon="mdiViewGridOutline"
-              :aria-label="t('proxies.cards')"
-            />
-            <v-btn
-              value="list"
-              :icon="mdiViewListOutline"
-              :aria-label="t('proxies.list')"
-            />
+            <v-btn value="cards" :aria-label="t('proxies.cards')" width="48">
+              <v-icon :icon="mdiViewGridOutline" size="20" />
+            </v-btn>
+            <v-btn value="list" :aria-label="t('proxies.list')" width="48">
+              <v-icon :icon="mdiViewListOutline" size="20" />
+            </v-btn>
           </v-btn-toggle>
         </div>
         <v-empty-state
