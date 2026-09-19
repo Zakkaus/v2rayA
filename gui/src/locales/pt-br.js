@@ -12,6 +12,12 @@ export default {
     connectFastest: "Conectar ao mais rápido",
     chooseManually: "Escolher manualmente",
   },
+  dashboard: {
+    status: "Estado do núcleo",
+    facts: "Instância",
+    version: "Versão",
+    core: "Núcleo",
+  },
   common: {
     dashboard: "Painel",
     proxies: "Proxies",

@@ -12,6 +12,12 @@ export default {
     connectFastest: "Connect fastest",
     chooseManually: "Choose manually",
   },
+  dashboard: {
+    status: "Core status",
+    facts: "Instance",
+    version: "Version",
+    core: "Core",
+  },
   common: {
     dashboard: "Dashboard",
     proxies: "Proxies",
