@@ -12,7 +12,13 @@ import {
   mdiWeatherSunny,
 } from "@mdi/js";
 import { useAppStore, type ThemePreference } from "@/stores/app";
-import { hueOf, isSeed, presetSeeds, seedFromHue } from "@/theme/scheme";
+import {
+  hueOf,
+  isPalette,
+  isSeed,
+  presetSeeds,
+  seedFromHue,
+} from "@/theme/scheme";
 
 const { t } = useI18n();
 const store = useAppStore();
@@ -26,8 +32,10 @@ const seed = computed({
   get: () => store.themeSeed,
   set: (v: string) => store.setThemeSeed(v),
 });
-const isPreset = computed(() =>
-  presetSeeds.some((p) => p.seed === store.themeSeed),
+const isPreset = computed(
+  () =>
+    presetSeeds.some((p) => p.seed === store.themeSeed) ||
+    isPalette(store.themeSeed),
 );
 const pickerOpen = ref(false);
 // the custom seed: a hue slider (Material's slider, the track painted with
@@ -96,6 +104,22 @@ function applyHex() {
           :icon="mdiCheck"
           class="swatch__check"
         />
+      </v-btn>
+      <v-btn
+        icon
+        size="small"
+        variant="flat"
+        class="swatch--rose-pine"
+        aria-label="Rosé Pine"
+        :aria-pressed="store.themeSeed === 'rose-pine'"
+        @click="seed = 'rose-pine'"
+      >
+        <v-icon
+          v-if="store.themeSeed === 'rose-pine'"
+          :icon="mdiCheck"
+          class="swatch__check"
+        />
+        <v-tooltip activator="parent" location="top">Rosé Pine</v-tooltip>
       </v-btn>
       <v-btn
         icon
@@ -173,6 +197,10 @@ function applyHex() {
 .swatch__check {
   position: relative;
   color: rgba(0, 0, 0, 0.72);
+}
+/* Rosé Pine's swatch: its base with the iris, rose and foam accents */
+.swatch--rose-pine {
+  background: conic-gradient(#c4a7e7 0 33%, #ebbcba 0 66%, #9ccfd8 0);
 }
 .swatch--custom {
   position: relative;

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { Base64 } from "js-base64";
 import type { OutboundStatus, Which, VersionResponse } from "@/api/types";
-import { brandSeed, isSeed } from "@/theme/scheme";
+import { brandSeed, isPalette, isSeed } from "@/theme/scheme";
 
 /** normalizeOutbounds keeps the backend's list as names: trimmed, unique, "proxy" first. */
 export function normalizeOutbounds(outbounds: unknown): string[] {
@@ -59,7 +59,7 @@ export const useAppStore = defineStore("app", {
     /** the seed colour the theme's palettes derive from */
     themeSeed: (() => {
       const seed = localStorage.getItem("themeSeed") ?? "";
-      return isSeed(seed) ? seed.toLowerCase() : brandSeed;
+      return isSeed(seed) || isPalette(seed) ? seed.toLowerCase() : brandSeed;
     })(),
     language: localStorage.getItem("_lang") ?? "",
     view: "dashboard" as View,
@@ -105,7 +105,7 @@ export const useAppStore = defineStore("app", {
       localStorage.setItem("theme", preference);
     },
     setThemeSeed(seed: string) {
-      if (!isSeed(seed)) return;
+      if (!isSeed(seed) && !isPalette(seed)) return;
       this.themeSeed = seed.toLowerCase();
       localStorage.setItem("themeSeed", this.themeSeed);
     },
